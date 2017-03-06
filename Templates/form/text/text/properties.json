@@ -1,0 +1,64 @@
+{
+    "id": "text",
+    "name": "text",
+    "label": "Text",
+    "default": "",
+    "title": "Text Input",
+    "tooltip": "Text Input",
+    "width": "",
+    "readonly": "false",
+    "class": "",
+    "label_class": "",
+    "input_class": "",
+    "form": {
+        "id": {
+            "type": "text"
+        },
+        "name": {
+            "type": "text"
+        },
+        "label": {
+            "type": "text"
+        },
+        "default": {
+            "type": "text"
+        },
+        "title": {
+            "type": "text"
+        },
+        "width": {
+            "type": "text"
+        },
+        "readonly": {
+            "type": "select",
+            "option": ["false", "true"]
+        },
+        "class": {
+            "type": "group",
+            "title": "Classes Setting",
+            "fields": {
+                "class": {
+                    "type": "text"
+                },
+                "label_class": {
+                    "type": "text"
+                },
+                "input_class": {
+                    "type": "text"
+                }
+            }
+        },
+        "description": {
+            "type": "group",
+            "title": "Description Setting",
+            "fields": {
+                "tooltip": {
+                    "type": "textarea"
+                },
+                "description": {
+                    "type": "textarea"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+    
+    {% import "form.macro.twig" as forms %}
+    
+    {{ set_assets('assets/js/comment.js') }}
+    {{ set_assets('assets/js/media.js') }}
+    {{ set_assets('assets/css/comment.css') }}
+
+    <div id="chat-box"  class="kazi-comments chat">
+        <div class="kazi-comment-list"></div>
+        {{ label }}
+        <div class="kazi_comment_form_holder item"></div>
+    </div>  
+
+    {{ set_media_exist(true) }}
+{% endmacro %}
+

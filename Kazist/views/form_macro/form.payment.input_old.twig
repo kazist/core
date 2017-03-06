@@ -1,0 +1,159 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+    {% import "form.macro.twig" as forms %}
+
+    {{ set_assets('assets/css/payment.css') }}
+    {{ set_assets('assets/js/payment.js') }}
+
+    {% set yes_no_options = get_context('yes_no_options') %}
+    {% set all_amount_sources = get_context('all_amount_sources') %}
+    {% set calc_amount_sources = get_context('calc_amount_sources') %}
+    {% set fixed_amount_sources = get_context('fixed_amount_sources') %}
+    {% set kazi_url = get_context('kazi_url') %}
+    {% set edit_index = get_context('edit_index') %}
+
+    {% set total_amount = 0 %}
+    {% set class_name = "success" %}
+
+    {% set payment_url = "?accounts.journal.journal.edit" %}
+    {% set payment_url = payment_url ~ "&source_" ~ kazi_url.app_name %}
+    {% set payment_url = payment_url ~ "&source_com=" ~ kazi_url.com_name %}
+    {% set payment_url = payment_url ~ "&source_subset=" ~ kazi_url.subset_name %}
+    {% set payment_url = payment_url ~ "&payment_subset=" ~ setting.parameters.payment.payment_subset|url_encode() %}
+    {% set payment_url = payment_url ~ "&payment_diplay_field=" ~ setting.parameters.payment.payment_diplay_field %}
+    {% set payment_url = payment_url ~ "&payment_amount_field=" ~ setting.parameters.payment.payment_amount_field %}
+    {% set payment_url = payment_url ~ "&source_record_id=" ~ edit_index.id %}
+    {% set payment_url = payment_url ~ "&source_field_name=" ~ name %}
+
+    {% set invoice_url = "?accounts.invoice.invoice.edit" %}
+    {% set invoice_url = invoice_url ~ "&source_" ~ kazi_url.app_name %}
+    {% set invoice_url = invoice_url ~ "&source_com=" ~ kazi_url.com_name %}
+    {% set invoice_url = invoice_url ~ "&source_subset=" ~ kazi_url.subset_name %}
+    {% set invoice_url = invoice_url ~ "&payment_subset=" ~ setting.parameters.payment.payment_subset|url_encode() %}
+    {% set invoice_url = invoice_url ~ "&payment_diplay_field=" ~ setting.parameters.payment.payment_diplay_field %}
+    {% set invoice_url = invoice_url ~ "&payment_amount_field=" ~ setting.parameters.payment.payment_amount_field %}
+    {% set invoice_url = invoice_url ~ "&source_record_id=" ~ edit_index.id %}
+    {% set invoice_url = invoice_url ~ "&source_field_name=" ~ name %}
+
+    {% if setting.accounts.total_amount < 0 %}
+        {% set total_amount = "(" ~ setting.accounts.total_amount ~ ")" %}
+        {% set class_name = "danger" %}
+    {% endif %}    
+
+    <div class="form-group">
+        <div class="col-sm-12 kazicode-form-field kazicode-form-payment">
+            <div> 
+                <span class="alert alert-{{ class_name }} kazi-payment">{{ total_amount }} </span>
+                <a class="btn btn-success btn-xs" href="{{ payment_url }}" title='Receive Payment'>
+                    <span class="glyphicon glyphicon-plus"></span>Receive Payment
+                </a>
+                <a class="btn btn-primary btn-xs" href="{{ invoice_url }}" title='Generate Invoice'>
+                    <span class="glyphicon glyphicon-plus"></span>Generate Invoice
+                </a>
+                <a class="advance_payment_options_link" href="#" style="float:right;" title='Advance Options'>
+                    <span class="glyphicon glyphicon-cog"></span>Advance Options
+                </a>
+            </div>
+            <br>
+            <div class="callout callout-info  advance_payment_options " style="display:none;">
+                {{ forms.input('active_payment_field', 'hidden', name) }} 
+                {% if setting.parameters.payment.payment_subset %}
+                    {{ forms.input('payment_amount_field', 'hidden', setting.parameters.payment.payment_amount_field) }} 
+                    {{ forms.input('amount_component_subset', 'hidden', setting.parameters.payment.payment_subset) }} 
+                    {{ forms.input('amount_sources', 'radio', setting.parameters.payment.payment_amount_source, 'Amt Sources', null, null, null, null, all_amount_sources) }}
+                {% else %}
+                    {{ forms.input('amount_sources', 'radio', setting.parameters.payment.payment_amount_source, 'Amt Sources', null, null, null, null, fixed_amount_sources) }}
+                {% endif %}
+
+                <div class="fixed_amount">
+                    {{ forms.input( name, 'text', default, 'Fixed Amount: ', null, null, 'placeholder="Enter Fixed Amount"') }}
+                </div>
+
+                {% if setting.parameters.payment.payment_subset %}
+
+                    <div class="calculated_amount">
+                        <div class=" advance_payment_options_slider">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th class="hidden-xs">Title</th>
+                                            <th class="hidden-xs text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if options|length>0 %}
+                                            {% for option in options %}
+                                                <tr>
+                                                    <td class="hidden-xs"> 
+                                                        {% if setting.parameters.payment.payment_diplay_field~'_join' %}
+                                                            {% set payment_display_field = setting.parameters.payment.payment_diplay_field~'_join' %}
+                                                        {% else %}
+                                                            {% set payment_display_field = setting.parameters.payment.payment_diplay_field %}
+                                                        {% endif %}
+                                                        {#{{ kazidump(option) }}#}
+                                                        {{ attribute(option, payment_display_field)  }}
+                                                    </td>
+                                                    <td class="hidden-xs  text-right"> 
+                                                        {% set payment_amount = attribute(option, setting.parameters.payment.payment_amount_field)  %}
+                                                        {% set total_amount = total_amount + payment_amount  %}
+                                                        {{ forms.input('amount_component.amount.' ~ option.id, 'text', payment_amount, null, ' text-right') }} 
+                                                        {{ forms.input('amount_component.text.' ~ option.id, 'hidden', attribute(option, payment_display_field)) }} 
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="hidden-xs text-right"> Total </th>
+                                            <th class="hidden-xs text-right"> {{ total_amount }} </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-history">
+        {% if setting.parameters.payment.payment_history_link %}
+            <a class="btn btn-primary btn-xs" title='View All Transaction History'>
+                <span class="glyphicon glyphicon-plus"></span>
+                View All Transaction History
+            </a>
+        {% endif %}
+
+        {% if setting.parameters.payment.payment_history %}
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="hidden-xs">Title</th>
+                        <th class="hidden-xs">Date Created</th>
+                        <th class="hidden-xs text-right">Debit</th>
+                        <th class="hidden-xs text-right">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if setting.parameters.transactions|length>0 %}
+                        {% for transaction in setting.parameters.transactions %}
+                            <tr>
+                                <td class="hidden-xs"> {{ transaction.description|truncate(40) }} </td>
+                                <td class="hidden-xs"> {{ transaction.date_created|date("m/d/Y") }} </td>
+                                <td class="hidden-xs  text-right"> {{ transaction.debit }} </td>
+                                <td class="hidden-xs  text-right"> {{ transaction.credit }} </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="hidden-xs"> No Transactions Records To Display.  </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endmacro %}
+

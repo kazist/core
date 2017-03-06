@@ -1,0 +1,40 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+<div>
+    <div class="col-md-2">
+        {{ forms.input(' list_limit', 'select', pagination.limit, null, ' pagination-select', null, null, null, pagination.options) }}
+    </div>
+    {% if pagination.links|length > 3 %}
+        <div class="col-md-10">
+            <ul class="pagination pagination-sm">
+                {% for page in pagination.links %}
+                    {% if page.url != "" %}
+                        {% set current_class = '' %}
+                        {% if page.current %}
+                            {% set current_class = 'current' %}
+                        {% endif %}
+                        <li class="{{ current_class }}">
+                            <a href="{{ page.url }}" title="Page  {{ page.text }}">
+                                {{ page.text }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a>
+                                {{ page.text }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
+  <div class="clearfix"></div>
+  
+<style>
+    .pagination-select{width: 80px;}
+</style>

@@ -1,0 +1,128 @@
+<!-- Modal -->
+
+{% set media_type =
+    {
+        0:{'value':'image','text':'image'},
+        1:{'value':'video','text':'video'},
+        2:{'value':'audio','text':'audio'},
+        3:{'value':'file','text':'file'}
+    }
+%}
+
+{% set media_eror =
+    {
+        0:{'value':'yes','text':'Yes'},
+        1:{'value':'no','text':'No'}
+    }
+%}
+
+
+<div class="modal fade form-horizontal" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="subsetModalLabel">Add Media</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#upload" data-toggle="tab" title="Upload File">Upload File</a></li>
+                    <li><a class="kazi-medias-server-link" href="#server" data-toggle="tab" title="Previously Uploaded">Previously Uploaded</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="upload">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                Title
+                            </div>
+                            <div class="col-md-12">
+                                {{ forms.input('kazicode_media_title','text') }}
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                Upload Media
+                            </div>
+                            <div class="col-md-12">
+                                {{ forms.input('kazicode_media','file', null , null, null, null, 'multiple ') }}
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <br>
+                        <!-- Progress bars -->
+                        <div id="dropzone" class="kazicode_media_dropzone dropzone">
+
+
+                        </div>
+                        <div class="kazi-medias-progress"></div>
+                        <div class="kazi-media-progress-default" style="display: none;">
+                            <div class="clearfix">
+                                <span class="pull-left kazi-media-name">&nbsp;</span>
+                                <small class="pull-right kazi-media-size">&nbsp;</small>
+                            </div>
+                            <div class="progress xs">
+                                <div class="progress-bar progress-bar-red" style="width: 10%;"></div>
+                            </div>
+                        </div>                   
+                    </div>
+                    <div class="tab-pane" id="server">
+                        <div id="kazi-medias-server-wrapper">
+
+                            <div class="kazi-medialist-progress">
+                                <div class="kazi-medialist-progress" style="display: none;">
+                                    <div class="clearfix">
+                                        <span class="pull-left">Updating</span>
+                                        <small class="pull-right">Please Wait</small>
+                                    </div>
+                                    <div class="progress xs">
+                                        <div class="progress-bar progress-bar-green" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kazi-medias-server-search">
+                                <div class="col-sm-3">
+                                    <b>Keyword</b></br>
+                                    {{ forms.input('kazicode_media_search_keyword','text') }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <b>Type</b></br>
+                                    {{ forms.input('kazicode_media_search_type','select', 'image', null, null, null, null, null, media_type) }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <b>Has Errors</b></br>
+                                    {{ forms.input('kazicode_media_search_error','select', 'no', null, null, null, null, null, media_eror) }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <b></b></br>
+                                    <a class="btn btn-success btn-flat btn-sm">Search</a>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+
+                            <div class="kazi-medias-server"></div>
+                            <ul class="pager">
+                                <li class="previous disabled"><a href="#">&larr; Previous</a></li>
+                                <li class="page_count">Page 1 of 20</li>
+                                <li class="next disabled"><a href="#" title="Next">Next &rarr;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <input class="kazicode_media_source" type="hidden" name="kazicode_media_source" value="">
+                    <input class="kazicode_media_input_id" type="hidden" name="kazicode_media_input_id" value="">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

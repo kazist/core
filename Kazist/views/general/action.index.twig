@@ -1,0 +1,62 @@
+{% set url_link = generate_url(document.base_route) %}
+
+{% if action_type == 'edit' or action_type == 'add'  %}
+    <a class="btn btn-success btn-xs kazi-save" href="#" title="Save"><span class="glyphicon glyphicon-plus"></span> Save</a>
+    <a class="btn btn-danger btn-xs" href="{{ url_link }}" title="Cancel"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
+    <span class="dropdown"> 
+        <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"  href="#" title="More Actions">
+            <span class="glyphicon glyphicon-cog"></span> More Actions<span class="caret"></span> </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a class=" kazi-savenew" href="#" title="Save & New">Save & New</a>
+            </li>
+            <li>
+                <a class=" kazi-savecopy" href="#" title="Save as Copy">Save as Copy</a>
+            </li>
+            <li>
+                <a class=" kazi-saveclose" href="#" title="Save & Close">Save & Close</a>
+            </li>
+        </ul> 
+    </span>
+{% elseif action_type == 'detail' %}
+
+    <a class="btn btn-danger btn-xs kazi-cancel" href="{{ url_link }}" title="Go Back">
+        <span class="glyphicon glyphicon-arrow-left"></span>
+        Go Back
+    </a>
+    <a class="btn btn-success btn-xs kazi-save" href="{{ url_link ~ '&view=edit&id=' ~ kazi_url.record_id }}" title="Edit">
+        <span class="glyphicon glyphicon-plus"></span>
+        Edit
+    </a>
+
+{% else %}
+
+
+    <a class="btn btn-success btn-xs" href="{{ generate_url(document.base_route~'.add') }}">
+        <span class="glyphicon glyphicon glyphicon-plus"></span> Add
+    </a>
+
+    {% if twig_file != 'recordpicker' %}
+        <span class="dropdown"> 
+            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"  href="#">
+                <span class="glyphicon glyphicon-cog"></span> More Actions<span class="caret"></span> 
+            </a>
+            <ul class="dropdown-menu">
+                {#
+                            <li>
+                                <a class="kazi-detail" href="#">Show Detail</a>
+                            </li>
+                            <li>
+                                <a class="kazi-edit" href="#">Edit</a>
+                            </li>
+                            #}
+                <li>
+                    <a class="kazi-delete" href="#">Delete</a>
+                </li>
+            </ul> 
+        </span>
+    {% endif %}
+{% endif %}
+
+<input id="main_form_id" type="hidden" name="main_form_id" value="{{ main_form_id }}"/>
+

@@ -1,0 +1,93 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{% set params = { 'location_id': location_id } %}
+
+{{ set_assets('applications/Users/assets/css/users.css') }}
+{{ set_assets('applications/Users/assets/js/users.js') }}
+
+{% set countries = callFunction( "Setup.Countries.Code.Models.CountriesModel", 'getCountriesInput', params ) %}
+
+<div class="user_register_bg">
+
+    <form  method="post" action="{{ generate_url('registration_save') }}" role="form">
+
+        {% if show_title %}
+            <div class="well well-sm"> Register Detail</div>        
+        {% endif %}
+
+        <div class="form-horizontal">
+
+            <div class="col-sm-12">
+                <label>Name</label>
+                {{ forms.input('name', 'text', null) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Username</label>
+                {{ forms.input('username', 'text', null) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Password</label>
+                {{ forms.input('password', 'password', null) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Password</label>
+                {{ forms.input('password_again', 'password', null) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Email</label>
+                {{ forms.input('email', 'text', null) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Country</label>
+                {{ forms.input('country_id', 'select', null, null, null, null, null, null, countries) }}
+                <div class="clr"></div>
+            </div>
+
+            <div class="col-sm-12">
+                <label>Location</label>
+                {{ forms.input('location_id', 'select', null) }}
+                <div class="clr"></div>
+            </div>
+
+        </div>
+
+        <div class="form-group form_links-group">
+            <label for="form_links" class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+                <div>
+
+                    <button type="submit" class="btn btn-success btn-sm btn-flat">
+                        <i class="fa fa-arrow-right"></i> Register
+                    </button>
+
+                    {% if show_cancel %}
+                        <a class="btn btn-danger btn-sm btn-flat" href="{{ uri.base.path }}" title="Cancel">
+                            <i class=" fa fa-mail-reply"></i> Cancel
+                        </a>
+                    {% endif %}  
+                </div>
+
+            </div>
+        </div>
+
+        {{ forms.input('return_url', 'hidden', return_url|raw ) }}
+        {{ forms.input('registration_view', 'hidden', registration_view ) }}
+
+        {{ forms.input('_token' ) }}  
+
+    </form>
+
+
+</div>

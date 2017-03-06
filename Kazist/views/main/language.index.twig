@@ -1,0 +1,28 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+<h3>Setting :- {{ path }}</h3>
+<hr>
+
+<form class="form-horizontal" method="POST" action="{{ generate_url('admin.' ~ root ~ '.main.savelanguage') }}">
+
+    {% if languages %}
+        {% for key,language in languages %}
+            {{ forms.input(key , 'text', language, key) }}
+        {% endfor %}
+    {% endif %}
+    <div>
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            {{ forms.input('path' , 'hidden', path) }}
+            {{ forms.input('return_url' , 'hidden', generate_url('admin.' ~ root ~ '.main.language') ~ '?path=' ~ path) }}
+            <input class="btn btn-success" name="save" type="submit" value="Save">
+        </div>
+    </div>
+    <br>
+    <br>
+
+    {{ forms.input('_token' ) }} 
+
+</form>

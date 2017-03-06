@@ -1,0 +1,43 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% set session_form = get_session('session_form') %}
+
+    {% if name == '_token' %}
+         {% import "form.token.input.twig" as forminput %}
+    {% elseif field_macro_exist("form." ~ type|default('text')  ~ ".input.twig") %}
+        {% import "form." ~ type|default('text')  ~ ".input.twig" as forminput %}
+    {% else %}
+        {% import "form.text.input.twig" as forminput %}
+    {% endif %}
+
+    {% if  default is empty %}
+        {% set default = attribute(session_form, name) %}
+    {% endif %}
+  
+    {{ forminput.input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+
+{% endmacro %}
+
+{% macro button(save_status, delete_status, cancel_status) %}
+    <div class="form-group {{ classname(class, name, false) }}-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            {% if save_status %}
+                <button type="submit" class="btn btn-primary">
+                    Save
+                </button>
+            {% endif %}
+
+            {% if delete_status %}
+                <button type="submit" class="btn btn-primary">
+                    Delete
+                </button>
+            {% endif %}
+
+            {% if cancel_status %}
+                <button type="submit" class="btn btn-primary">
+                    Cancel
+                </button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

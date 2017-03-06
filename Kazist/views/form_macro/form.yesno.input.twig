@@ -1,0 +1,19 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+    {% import "form.macro.twig" as forms %}
+    {# set yes_no_options = get_context('yes_no_options') #}
+
+    {% set yes_no_options =
+    {
+        0:{'value':'1','text':'Yes'},
+        1:{'value':'0','text':'No'}
+    }
+    %}
+
+    {% if default is empty %}
+        {% set default = '1' %}
+    {% endif %}
+
+    {{ forms.input(name, 'radiogroup', default, label, class, id, attributes, readonly, yes_no_options, setting, context) }}
+
+{% endmacro %}
+

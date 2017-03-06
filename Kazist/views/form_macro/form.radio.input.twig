@@ -1,0 +1,56 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% import _self as self_macro %}
+    {% if (label is empty) %}
+        {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+    {% else %}
+        <div class="form-group {{ classname(class, name, false) }}-group">
+            <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+            <div class="col-sm-9 {% if readonly %}form-control-static{% endif %}">
+                {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+            </div>
+        </div>
+    {% endif %}
+
+{% endmacro %}
+
+{% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% import _self as self_macro %}
+    
+    {% if not readonly %}
+        {% if(options is not empty) %}
+            <div class="{{ classname(class, name, false) }}"  id="{{ idname(id, name)}}">
+                {% for key, option in options %}
+                    {% if default == option.value %}
+                        {% set checked = "checked" ~ attributes %}
+                        {% set checked_status= "active"  %}
+                        {% set button_class= "btn-primary"  %}
+                    {% else %}
+                        {% set checked ="" ~ attributes %}
+                        {% set checked_status="" %}
+                        {% set button_class="btn-default"  %}
+                    {% endif %}
+                    <label class=" {{ checked_status }}"> 
+                        {{ self_macro.html_input_option(name, type, option.value, option.text, null, classname(class, name, false) ~'_' ~ key, checked ) }}
+                        {{ option.text|e|raw }} </label>
+                    {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        {{ default }}
+    {% endif %}
+
+
+{% endmacro %}
+
+{% macro html_input_option(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% if not readonly %}
+        <input id="{{ id|classname(name) }}" class="{{ classname(class, name, false) }}" name="{{ fieldname(name) }}" type="radio" value="{{ default|e }}"  {{ attributes }}/>
+    {% else %}
+        {{ default|e|raw }}
+    {% endif %}
+{% endmacro %}
+
+

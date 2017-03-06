@@ -1,0 +1,58 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{{ set_assets('applications/Users/assets/css/login.css') }}
+
+{% set reset_type =
+    {
+        0:{'value':'username','text':'Username'},
+        1:{'value':'password','text':'Password'}
+    }
+%}
+
+<div class="user_login_bg">
+
+    <form  method="post" action="{{ generate_url('change_password') }}" role="form">
+
+        <h1>Change Password ? </h1>
+
+        If you have forgotten you password or username, Enter you email below to reset you account.
+
+        Your recieve an email with detail on how to reset you account.
+
+        Please check your email now for account reset link.
+
+        </br>
+        </br>
+        <div class="form-horizontal">
+
+            {{ forms.input('current_password', 'password', null, 'Enter Current Password') }}
+            {{ forms.input('new_password', 'password', null, 'Enter New Password') }}
+            {{ forms.input('new_password_again', 'password', null, 'Confirm New Password ') }}
+        </div>
+
+        <div class="form-group form_links-group">
+            <label for="form_links" class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+                <div>
+                    <button type="submit" class="btn btn-success btn-sm btn-flat">
+                        <i class="fa fa-arrow-right"></i> Reset Password
+                    </button>
+
+                    <a class="btn btn-danger btn-sm btn-flat" href="{{ uri.base.path }}" title='Cancel'>
+                        <i class=" fa fa-mail-reply"></i> Cancel
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        {{ forms.input('return_url', 'hidden', return_url|raw ) }}
+
+        {{ forms.input('_token' ) }}  
+
+    </form>
+
+
+</div>

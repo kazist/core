@@ -1,0 +1,106 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+
+    {% import "form.macro.twig" as forms %}
+    {{ set_assets('applications/Users/assets/js/right_field.js') }}
+
+    {% set edit_index = get_context('edit_index') %}
+    {% set user = getSessionItem('user') %}
+
+    {% set style_params = 'style="display: none;"' %}
+    {% set checkbox_params = '' %}
+    {% set user_form_name = 'form[' ~ name ~ ']' %}
+
+    {% if attribute(edit_index, name) != '' %}
+        {% set checkbox_params = 'checked' %}
+        {% set style_params = '' %}
+        {% set user_form_name = '' %}
+    {% endif%}
+
+    <div class="form-group {{ classname(class, name, false) }}-group">
+        <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+        <div class="col-sm-9 kazicode-form-field private_confidential {% if readonly %}form-control-static{% endif %}">
+            <input type="checkbox" name="{{ user_form_name }}" value="" {{ checkbox_params }} field_name="{{ name }}"> Private & Confidential<br><br>
+            <input class="all_access_rights" type="hidden" name="{{ user_form_name }}" value="" />
+
+            <div class="other_private_confidential" {{ style_params|raw }}>
+                <div class="form-horizontal">
+                    <a class="btn btn-primary btn-xs add_other_private_confidential" data-toggle="modal" data-target="#right{{ name }}Modal" field_name="{{ name }}"> 
+                        <i class="fa fa-plus"></i> Who Can Access
+                    </a>
+                </div>
+                <br>
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <tbody>
+                            {% if options|length > 0 %}
+                                {% for option in options%}
+                                    <tr>
+                                        <td>
+                                            <b>{{ option.name }}</b> 
+                                            {% if user.id == option.id %}
+                                                (You)
+                                            {% elseif edit_index.created_by == option.id %}
+                                                (Owner)
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right">
+                                            {{ forms.input(name ~ '.', 'hidden', option.id, null, 'private_confidential_' ~ name) }}
+                                            <a class="delete_private_confidential" href="#" title="Delete">
+                                                <span class="label label-danger">
+                                                    <span class="glyphicon glyphicon-trash">
+                                                    </span>
+                                                </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td>
+                                        <b>{{ user.name }}</b> 
+                                        (You)
+                                    </td>
+                                    <td class="text-right">
+                                        <input id="rights_" class="private_confidential_rights" name="" type="hidden" value="1">
+                                        <span class="label label-danger delete_media">
+                                            <span class="glyphicon glyphicon-trash">
+                                            </span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade form-horizontal right_field_modal" id="right{{ name }}Modal" tabindex="-1" role="dialog" aria-labelledby="charges{{ name }}ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="subsetModalLabel">Add Users</h4>
+                </div>
+                <div class="modal-body">
+
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>       
+
+
+{% endmacro %}
+

@@ -1,0 +1,130 @@
+<!-- Modal -->
+
+
+{% set link_type =
+    {
+        0:{'value':'image','text':'image'},
+        1:{'numeric':'video','text':'video'},
+        2:{'numeric':'audio','text':'audio'},
+        3:{'numeric':'file','text':'file'}
+    }
+%}
+
+{% set link_eror =
+    {
+        0:{'value':'yes','text':'Yes'},
+        1:{'value':'no','text':'No'}
+    }
+%}
+
+{% set menu_links = callFunction( "System.Menus.Code.Classes.EditorPopup", 'getMenuCategories' )%}
+{% set menu_applications = callFunction( "System.Menus.Code.Classes.EditorPopup", 'getApplications' )%}
+
+{% set menu_link = menu_links.0 %}
+
+<div class="modal fade form-horizontal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="subsetModalLabel">Add Link</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#link" data-toggle="tab" title="Upload File">Menu Link</a></li>
+                    <li><a class="kazi-links-custom-link" href="#custom" data-toggle="tab" title="Previously Uploaded">Custom Link</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="link">
+
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                Categories
+                            </div>
+                            <div class="col-md-12">
+                                {{ forms.input('kazicode_link_menu_category','select', menu_link.value, null, null, null, null, null, menu_links) }}
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <br>
+                        <br>
+
+                        <div class="kazi-menu-links"></div>
+
+                    </div>
+                    <div class="tab-pane" id="custom">
+                        <div id="kazi-links-custom-wrapper">
+
+                            <div class="kazi-linklist-progress">
+                                <div class="kazi-linklist-progress" style="display: none;">
+                                    <div class="clearfix">
+                                        <span class="pull-left">Updating</span>
+                                        <small class="pull-right">Please Wait</small>
+                                    </div>
+                                    <div class="progress xs">
+                                        <div class="progress-bar progress-bar-green" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kazi-links-custom-search">
+
+                                <div class="col-sm-3">
+                                    <b>Application</b></br>
+                                    {{ forms.input('kazicode_link_application','select', null, null, null, null, null, null, menu_applications) }}
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <b>Component</b></br>
+                                    {{ forms.input('kazicode_link_component','select') }}
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <b>Subset</b></br>
+                                    {{ forms.input('kazicode_link_subset','select') }}
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <b> Keyword</b></br>
+                                    <div class="input-group">
+                                        <input id="kazicode_link_menu_keyword" type="text" class="form-control input-sm kazicode_link_menu_keyword" name="kazicode_link_menu_keyword" value="" placeholder=" Search...">
+                                        <div class="input-group-btn ">
+                                            <input id="kazicode_link_menu_search" type="submit" class="btn btn-primary  btn-sm kazicode_link_menu_search" name="submit" value="Search">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                            <br>
+
+                            <div class="kazi-links-custom"></div>
+
+                            <ul class="pager kazi-links-custom-nav">
+                                <li class="previous disabled"><a href="#">&larr; Previous</a></li>
+                                <li class="page_count">Page 1 of 1</li>
+                                <li class="next disabled"><a href="#" title="Next">Next &rarr;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <input class="kazicode_link_offset" type="hidden" name="kazicode_link_offset" value="">
+                    <input class="kazicode_link_limit" type="hidden" name="kazicode_link_limit" value="">
+                    <input class="kazicode_link_source" type="hidden" name="kazicode_link_source" value="">
+                    <input class="kazicode_link_search_type" type="hidden" name="kazicode_link_search_type" value="">
+                    <input class="kazicode_link_input_id" type="hidden" name="kazicode_link_input_id" value="">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

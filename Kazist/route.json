@@ -1,0 +1,230 @@
+{
+    "frontend": [{
+            "title": "Homepage",
+            "description": "Homepage.",
+            "controller": "Kazist\\Controller\\HomeController::indexAction",
+            "unique_name": "home",
+            "route": "",
+            "arguments": "",
+            "keywords": "Homepage",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 0,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Login",
+            "description": "Login.",
+            "controller": "Kazist\\Controller\\UserController::loginAction",
+            "unique_name": "login",
+            "route": "login",
+            "arguments": "",
+            "keywords": "login",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 0,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Login Check",
+            "description": "Login Check.",
+            "controller": "Kazist\\Controller\\UserController::loginCheckAction",
+            "unique_name": "login_check",
+            "route": "login-check",
+            "arguments": "",
+            "keywords": "login, check",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 0,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator Create",
+            "description": "Generator Create.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::createAction",
+            "unique_name": "generator_create",
+            "route": "generator-create",
+            "arguments": "",
+            "keywords": "login, generator",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+
+        }, {
+            "title": "Generator Show",
+            "description": "Generator Show.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::showAction",
+            "unique_name": "generator_show",
+            "route": "generator-show/{id}",
+            "arguments": {
+                "id": null
+            },
+            "keywords": "Generator, Show",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator Builder",
+            "description": "Generator Builder.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::buildAction",
+            "unique_name": "generator_builder",
+            "route": "generator-build/{id}{file}",
+            "arguments": {
+                "id": null,
+                "file": null
+            },
+            "keywords": "Generator, Builder",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator Save",
+            "description": "Generator Save.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::saveAction",
+            "unique_name": "generator_save",
+            "route": "generator-save/{type}",
+            "arguments": {
+                "type": null
+            },
+            "keywords": "Generator, save",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator table",
+            "description": "Generator table.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::tableAction",
+            "unique_name": "generator_table",
+            "route": "generator-table/{id}/{table}",
+            "arguments": {
+                "id": null,
+                "table": null
+            },
+            "keywords": "Generator, table",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator general",
+            "description": "Generator general.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::generalAction",
+            "unique_name": "generator_general",
+            "route": "generator-general/{id}/{namespace}",
+            "arguments": {
+                "id": null,
+                "namespace": null
+            },
+            "keywords": "Generator, general",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Generator fieldlist",
+            "description": "Generator fieldlist.",
+            "controller": "Generator\\Code\\Controllers\\GeneratorController::fieldlistAction",
+            "unique_name": "generator_fieldlist",
+            "route": "generator-fieldlist/{table}",
+            "arguments": {
+                "table": null
+            },
+            "keywords": "Generator, fieldlist",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }],
+    "backend": [{
+            "title": "General Tasks",
+            "description": "General Tasks.",
+            "controller": "Kazist\\Controller\\BaseController::taskAction",
+            "unique_name": "admi.task",
+            "route": "admin/task",
+            "arguments": "",
+            "keywords": "task",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_save"],
+                "ADMIN": ["can_save"]
+            }
+        }, {
+            "title": "Homepage",
+            "description": "Homepage.",
+            "controller": "Kazist\\Controller\\HomeController::indexAction",
+            "unique_name": "admin.home",
+            "route": "admin",
+            "arguments": "",
+            "keywords": "homepage",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Login",
+            "description": "Login.",
+            "controller": "Kazist\\Controller\\UserController::loginAction",
+            "unique_name": "admin.login",
+            "route": "admin/login",
+            "arguments": "",
+            "keywords": "Login",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }, {
+            "title": "Login Check",
+            "description": "Login Check.",
+            "controller": "Kazist\\Controller\\UserController::loginCheckAction",
+            "unique_name": "admin.login_check",
+            "route": "admin/login-check",
+            "arguments": "",
+            "keywords": "Login Check",
+            "priority": "0.5",
+            "changefreq": "weekly",
+            "login_required": 1,
+            "roles": {
+                "SUPER_ADMIN": ["can_view", "can_viewown"],
+                "ADMIN": ["can_view", "can_viewown"]
+            }
+        }]
+} 	

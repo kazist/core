@@ -1,0 +1,132 @@
+
+{% import _self as tablefield %}
+
+{% if first_record %}
+    <a href="{{ generate_url(view_url ~ '.edit', {'id':item.id }) }}" title="View Detail">
+    {% endif %}
+
+    {% set field_parameter = attribute(json_object.fields, field) %}
+
+    {{ tablefield.field(field_parameter, item) }}
+
+    {% if first_record %}
+    </a>
+{% endif %}
+
+{% macro field(field, item) %}
+
+    {% import _self as self_macro %}
+
+    {% set field_type = field.html_type %}
+
+    {% if field_type == 'media' %}
+        {{ _self.field_media(field, item) }}
+    {% elseif field_type == 'yesno' %}
+        {{ _self.field_yesno(field, item) }}
+    {% elseif field_type == 'select' or field_type == 'autocomplete' or field_type == 'radio'  %}
+        {{ _self.field_select(field, item) }}
+    {% elseif field_type == 'datetime' %}
+        {{ _self.field_datetime(field, item) }}
+    {% elseif field_type == 'date' %}
+        {{ _self.field_date(field, item) }}
+    {% elseif field_type == 'time' %}
+        {{ _self.field_time(field, item) }}
+    {% else %}
+        {{ _self.field_default(field, item) }}
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro field_media(field, item) %}
+
+    {% set field_name = field.name %}
+    {% set media_file = attribute(item, field_name~"_file") %}
+
+    {% if media_file != '' %}
+        <img src="{{ resized_image(media_file,48,48) }}" alt="{{ media_title }}" title="{{ media_title }} ">
+    {% endif %}
+
+{% endmacro %} 
+
+
+{% macro field_yesno(field, item) %}
+
+    {% set field_name = field.name %}
+    {% set item_id = attribute(item, "id") %}
+    {% set item_status = attribute(item, field_name) %}
+
+    <div class="text-center">
+        <a class="{% if item_status %}bg-green{% else %}bg-red{% endif %} item-yesno" href="#" item_id="{{ item_id }}" item_status="{{ item_status }}" item_field="{{ field_name }}" title="Change Status">
+            <i class="fa {% if item_status %}fa-check{% else %}fa-times{% endif %}"></i>
+        </a>
+    </div>
+
+{% endmacro %}
+
+{% macro field_select(field, item) %}
+
+    {% set field_name = field.name %}
+    {% set field_data_source = field.parameters.source.data_source  %}
+    {% set field_display_fields = field.parameters.source.display_field  %}
+
+    {% if field_data_source == 'db_table' %}
+
+        {% if field_display_fields|length > 1 %}
+            {% set field_separator = ' - ' %}
+        {% else %}
+            {% set field_separator = ' ' %}
+        {% endif %}
+
+        {% for field_display_field in field_display_fields %}
+            {% set tmp_field_name = field_name ~ '_' ~ field_display_field  %}
+            {{ attribute(item, tmp_field_name) }}{{ field_separator  }}
+        {% endfor %}
+    {% else %}
+        {{ attribute(item, field_name) }}
+    {% endif  %}
+
+{% endmacro %}
+
+{% macro field_datetime(field, item) %}
+
+    {% set field_name = field.name %}
+
+    {% if attribute(item, field_name) !=  '' %}
+        {{ attribute(item, field_name)|date('d M Y H:i:s') }}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro field_date(field, item) %}
+
+    {% set field_name = field.name %}
+
+    {% if attribute(item, field_name) !=  '' %}
+        {{ attribute(item, field_name)|date('d M Y') }}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro field_time(field, item) %}
+
+    {% set field_name = field.name %}
+
+    {% if attribute(item, field_name) != '' %}
+        {{ attribute(item, field_name)|date('H:i:s') }}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro field_default(field, item) %}
+
+    {% set field_name = field.name %}
+
+    {% if field.parameters.source.join_field is not empty %}
+        {{ attribute(item, field_name~"_join") }}
+    {% else %}
+        {{ attribute(item, field_name) }}
+    {% endif %}
+
+{% endmacro %}
+

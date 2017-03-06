@@ -1,0 +1,50 @@
+{% macro render_block(name, context, is_boxed, passed_key, nodiv) %}
+
+    <div class="{{ name }}_block">
+
+        {% set blocks = attribute(context, name)  %}
+
+        {% if passed_key|length %}
+            {% if blocks|length > 0 %}
+                {% for key,block in blocks if key==passed_key %}
+                    {{ _self.render_single_block(block, is_boxed, nodiv) }}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {% if blocks|length > 0 %}
+                {% for block in blocks %}
+                    {{ _self.render_single_block(block, is_boxed, nodiv) }}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+{% endmacro %}
+
+{% macro render_single_block(block, is_boxed, nodiv) %}
+
+    {% if nodiv %}
+        {{ _self.get_block_html(block) }}
+    {% else %}
+        <div class="{% if is_boxed %}box{% endif %} kazi-block{{ block.class }}">
+            {{ _self.get_block_html(block) }}
+        </div>
+
+    {% endif %}
+
+{% endmacro %}
+
+{% macro get_block_html(block) %}
+
+    {% if block.show_title %}
+        <div class="headline">
+            <h3 class="block-title">{{ block.title }}</h3>
+        </div>
+    {% endif %}
+
+    {{ block.html|raw }}
+{% endmacro %}
+
+
+

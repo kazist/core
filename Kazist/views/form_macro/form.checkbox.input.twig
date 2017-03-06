@@ -1,0 +1,61 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+
+    {% import _self as self_macro %}
+
+    {% if (label is empty) %}
+        {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting, context) }}
+    {% else %}
+        <div class="form-group {{ classname(class, name, false) }}-group">
+            <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+            <div class="col-sm-9 {% if readonly %}form-control-static{% endif %}">
+                {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting, context) }}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+    
+    {% import _self as self_macro %}
+    
+    {% if(options is not empty) %}
+        <ul>
+            {% for key, option in options %}
+
+                {% set is_checked = false %}
+                {% if default is iterable %}
+                    {% set is_checked = false %}
+                    {% for key, single_default in default %}
+                        {% if single_default.value == option.value or single_default == option.value  %}
+                            {% set is_checked = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if default == option.value or is_checked %}
+                    {% set checked = "checked" %}
+                    {% set is_checked = false %}
+                {% else %}
+                    {% set checked ="" %}
+                {% endif %}
+                <li>
+                    {{ self_macro.html_input_option(name ~'.' ~ key, type, option.value, option.text, null, classname(class, name, false) ~'.' ~ key, checked) }}
+                    {{ option.text|raw }} 
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+{% endmacro %}
+
+{% macro html_input_option(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+
+    {% if not readonly %}
+        <input id="{{ id|classname(name) }}" class="{{ classname(class, name, false) }}" name="{{ fieldname(name) }}" type="checkbox" value="{{ default|raw }}"  {{ attributes }}/>
+    {% else %}
+        {{ default|raw }}
+    {% endif %}
+{% endmacro %}
+
+
