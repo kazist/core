@@ -182,9 +182,8 @@ class Cron {
         $query->from('#__system_crons');
         $query->where('published=1');
         $query->andWhere('next_run_time<\'' . date('Y-m-d H:i:s') . '\'');
-
         $query->setFirstResult(0);
-        $query->setMaxResults(5);
+        $query->setMaxResults(1);
 
         $crons = $query->loadObjectList();
 
