@@ -1,8 +1,8 @@
 {
-    "name": "kazist/include",
-    "description": "Kazist include Manager.",
-    "keywords": ["kazist", "include manager", "adverts"],
-    "homepage": "https://github.com/kazist/include",
+    "name": "kazist/core",
+    "description": "Kazist core Manager.",
+    "keywords": ["kazist", "core manager", "adverts"],
+    "homepage": "https://github.com/kazist/core",
     "license": "LGPL-3.0",
     "authors": [
         {
