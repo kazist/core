@@ -1,0 +1,15 @@
+{
+    "name": "kazist/include",
+    "description": "Kazist include Manager.",
+    "keywords": ["kazist", "include manager", "adverts"],
+    "homepage": "https://github.com/kazist/include",
+    "license": "LGPL-3.0",
+    "authors": [
+        {
+            "name": "Dedan Irungu",
+            "email": "info@emshyinnovate.com",
+            "homepage": "http://emshyinnovate.com",
+            "role": "Founder & Developer"
+        }
+    ]
+}
