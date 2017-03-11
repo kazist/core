@@ -1,6 +1,6 @@
 {
     "name": "kazist/core",
-    "type": "kazist-assets",
+    "type": "kazist-core",
     "description": "Kazist core Manager.",
     "keywords": ["kazist", "core manager"],
     "homepage": "https://github.com/kazist/core",
