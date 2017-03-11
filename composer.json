@@ -1,5 +1,6 @@
 {
     "name": "kazist/core",
+    "type": "kazist-assets",
     "description": "Kazist core Manager.",
     "keywords": ["kazist", "core manager", "adverts"],
     "homepage": "https://github.com/kazist/core",
@@ -11,5 +12,8 @@
             "homepage": "http://emshyinnovate.com",
             "role": "Founder & Developer"
         }
-    ]
+    ],
+    "require": {
+        "composer/installers": "~1.0"
+    }
 }
