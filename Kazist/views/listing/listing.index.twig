@@ -1,0 +1,41 @@
+<!-- TO DO List -->
+<div class="box-body">
+    <ul class="todo-list">
+        {% if items|length > 0 %}
+            {% for item in items %}
+                <li>
+                    <span class="handle">
+                        <i class="fa fa-ellipsis-v"></i>
+                        <i class="fa fa-ellipsis-v"></i>
+                    </span>                                            
+                    <input type="checkbox" value="" name=""/>
+                    <span class="text">
+
+
+                        {% if json_object.views.listing.fields|length > 0 %}
+                            {% for field in json_object.views.listing.fields %}
+                                <!-- <div>-->
+                                {#<label>#}
+                                {{ phrase(kazi_url.app_name ~ '.components.' ~ kazi_url.com_name ~ '.listing.header.title.' ~ field) }} : 
+                                {# </label>#}
+
+                                {% set field_parameter = attribute(json_object.fields, field) %}
+
+                                {% if field_parameter.parameters.join_field is not empty %}
+                                    {{ attribute(item, field~"_join") }}
+                                {% else %}
+                                    {{ attribute(item, field) }}
+                                {% endif %},&nbsp;&nbsp;
+                                <!--</div>-->
+                            {% endfor %}
+                        {% endif %}
+                    </span>
+                    <div class="tools">
+                        <i class="fa fa-edit"></i>
+                        <i class="fa fa-trash-o"></i>
+                    </div> 
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>

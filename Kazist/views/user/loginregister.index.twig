@@ -1,0 +1,37 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{{ set_assets('applications/Users/assets/css/login.css') }}
+
+
+<div class="loginregister">
+
+    <h1 class="component-header">Login/Register</h1>
+
+    <div class="col-sm-5">
+        <div class="login-register-block">
+            <h3>Login</h3>
+            <hr>
+            {% include "login.index.twig" ignore missing with {'show_cancel': 0}  %}
+            <div class="clr"></div>
+        </div>
+        <div class="login-register-block">
+            <h3>Login with Social Site </h3>
+            <hr>
+            {% include "socialmedia.index.twig" ignore missing %}
+            <div class="clr"></div>
+        </div>
+    </div>
+    <div class="col-sm-7">
+        <div class="login-register-block">
+            <h3>Register</h3>
+            <hr>
+            {% include "register.index.twig" ignore missing with {'show_cancel': 0, 'registration_view':'loginregister'}  %}
+            <div class="clr"></div>
+        </div>
+    </div>
+
+    <div class="clr"></div>
+</div>
+

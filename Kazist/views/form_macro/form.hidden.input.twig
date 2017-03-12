@@ -1,0 +1,5 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+
+    <input id="{{ idname(id, name) }}" class="{{ classname(class, name) }}" name="{{ fieldname(name) }}" type="hidden" value="{{ default|e }}"  {{ attributes }}/>
+{% endmacro %}
+

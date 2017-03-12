@@ -1,0 +1,119 @@
+
+{% import "form.macro.twig" as forms %}
+
+{% if web_is_admin %}
+    {% set view_url = 'admin.'~json_object.table_name|replace({'_': '.'}) %}
+{% else %}
+    {% set view_url = json_object.table_name|replace({'_': '.'}) %}
+{% endif %}
+
+
+<form id="{{ main_form_id }}" action="{{ generate_url(view_url) }}" method="post" >
+
+    <script src="{{ web_root }}assets/js/recordpicker.js"></script>
+
+    {% include "top.table." ~ document.base_route ~ ".twig" ignore missing %}
+
+    {% import "table\\table.field.twig" as tablefield %}
+
+    {% if items|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        {% if twig_file != 'recordpicker' %}
+                            <th width="25px">
+                                <input class="select_all_cid" type="checkbox" name="cid[]" value="1" />
+                            </th>
+                            <th width="75px">&nbsp;</th>
+                            {% else %}
+                            <th width="25px">
+                                &nbsp;
+                            </th>
+                        {% endif %}
+                        {% if json_object.views.table.fields|length > 0 %}
+                            {% for field in json_object.views.table.fields %}
+                                <th class="hidden-xs">{{ (json_object.table_name ~ '_table_header_' ~ field)|trans }}</th>
+                                {% endfor %}
+                            {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            {% if twig_file != 'recordpicker' %}
+                                <td>
+                                    <input class="cid" type="checkbox" name="cid[]" value="{{ attribute(item, "id") }}" />
+                                </td>
+                                <td class="dropdown">
+                                    <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#" title="More Actions"> <span class="glyphicon glyphicon glyphicon-cog"></span>&nbsp; <span class="caret"></span> </a>
+                                    <ul class="dropdown-menu">
+                                        {% if is_granted_access(view_url, 'view') %}
+                                            <li>
+                                                <a href="{{ generate_url(view_url ~ '.detail', {'id':item.id }) }}" title="Show Detail<">Show Detail</a>
+                                            </li>
+                                        {% endif %}
+                                        {% if is_granted_access(view_url, 'write') %}
+                                            <li>
+                                                <a href="{{ generate_url(view_url ~ '.edit', {'id':item.id }) }}" title="Edit">Edit</a>
+                                            </li>
+                                        {% endif %}
+                                        {% if is_granted_access(view_url, 'delete') %}
+                                            <li>
+                                                <a class="confirm_delete" href="{{ generate_url(view_url ~ '.delete', {'id':item.id }) }}" title="Delete">Delete</a>
+                                            </li>
+                                        {% endif %}
+                                        <li class="divider"></li>
+                                        <li class="dropdown-header">
+                                            Id : {{ attribute(item, "id") }}
+                                        </li>
+                                    </ul>
+                                </td>
+                            {% else %}
+                                {% set recordpicker_text = '' %}
+
+                                {% if displayfields|length > 0 %}
+                                    {% for displayfield in displayfields %}
+                                        {% set recordpicker_text = recordpicker_text ~ attribute(item, displayfield) %}
+                                    {% endfor %}
+                                {% endif %}
+
+                                <td>
+                                    <a class="btn btn-primary btn-xs insert-recordpicker" href="#" recordpicker_text="{{ recordpicker_text }}" recordpicker_value="{{ attribute(item, "id") }}" title="Insert">
+                                        <i class="fa fa-arrow-circle-o-left"></i> Insert
+                                    </a>
+                                </td>
+                            {% endif %}
+
+                            {% if json_object.views.table.fields|length > 0 %}
+                                {% set first_record = true %}
+                                {% for field in json_object.views.table.fields %}
+                                    <td>
+                                        {% include ['table\\' ~ field ~ ".field.twig", field ~ ".field.twig", 'table\\table.field.twig']  %}
+                                    </td>
+                                    {% set first_record = false %}
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include "items.pagination.twig"%}
+        <br>
+    {% else %}
+        No Records to show
+    {% endif %}
+
+
+    {% include "bottom.table." ~ document.unique_name ~ ".twig" ignore missing %}
+    {#
+        {% include "form.hidden.twig" %}
+    #}
+
+    {{ forms.input('_token' ) }}  
+
+</form>
+

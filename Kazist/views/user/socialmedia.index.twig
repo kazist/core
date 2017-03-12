@@ -1,0 +1,31 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{{ set_assets('applications/Users/assets/css/login.css') }}
+
+{# set google_url = callFunction( "Users.Users.Code.Classes.Google.GoogleRegistration", 'getGoogleUrl' ) #}
+{# set facebook_url = callFunction( "Users.Users.Code.Classes.Facebook.FacebookRegistration", 'getFacebookUrl' ) #}
+
+<div class="social-media-login">
+    <div class="col-sm-12">
+        <a href="{{facebook_url }}" class="btn btn-block btn-social btn-facebook" title='Sign in With Facebook'>
+            <i class="fa fa-facebook"></i>
+            <span>Sign in With Facebook</span>
+        </a>
+    </div>
+    <!--
+        <div class="col-sm-12">
+            <a href="#" class="btn btn-block btn-social btn-twitter" title="Sign in With Twitter">
+                <i class="fa fa-twitter"></i>
+                <span>Sign in With Twitter</span>
+            </a>
+        </div>
+    -->
+    <div class="col-sm-12">
+        <a href="{{ google_url }}" class="btn btn-block btn-social btn-google" title='Sign in With Google'>
+            <i class="fa fa-google-plus"></i>
+            <span>Sign in With Google</span>
+        </a>
+    </div>
+</div>

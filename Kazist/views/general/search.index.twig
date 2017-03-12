@@ -1,0 +1,140 @@
+{% import "form.macro.twig" as forms %}
+
+{% set search = document.search %}
+
+{% set yes_no_options =
+    {
+        0:{'value':'1','text':'Yes'},
+        1:{'value':'0','text':'No'}
+    }
+%}
+
+{% set field_ignore = ['follow', 'comment', 'media', 'password', 'hidden', 'text', 'textarea'] %}
+{% set field_range = ['date', 'datetime', 'time']%}
+{% set field_same = ['radio'] %}
+{% set field_select = ['checkbox', 'select'] %}
+{% set field_autocomplete = ['autocomplete'] %}
+
+<div>
+    <form role="form" action="{{ generate_url(document.unique_name) }}" method="post">
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" name="search[keyword]" value="{{ search.keyword }}" placeholder=" Search...">
+            <div class="input-group-btn " >
+                <input type="submit" class="btn btn-success btn-sm" name="submit" value="Search" />
+                {% if json_object.views.advancesearch  %}
+                    <button id="advance-search-btn" type="button" class="btn btn-primary btn-sm">
+                        Advance <span class="caret"></span>
+                    </button>
+                {% endif %}
+                <input type="submit" class="btn btn-default  btn-sm cancel-search" name="submit" value="Reset" />
+            </div><!-- /btn-group -->
+        </div><!-- /input-group -->
+
+        <div class="dropdown-search-form" style="display: none">
+
+            <div class="col-sm-12 search-form-fields">
+                {% if json_object.fields|length > 0 %}
+                    {% for field in json_object.fields %}
+
+                        {% set field_html_type = (field.html_type=='payment')? 'text' : field.html_type %}
+                        {% set field_name = field.name %}
+                        {% set field_default = attribute(search, field_name) %}
+
+                        {% if field.html_type not in field_ignore and field.dropdown_filter %}
+
+                            {% if field.html_type in field_same %}
+                                <div class="form-group">
+                                    <label class="col-md-12">{{ field_name }}</label>
+                                    <div class="col-md-12">
+                                        {{ forms.input('search.' ~ field_name, field_html_type, field_default) }} 
+                                    </div>
+                                </div>
+                            {%  elseif field.html_type in field_range %}
+                                <div class="form-group">
+                                    <label class="col-md-12">{{ field_name }}</label>
+                                    <div class="col-md-12">
+                                        {{ forms.input('search.' ~ field_name~'.start', field_html_type, field_default.start, null, 'search_date_field') }} 
+                                        {{ forms.input('search.' ~ field_name~'.end', field_html_type, field_default.end, null, 'search_date_field') }} 
+                                    </div>
+                                </div>
+                            {%  elseif field.html_type == 'yesno' %}
+                                <div class="form-group">
+                                    <label class="col-md-12"> {{ field_name }}</label>
+                                    <div class="col-md-12">
+                                        {{ forms.input('search.' ~ field_name, 'select', field_default, null, null, null, null, null, yes_no_options) }} 
+                                    </div>
+                                </div>
+                            {%  elseif field.html_type in field_select %}
+                                <div class="form-group">
+                                    <label class="col-md-12"> {{ field_name }}</label>
+                                    <div class="col-md-12">
+                                        {{ forms.input('search.' ~ field_name, field_html_type,  field_default, null, null, null, null, null, field.parameters.options) }} 
+                                    </div>
+                                </div>
+                            {%  elseif field.html_type in field_autocomplete %}
+                                <div class="form-group">
+                                    <label class="col-md-12">{{ field_name }}</label>
+                                    <div class="col-md-12">
+                                        {{ forms.input('search.' ~ field_name, field_html_type, field_default, null, null, null, null, null, field.parameters.options, field) }} 
+                                    </div>
+                                </div>
+                            {%  endif %}
+
+                        {%  endif %}
+
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-sm-12">
+                <input class="btn btn-primary btn-xs" type="submit" name="Search" value="Search" >
+                <input class="btn btn-danger btn-xs cancel-search" type="submit" name="Reset" value="Reset" >
+            </div>
+
+            <div class="clearfix"></div>
+
+        </div>
+
+        <div class="filter-summary pull-right">
+
+            <b>Filter Fields:</b> 
+
+            {% for key,search_item in search %}
+                {% if search_item is iterable %}
+                    
+                    {% for key_inner,search_item_single in search_item %}
+                        {% if search_item_single is not empty and search_item_single|slice(0, 4) != '____' %}
+                           { {{ key_inner }} }
+                        {% endif %}
+                    {% endfor %}
+                    
+                {% else %}
+                    {% if search_item is not empty %}
+                        {{ key }},
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+        {{ forms.input('_token' ) }} 
+
+    </form>
+
+</div>
+
+
+<script>
+    jQuery(function () {
+        // Fix input element click problem
+        var total_search_fields = jQuery('.dropdown-search-form .search-form-fields div').length;
+
+        if (total_search_fields) {
+            jQuery('#advance-search-btn').show();
+        }
+
+        jQuery('#advance-search-btn').click(function (e) {
+            jQuery('.dropdown-search-form').toggle('show');
+        });
+    });
+</script>

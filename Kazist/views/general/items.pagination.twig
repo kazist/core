@@ -1,0 +1,85 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{% set pagination_options =
+    {
+        0:{'value':5,'text':'5'},
+        1:{'value':10,'text':'10'},
+        2:{'value':20,'text':'20'},
+        3:{'value':50,'text':'50'},
+        4:{'value':100,'text':'100'},
+        5:{'value':200,'text':'200'}
+    }
+%}
+
+{% set page_count = (total/document.limit)|round(0, 'floor') %}
+{% set page_current = (document.offset/document.limit)|round %}
+
+
+{% set start =0 %}
+{% set end = 10 %}
+
+{% if page_current > 5 %}
+    {% set start = page_current - 5 %}
+{% endif %}
+
+{% if page_current > 5 %}
+    {% set end = page_current + 5 %}
+{% endif %}
+
+{% if page_count < 10 or start > end or end > page_count %}
+    {% set end = page_count %}
+{% endif %}
+
+
+<div>
+
+    <div class="col-md-2">
+        {{ forms.input(' list_limit', 'select', document.limit, null, ' pagination-select', null, null, null, pagination_options) }}
+    </div>
+
+    {% if page_count >= 1 and start != end %}
+        <div class="col-md-10">
+            <ul class="pagination pagination-sm">
+
+                <li>
+                    <a class="{% if not document.page %}current bg-blue{% endif %}" href="{{ document.main_route }}" title="Page First">
+                        First
+                    </a>
+                </li>
+
+                {% for x in start..end  %}
+
+                    {% set current_class = '' %}
+
+                    {% if page_current == x %}
+                        {% set current_class = 'current bg-blue' %}
+                    {% endif %}
+
+                    {% if x %}
+                        <li class="{{ current_class }}">
+                            <a  class="{{ current_class }}" href="{{ document.main_route }}{{ document.main_route_join }}page={{ x }}" title="Page  {{ x+1 }}">
+                                {{ x }}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+
+                <li>
+                    <a  href="{{ document.main_route }}{{ document.main_route_join }}page={{ page_count }}" title="Page  Last">
+                        Last
+                    </a>
+                </li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+
+<div class="clearfix"></div>
+
+<style>
+    .pagination{margin: 0 !important;}
+    .pagination-select{width: 80px;}
+</style>

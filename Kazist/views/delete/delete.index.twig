@@ -1,0 +1,82 @@
+<form id="{{ main_form_id }}" action="{{generate_url('' ~ kazi_url.app_name ~ '.' ~ kazi_url.com_name ~ '.' ~ kazi_url.subset_name ~ '.delete') }}" method="post" >
+
+    {% if items|length > 0 %}
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th width="25px">
+                            <input class="cid" type="checkbox" name="cid[]" value="1"  />
+                        </th>
+                        {% if json_object.views.table.fields|length > 0 %}
+                            {% for field in json_object.views.table.fields %}
+                                <th class="hidden-xs">{{ phrase(kazi_url.app_name ~ '_' ~ kazi_url.com_name ~ '_' ~ kazi_url.subset_name ~ '_table_header_' ~ field) }}</th>
+                                {% endfor %}
+                            {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="cid[]" value="{{ attribute(item, "id") }}" checked />
+                            </td>
+                            {% if json_object.views.table.fields|length > 0 %}
+                                {% set first_record = true %}
+                                {% for field in json_object.views.table.fields %}
+                                    <td class="hidden-xs">
+                                        {% if first_record %}
+                                            <a href="{{generate_url('' ~ kazi_url.app_name ~ '.' ~ kazi_url.com_name ~ '.' ~ kazi_url.subset_name ~ '.detail', { 'id': attribute(item, "id")}) }}" title="View">
+                                            {% endif %}
+                                            {% set field_parameter = attribute(json_object.fields, field) %}
+                                            {% if field_parameter.parameters.source.join_field is not empty %}
+                                                {{ attribute(item, field~"_join") }}
+                                            {% else %}
+                                                {{ attribute(item, field) }}
+                                            {% endif %}
+                                            {% if first_record %}
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                    {% set first_record = false %}
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pagination|length > 3 %}
+            <ul class="pagination pagination-sm">
+                {% for page in pagination %}
+                    {% if page.url != "" %}
+                        <li><a href="{{ page.url }}">{{ page.text }}</a></li>
+                        {% else %}
+                        <li><a>{{ page.text }}</a></li>
+                            {% endif %}
+
+
+                {% endfor %}
+
+            </ul>
+        {% endif %}
+
+    {% else %}
+        No Records to show
+    {% endif %}
+
+
+
+    <input  type="hidden" name="task" value="delete">
+    <input  type="hidden" name="return_url" value="{{ kazi_url.return_url }}">
+    <input class="btn btn-danger btn-sm" type="submit" name="delete" value="Delete">
+    <a href=""><input class="btn btn-success btn-sm" type="button" name="delete" value="Cancel"></a>
+
+    {{ forms.input('_token' ) }}  
+
+</form>
+

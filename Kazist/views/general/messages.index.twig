@@ -1,0 +1,22 @@
+
+{% set flashBags = get_flash_bags() %}
+
+{% for type, bag_messages in flashBags %}
+
+    {%if type == 'info' %}
+        {% set class_type = 'success' %}
+    {% elseif type == 'error' %}
+        {% set class_type = 'danger' %}
+    {% else %}
+        {% set class_type = 'info' %}
+    {% endif %}
+
+    {% if bag_messages|length > 0 %}
+        <div class="alert alert-{{ class_type }}">
+            {% for flashmessage in bag_messages %}
+                {{ flashmessage }}</br>
+            {% endfor %}
+        </div>
+    {% endif %} 
+
+{% endfor %}

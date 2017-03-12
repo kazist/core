@@ -1,0 +1,24 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+    {% import "form.macro.twig" as forms %}
+    {% set kazi_url = get_context('kazi_url') %}
+
+    {{ set_assets('assets/js/follow.js') }}
+
+    <div class="kazi-following">
+        <div class="col-md-12">
+            Click to <a class="btn btn-success btn-xs kazi-following-btn" href="#" title="Follow">Follow</a> 
+            {% if setting.add_other %}
+                or 
+                <a class="btn btn-primary btn-xs add-other-followers" data-toggle="modal" data-target="#followModal" subset_id="{{ kazi_url.subset_id }}">Add Others</a>
+                <br>
+            {% endif %}
+        </div>
+        <div class="col-md-12 avatar">
+        </div>  
+
+    </div>     
+    <div class="clearfix"></div>
+
+    {{ set_follow_exist(true) }}
+{% endmacro %}
+

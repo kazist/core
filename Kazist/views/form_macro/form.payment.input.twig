@@ -1,0 +1,299 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+    {% import "form.macro.twig" as forms %}
+
+    {{ set_assets('applications/Accounts/assets/css/payment.css') }}
+    {{ set_assets('applications/Accounts/assets/js/events.js') }}
+    {{ set_assets('applications/Accounts/assets/js/payment.js') }}
+    {{ set_assets('applications/Accounts/assets/js/payment_field.js') }}
+
+    {% set yes_no_options = get_context('yes_no_options') %}
+    {% set all_amount_sources = get_context('all_amount_sources') %}
+    {% set calc_amount_sources = get_context('calc_amount_sources') %}
+    {% set fixed_amount_sources = get_context('fixed_amount_sources') %}
+    {% set kazi_url = get_context('kazi_url') %}
+    {% set edit_index = get_context('edit_index') %}
+
+    {% set total_amount = 0 %}
+    {% set class_name = "success" %}
+
+    {% set payment_url = "?accounts.journal.journal.edit" %}
+    {% set payment_url = payment_url ~ "&source_" ~ kazi_url.app_name %}
+    {% set payment_url = payment_url ~ "&source_com=" ~ kazi_url.com_name %}
+    {% set payment_url = payment_url ~ "&source_subset=" ~ kazi_url.subset_name %}
+    {% set payment_url = payment_url ~ "&client_name=" ~ setting.parameters.client.name %}
+    {% set payment_url = payment_url ~ "&client_email=" ~ setting.parameters.client.email %}
+    {% set payment_url = payment_url ~ "&client_postal_address=" ~ setting.parameters.client.postal_address %}
+    {% set payment_url = payment_url ~ "&client_postal_code=" ~ setting.parameters.client.postal_code %}
+    {% set payment_url = payment_url ~ "&client_physical_location=" ~ setting.parameters.client.physical_location %}
+    {% set payment_url = payment_url ~ "&client_phone=" ~ setting.parameters.client.phone %}
+    {% set payment_url = payment_url ~ "&client_telephone=" ~ setting.parameters.client.telephone %}
+    {% set payment_url = payment_url ~ "&source_record_id=" ~ edit_index.id %}
+    {% set payment_url = payment_url ~ "&source_field_name=" ~ name %}
+    {% set payment_url = payment_url ~ "&category_id=11" %}
+    {% set payment_url = payment_url ~ "&debitcredit=credit" %}
+
+    {% set invoice_url = "?accounts.invoice.invoice.edit" %}
+    {% set invoice_url = invoice_url ~ "&source_" ~ kazi_url.app_name %}
+    {% set invoice_url = invoice_url ~ "&source_com=" ~ kazi_url.com_name %}
+    {% set invoice_url = invoice_url ~ "&source_subset=" ~ kazi_url.subset_name %}
+    {% set invoice_url = invoice_url ~ "&client_name=" ~ setting.parameters.client.name %}
+    {% set invoice_url = invoice_url ~ "&client_email=" ~ setting.parameters.client.email %}
+    {% set invoice_url = invoice_url ~ "&client_postal_address=" ~ setting.parameters.client.postal_address %}
+    {% set invoice_url = invoice_url ~ "&client_postal_code=" ~ setting.parameters.client.postal_code %}
+    {% set invoice_url = invoice_url ~ "&client_physical_location=" ~ setting.parameters.client.physical_location %}
+    {% set invoice_url = invoice_url ~ "&client_phone=" ~ setting.parameters.client.phone %}
+    {% set invoice_url = invoice_url ~ "&client_telephone=" ~ setting.parameters.client.telephone %}
+    {% set invoice_url = invoice_url ~ "&source_record_id=" ~ edit_index.id %}
+    {% set invoice_url = invoice_url ~ "&source_field_name=" ~ name %}
+
+    {% if setting.accounts.total_amount < 0 %}
+        {% set total_amount = "(" ~ setting.accounts.total_amount ~ ")" %}
+        {% set class_name = "danger" %}
+    {% endif %}    
+
+    {% if  setting.parameters.company.name != '' %}
+    {{ forms.input(name ~ '.parameters.company.name','hidden', setting.parameters.company.name) }}
+    {{ forms.input(name ~ '.parameters.company.postal_address','hidden', setting.parameters.company.postal_address) }}
+    {{ forms.input(name ~ '.parameters.company.postal_code','hidden', setting.parameters.company.postal_code) }}
+    {{ forms.input(name ~ '.parameters.company.physical_location','hidden', setting.parameters.company.physical_location) }}
+    {{ forms.input(name ~ '.parameters.company.phone','hidden', setting.parameters.company.phone) }}
+    {{ forms.input(name ~ '.parameters.company.telephone','hidden', setting.parameters.company.telephone) }}
+    {{ forms.input(name ~ '.parameters.company.email','hidden', setting.parameters.company.email) }}
+    {% endif %}
+
+        {% if  setting.parameters.client.name != '' %}
+        {{ forms.input(name ~ '.parameters.client.name','hidden', setting.parameters.client.name) }}
+        {{ forms.input(name ~ '.parameters.client.postal_address','hidden', setting.parameters.client.postal_address) }}
+        {{ forms.input(name ~ '.parameters.client.postal_code','hidden', setting.parameters.client.postal_code) }}
+        {{ forms.input(name ~ '.parameters.client.physical_location','hidden', setting.parameters.client.physical_location) }}
+        {{ forms.input(name ~ '.parameters.client.phone','hidden', setting.parameters.client.phone) }}
+        {{ forms.input(name ~ '.parameters.client.telephone','hidden', setting.parameters.client.telephone) }}
+        {{ forms.input(name ~ '.parameters.client.email','hidden', setting.parameters.client.email) }}
+        {% endif %}
+
+            {% if kazi_url.record_id %}
+                <div class="form-group">
+                    <div class="col-sm-12 kazicode-form-field kazicode-form-payment">
+                        <div> 
+                            <span class="alert alert-{{ class_name }} kazi-payment">{{ total_amount }} </span>
+                            <a class="btn btn-success btn-xs" href="{{ payment_url }}" title="Receive Payment">
+                                <span class="glyphicon glyphicon-plus"></span>Receive Payment
+                            </a>
+                            <a class="btn btn-primary btn-xs" href="{{ invoice_url }}" title="Generate Invoice">
+                                <span class="glyphicon glyphicon-plus"></span>Generate Invoice
+                            </a>
+                            <a class="advance_payment_options_link" href="#" style="float:right;" title="Advance Options">
+                                <span class="glyphicon glyphicon-cog"></span>Advance Options
+                            </a>
+                        </div>
+                        <br>
+
+                        <div class="callout callout-info  advance_payment_options " style="display:none;">
+                            <a class="btn btn-primary btn-xs" href="#" payment_fieldname="{{ name }}" data-toggle="modal" data-target="#charges{{ name }}Modal" title="Add Charges">
+                                <span class="glyphicon glyphicon-plus"></span>Add Charges
+                            </a>
+
+                            <div class="payment_charges">
+                                {% if setting.parameters.transactions|length>0 %}
+                                    {% for transaction in setting.parameters.transactions %}
+                                        {% if transaction.debit > 0 %}
+                                            {% set parameters =transaction.parameters|json_decode() %}
+                                            {% set transaction_amount = 0 %}
+
+                                            <div class="single_payment_charges payment_token_{{ transaction.id }}">
+                                                <div class="payment_token">
+                                                    <br>
+                                                    <input type="hidden" name="form[{{ name }}][components][{{ transaction.id }}][title]" value="{{ transaction.description }}">
+                                                    {{ transaction.description }} : {{ transaction.date_created }}
+                                                    <a href="{{ generate_url('accounts.subsettransactions.detail', {'id': transaction.id}) }}" target="_blank" title="Print">
+                                                        <span class="label label-primary"><span class="glyphicon glyphicon-print"> Print</span></span>
+                                                    </a>
+                                                    <a href="#" class="edit_payment_charges" payment_fieldname="{{ name }}" data-toggle="modal" data-target="#charges{{ name }}Modal" title="Edit">
+                                                        <span class="label label-primary"><span class="glyphicon glyphicon-pencil"> Edit</span></span>
+                                                    </a>
+                                                    <a href="#" title="Delete">
+                                                        <span class="label label-danger"><span class="glyphicon glyphicon-trash"> Delete</span></span>
+                                                    </a>
+
+                                                    <input id="payment_token" type="hidden" name="payment_token" value="{{ transaction.id }}">
+                                                    <input id="payment_title" type="hidden" name="payment_title" value="{{ transaction.description }}">
+                                                    <input id="payment_date" type="hidden" name="payment_date" value="{{ transaction.date_created }}">
+                                                    <input class="payment_fieldname" type="hidden" name="payment_fieldname" value="{{ name }}">
+
+                                                    <br>
+                                                </div>
+                                                <input class="payment_token" type="hidden" name="payment_token" value="{{ transaction.id }}">
+                                                {% if parameters.components|length>0 %}
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-hover table-condensed">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="">Title</th>
+                                                                    <th class="text-right">Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for component in parameters.components %}
+                                                                    {% set transaction_amount = transaction_amount + component.amount%}
+
+                                                                    <tr>
+                                                                        <td>
+                                                                            {{ component.description }}
+                                                                            <input class="charges_description" type="hidden" name="form[{{ name }}][components][{{ transaction.id }}][description][]" value="{{ component.description }}">
+                                                                        </td>
+                                                                        <td class="text-right">
+                                                                            {{ component.amount }}
+                                                                            <input class="charges_amount" type="hidden" name="form[{{ name }}][components][{{ transaction.id }}][amount][]" value="{{ component.amount }}">
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <th class="hidden-xs text-right"> 
+                                                                        Total 
+                                                                    </th>
+                                                                    <th class="hidden-xs text-right payment_charges_total">
+                                                                        {{ transaction_amount }}
+                                                                    </th>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div> 
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-history">
+                    {% if setting.parameters.payment.payment_history_link %}
+                        <a class="btn btn-primary btn-xs">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            View All Transaction History
+                        </a>
+                    {% endif %}
+
+                    {% if setting.parameters.payment.payment_history %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="hidden-xs">Title</th>
+                                        <th class="hidden-xs">Date Created</th>
+                                        <th class="hidden-xs text-right">Debit</th>
+                                        <th class="hidden-xs text-right">Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if setting.parameters.transactions|length>0 %}
+                                        {% for transaction in setting.parameters.transactions %}
+                                            <tr>
+                                                <td class="hidden-xs"> {{ transaction.description|truncate(40) }} </td>
+                                                <td class="hidden-xs"> {{ transaction.date_created|date("m/d/Y") }} </td>
+                                                <td class="hidden-xs  text-right"> {{ transaction.debit }} </td>
+                                                <td class="hidden-xs  text-right"> {{ transaction.credit }} </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="4" class="hidden-xs"> No Transactions Records To Display.  </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <div class="modal fade form-horizontal payment_field_modal" id="charges{{ name }}Modal" tabindex="-1" role="dialog" aria-labelledby="charges{{ name }}ModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+
+                        <input class="modal_payment_charges_fieldname" type="hidden" name="modal_payment_charges_fieldname" value="{{ name }}">
+                        <input class="modal_payment_charges_token" type="hidden" name="modal_payment_charges_token" value="">
+                        <input class="modal_payment_charges_date" type="hidden" name="modal_payment_charges_date" value="">
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="subsetModalLabel">Add Charges</h4>
+                            </div>
+                            <div class="modal-body">
+                                {% if setting.parameters.payment.payment_diplay_field~'_join' %}
+                                    {% set payment_display_field = setting.parameters.payment.payment_diplay_field~'_join' %}
+                                {% else %}
+                                    {% set payment_display_field = setting.parameters.payment.payment_diplay_field %}
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <label for="title" class="col-sm-3 control-label">Title</label>
+                                    <div class="col-sm-9">
+                                        <input class="modal_payment_charges_title" class="form-control input-sm title" name="title" type="text" value="">
+                                    </div>
+                                </div>
+
+                                <a class="btn btn-primary btn-xs modal_add_custom_charges">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    Add Custom Charges
+                                </a>
+
+                                {% if options|length>0 %}
+                                    <ul class="modal_payment_charges_ul">
+                                        {% for option in options %}
+                                            <li>
+                                                <input id="modal_payment_charges_checkbox" type="checkbox" name="modal_payment_charges_checkbox" value="">
+                                                {{ attribute(option, payment_display_field) }}
+                                                {% set payment_amount = attribute(option, setting.parameters.payment.payment_amount_field)  %}
+                                                <input id="modal_payment_charges_desc" type="hidden" name="modal_payment_charges_desc" value="{{ attribute(option, payment_display_field) }}">
+                                                <input id="modal_payment_charges_amt" type="hidden" name="modal_payment_charges_amt" value="{{ payment_amount }}">
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}     
+                                <div class="modal_payment_charges_div">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th class="">&nbsp;</th>
+                                                    <th class="">Title</th>
+                                                    <th class="text-right">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="modal_payment_charges_norecord">
+                                                    <td colspan="3">No Added Charges.</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th class="hidden-xs text-right" colspan="2"> Total </th>
+                                                    <th class="hidden-xs text-right modal_payment_charges_total"></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    Close
+                                </button>
+                                <button  type="button" class="btn btn-primary modal_payment-charge-button">
+                                    Save changes
+                                </button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+            {% endif %} 
+            {% endmacro %}
+

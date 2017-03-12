@@ -1,0 +1,99 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% import _self as self_macro %}
+
+    {% if (label is empty) %}
+        {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+    {% else %}
+        <div class="form-group {{ classname(class, name, false) }}-group">
+            <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+            <div class="col-sm-9 {% if readonly %}form-control-static{% endif %}">
+                {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+            </div>
+        </div>
+    {% endif %}
+
+{% endmacro %}
+
+{% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {% if not readonly %}
+
+        {% if(options is not empty) %}
+
+            <select id="{{ idname(id, name)}}" class="{{ classname(class, name) }}"  name="{{ fieldname(name) }}"  {% if readonly %}disabled{% endif %}  {{ attributes }}>
+
+                {% if setting.option.default.text %}
+                    <option value="{{ setting.option.default.value|raw }}" {% if default is null %}selected{% endif %} >{{ setting.option.default.text|raw }}</option>
+                {% else %}
+                    <option value="" {% if default is null %}selected{% endif %} >-- Select --</option>
+                {% endif %}
+
+                {% for key, option in options %}
+
+                    {% set is_checked = false %}
+                    {% if default is iterable %}
+                        {% set is_checked = false %}
+                        {% for key, single_default in default %}
+                            {% if single_default.value == option.value or single_default == option.value  %}
+                                {% set is_checked = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if (default is not null) and (default == option.value or is_checked)  %}
+                        {% set selected="selected"  %}
+                    {% else %}
+                        {% set selected = ""  %}
+                    {% endif %}
+                    <option value="{{ option.value|raw }}" {{ selected }}>{{ option.text|raw }}</option>
+                {% endfor %}    
+            </select>  
+
+        {% else %}
+            {% if not readonly %}
+
+                <select id="{{ idname(id, name)}}" class="{{ classname(class, name) }}"  name="{{ fieldname(name) }}"  {{ attributes }} >
+                    {% set selected = "selected" %}
+                    <option value="{{ default|raw }}" {{ selected }}>{{ default|raw }}</option>
+                </select> 
+
+            {% else %}
+
+                {% if default is iterable %}
+                    {% for key, single_default in default %}
+                        {% if single_default.value == option.value or single_default == option.value  %}
+                            {{ option.value|raw }}
+                        {% endif %},
+                    {% endfor %}
+                {% else %}
+                    {{ default|raw }}
+                {% endif %}
+
+            {% endif %}
+        {% endif %}
+    {% else %}
+
+        {% for key, option in options %}
+
+            {% set is_checked = false %}
+            {% if default is iterable %}
+                {% set is_checked = false %}
+                {% for key, single_default in default %}
+                    {% if single_default.value == option.value or single_default == option.value  %}
+                        {% set is_checked = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if default == option.value %}
+                {{ option.text|raw }}
+            {% elseif is_checked   %}
+                {{ option.text|raw }},
+            {% endif %}
+
+
+        {% endfor %}  
+    {% endif %}
+
+{% endmacro %}

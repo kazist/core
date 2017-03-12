@@ -1,0 +1,25 @@
+{% set view_name =kazi_url.app_name  %}
+
+{% if kazi_url.com_name != ''  %}
+    {% set view_name = view_name ~ '_' ~ kazi_url.com_name  %}
+{% endif %}
+
+{% if kazi_url.subset_name != ''  %}
+{% set view_name = view_name ~ '_' ~ kazi_url.subset_name  %}
+{% endif %}
+
+    <h1>
+        {% if page_header != '' %}
+            {{ page_header }}
+        {% else %}
+            {{ phrase(view_name ~ '_title') }}
+        {% endif %}
+
+        <small>:
+            {% if page_explanation != '' %}
+                {{ page_explanation }}
+            {% else %}
+                {{ phrase(view_name ~ '_explanation') }} 
+            {% endif %}
+        </small>
+    </h1>

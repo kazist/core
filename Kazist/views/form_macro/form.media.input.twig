@@ -1,0 +1,109 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+    {% import "form.macro.twig" as forms %}
+
+    {{ set_assets('assets/js/media.js') }}
+    {{ addTwigPath('include.Kazist.views.edit') }}
+
+    {% set kazi_url = get_context('kazi_url') %}
+    {% set saving_type = setting.parameters.save.saving_type %}
+
+    {% if saving_type == '' %}
+        {% set saving_type = 'single' %}
+    {% endif %}
+
+    {% set field_value_name = name~'.' %}
+     
+    <div class="form-group {{ classname(class, name, false) }}-group">
+        
+        {% if (label is not empty) %}
+            <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+        {% endif %}
+
+        <div {% if (label is not empty) %}class="col-sm-9"{% endif %}>
+            {% if not readonly %}
+                <a class="btn btn-primary btn-xs kazi_media_upload"  data-toggle="modal" data-target="#mediaModal" field_name="{{ name }}" field_form_name="{{ fieldname(name) }}" application_name="{{ kazi_url.app_name }}"  component_name="{{ kazi_url.com_name }}"  subset_name="{{ kazi_url.subset_name }}" saving_type="{{ saving_type }}" for_comment="0" >Choose File</a>
+                <br>
+            {% endif %}
+
+            {% if saving_type == 'single' %}
+                <div class="{{ name }}_medias_single">
+                    <img  src="{{ web_root }}/{{ default.media_image }}" alt="Default Image" title="Default Image"/> 
+                    {{ forms.input(name , 'hidden', default.media_id, '', class, name ~ '_medias_value', attributes, readonly) }}
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table {{ name }}_medias_list">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Title</th>
+                                    {% if not readonly %}
+                                    <th style="width: 100px">Action</th>
+                                    {% endif %}
+                            </tr>
+                        <thead>
+                        <tbody>
+                            {{ _self.html_input_multiple(name, type, default, label, class, id, attributes, readonly, options, setting, kazi_url) }}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {{ set_media_exist(true) }}
+{% endmacro %}
+
+{% macro html_input_multiple(name, type, default, label, class, id, attributes, readonly, options, setting, kazi_url) %}
+
+    {% set saving_type = setting.parameters.save.saving_type %}
+    
+    {% import "form.macro.twig" as forms %}
+
+    {% set return_url =generate_url('admin.media.media.detail', {'id':kazi_url.record_id}) %}
+
+    {% if default|length>0 %}
+        {% for single_default in default %}
+
+            {% set field_value_name = name~'.' %}
+
+            <tr>
+                <td>
+                    <a href="{{generate_url('admin.media.media.detail', {'id': single_default.media_id, 'return_url': return_url}) }}" 
+                       target="_blank" class="tooltip_element" data-placement="bottom" 
+                       data-toggle="tooltip" title="{{ single_default.media_title }}">
+                        <img width="32px" src="{{ web_root }}/{{ single_default.media_image }}"/>
+                    </a>
+                </td>
+                <td>
+                    {{ single_default.media_title }}
+                    {{ forms.input(field_value_name , 'hidden', single_default.media_id, '', class, id, attributes, readonly) }}
+                </td>
+                {% if not readonly %}
+                    <td>
+                        <span class="label label-danger delete_media">
+                            <span class="glyphicon glyphicon-trash">
+                            </span>
+                        </span> &nbsp;
+                        <a href="{{generate_url('admin.media.media.edit', {'id': single_default.media_id}) }}" target="_blank" title="Edit Media" >
+                            <span class="label label-primary">
+                                <span class="glyphicon glyphicon-pencil">
+                                </span>
+                            </span>
+                        </a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+    {% if not readonly %}
+        <input id="{{ idname(id, name)}}" class="{{ classname(class, name) }}" name="{{ fieldname(name) }}" type="{{ type|default('text') }}" value="{{ default|e }}"  {{ attributes }}/>
+    {% else %}
+        {{ default|e }}
+    {% endif %}   
+{% endmacro %}

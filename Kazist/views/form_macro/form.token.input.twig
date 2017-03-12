@@ -1,0 +1,8 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
+
+    {% set token = get_session('_token') %}
+    
+    <input id="_token" class="_token" name="_token" type="hidden" value="{{ token }}" />
+
+{% endmacro %}
+

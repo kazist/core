@@ -1,0 +1,28 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+<h3>Setting :- {{ path }}</h3>
+<hr>
+
+<form class="form-horizontal" method="POST" action="{{ generate_url('admin.' ~ root ~ '.main.savesetting') }}">
+
+    {% if settings %}
+        {% for setting in settings %}
+
+            {{ forms.input(setting.name , setting.type, setting.default, setting.label, null, null, null, null, setting.options) }}
+        {% endfor %}
+    {% endif %}
+    <div>
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="col-sm-9">
+            {{ forms.input('return_url' , 'hidden', generate_url('admin.' ~ root ~ '.main.setting') ~ '?path=' ~ path) }}
+            <input class="btn btn-success" name="save" type="submit" value="Save">
+        </div>
+    </div>
+    <br>
+    <br>
+
+    {{ forms.input('_token' ) }}  
+
+</form>

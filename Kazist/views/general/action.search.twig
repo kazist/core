@@ -1,0 +1,19 @@
+<div class="action-search" style="padding:5px 0;border-bottom: 1px solid #ddd;">
+    {% if action_content|trim is not empty and search_content|trim is not empty %}
+        <div class="col-md-12 action_content">
+            {{ action_content|raw }}
+            <div class="clearfix"></div>
+        </div>
+        <div class="col-md-12 search_content">
+            {{ search_content|raw }}
+            <div class="clearfix"></div>
+        </div>
+    {% elseif action_content|trim is not empty  %}
+        {{ action_content|raw }}
+    {% elseif search_content|trim is not empty %}
+        {{ search_content|raw }}
+    {% endif%}
+<div class="clearfix"></div>
+</div>
+
+<div class="clearfix"></div>

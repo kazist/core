@@ -1,0 +1,71 @@
+{% if items.kanban|length > 0 %}
+    {% for key, item in items.kanban %}
+        <div class="col-md-{{ 12/items.kanban|length }}">
+            <h3> {{ key }} </h3>
+            {% if item.records|length > 0 %}
+                {% for key, item in item.records %}
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">
+                                {% if json_object.main_fields|length > 0 %}
+                                    {% for field in json_object.main_fields %}
+
+                                        {% set field_parameter = attribute(json_object.fields, field) %}
+
+                                        {% if field_parameter.parameters.join_field is not empty %}
+                                            {{ attribute(item, field~"_join") }}
+                                        {% else %}
+                                            {{ attribute(item, field) }}
+                                        {% endif %},&nbsp;&nbsp;
+                                        <!--</div>-->
+                                    {% endfor %}
+                                {% endif %}
+
+                            </h3>
+
+                        </div>
+                        <div class="box-body">
+                            <p>
+                                {% if json_object.views.kanban.fields|length > 0 %}
+                                    {% for field in json_object.views.kanban.fields %}
+                                        <!-- <div>-->
+                                        <label>
+                                            {{ phrase(kazi_url.app_name ~ '.components.' ~ kazi_url.com_name ~ '.listing.header.title.' ~ field) }} : 
+                                        </label>
+
+                                        {% set field_parameter = attribute(json_object.fields, field) %}
+
+                                        {% if field_parameter.parameters.join_field is not empty %}
+                                            {{ attribute(item, field~"_join") }}
+                                        {% else %}
+                                            {{ attribute(item, field) }}
+                                        {% endif %},&nbsp;&nbsp;
+                                        <!--</div>-->
+                                    {% endfor %}
+                                {% endif %}
+                            </p>
+                        </div><!-- /.box-body -->
+                        <div class="box-footer">
+                            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#"> <span class="glyphicon glyphicon glyphicon-cog"></span>&nbsp; <span class="caret"></span> </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{{ friendly_url(''~ kazi_url.app_name ~'.'~ kazi_url.com_name ~'&view=detail&id='~ attribute(item, "id")) }}" title="Show Detail">Show Detail</a>
+                                </li>
+                                <li>
+                                    <a href="{{ friendly_url(''~ kazi_url.app_name ~'.'~ kazi_url.com_name ~'&view=edit&id='~ attribute(item, "id")) }}" title="Edit">Edit</a>
+                                </li>
+                                <li>
+                                    <a href="{{ friendly_url(''~ kazi_url.app_name ~'.'~ kazi_url.com_name ~'&view=delete&id='~ attribute(item, "id")) }}" title="Delete">Delete</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">
+                                    Id : {{ attribute(item, "id") }}
+                                </li>
+                            </ul>
+                        </div><!-- /.box-footer-->
+                    </div><!-- /.box -->
+                {% endfor %}
+            {% endif %}           
+        </div>
+    {% endfor %}
+{% endif %}

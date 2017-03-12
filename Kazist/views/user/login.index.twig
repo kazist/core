@@ -1,0 +1,77 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{{ set_assets('applications/Users/assets/css/login.css') }}
+
+{% if web_is_admin %}
+    {% set view_url = 'admin.login_check' %}
+{% else%}
+    {% set view_url = 'login_check' %}
+{% endif%}
+
+
+<div class="user_login_bg">
+
+    <form  method="post" action="{{ generate_url(view_url) }}" role="form">
+
+        {% if show_title %}
+            <div class="well well-sm"> Login Detail</div>        
+        {% endif %}
+
+        <div class="form-horizontal">
+
+            <div class="col-sm-12">
+                {% if login_using =='both' %}
+                    <label>Username or Email</label>
+                {% elseif login_using =='username' %}
+                    <label>Username </label>
+                {% elseif login_using =='email' %}
+                    <label>Email </label>
+                {% endif %}
+                {{ forms.input('username', 'text', null) }}
+            </div>
+
+            <div class="col-sm-12">
+                <label>Password</label>
+                {{ forms.input('password', 'password', null) }}
+            </div>
+
+        </div>
+
+        <div class="form-group form_links-group">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <input type="checkbox" name="remember_me"/> Remember Me
+                </div>
+
+                <a href="{{generate_url('forgot_password_form') }}" title='Forget Password?'>
+                    Forget Password?
+                </a><br>
+
+                <br>
+
+                <div>
+
+                    <button type="submit" class="btn btn-success btn-sm btn-flat">
+                        <i class="fa fa-arrow-right"></i> Sign Me In
+                    </button>
+
+                    {% if show_cancel %}
+                        <a class="btn btn-danger btn-sm btn-flat" href="{{generate_url('home') }}" title='Cancel'>
+                            <i class=" fa fa-mail-reply"></i> Cancel
+                        </a>
+                    {% endif %} 
+                </div>
+
+            </div>
+        </div>
+
+        {{ forms.input('return_url', 'hidden', return_url|raw ) }}
+
+        {{ forms.input('_token' ) }} 
+
+    </form>
+
+
+</div>

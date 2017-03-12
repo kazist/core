@@ -1,0 +1,268 @@
+{% import "form.macro.twig" as forms %}
+
+{% import _self as editview %}
+
+{% set item = get_context('item') %}
+
+
+{% set field_parameter = attribute(json_fields, field) %}
+
+{% include "before.editform." ~ document.base_route ~ ".twig" ignore missing %}
+
+{% if not  constant('WEB_IS_ADMIN') %}
+    <h1>{{ document.title }}</h1>
+    <hr>
+{% endif %}
+
+{% if main_form_id == '' %}
+    {% set main_form_id = 'form_'~ document.base_route|replace({'.': '_'}) %}
+{% endif %}
+
+
+<form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
+    {% include "top.editform." ~ document.base_route ~ ".twig" ignore missing %}
+
+    {% if json_object.views.edit.structure.rows|length > 0 %}
+        {% for row in json_object.views.edit.structure.rows %}
+            {{ editview.add_row(edit_index,row, json_object.fields, _context) }}
+        {% endfor %}
+    {% endif %}
+
+    <div class="clearfix"></div>
+
+    {% if extend_edit %}
+        {% include "extend.edit.twig" %}
+    {% endif %}
+
+    {% include "bottom.editform." ~ document.base_route ~ ".twig" ignore missing %}
+
+    {{ forms.input('id', 'hidden', item.id ) }}
+
+    {% if not  constant('WEB_IS_ADMIN')  %}
+        <a class="btn btn-danger btn-sm" href="{{generate_url(document.base_route) }}" title ="Cancel">Cancel</a>
+        <input class="btn btn-success btn-sm" name="id" type="submit" value="Save">
+        <br>
+        <br>
+    {% endif %}
+
+    <input class="form-id" name="id" type="hidden" value="{{ item.id }}">
+    <input class="form-task_name" name="task" type="hidden" value="save">
+    <input class="form-view" name="view" type="hidden" value="{{ kazi_url.view_name }}">
+    <input class="form-twig" name="twig" type="hidden" value="{{ twig_file }}">
+    <input class="form-return_url" name="return_url" type="hidden" value="{{ kazi_url.return_url }}">
+
+    {{ forms.input('_token' ) }} 
+
+</form>
+
+{% include "after.editform." ~ document.base_route ~ ".twig" ignore missing %}
+
+
+{% if get_media_exist() %}
+    {{ addTwigPath('include.Kazist.views.edit') }}
+    {% include "media.modal.twig"  %}  
+    {% include "link.modal.twig" %}  
+{% endif %}
+
+{% if get_follow_exist() %}
+    {% include "follow.modal.twig" %}  
+{% endif %}
+
+{% macro add_row(edit_index,row, json_fields, context) %}
+
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Row -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    <div class="editrow">
+        {{ editview.add_columns(edit_index,row.columns, json_fields, context) }}
+    </div> 
+    <div class="clearfix"></div>
+{% endmacro %} 
+
+{% macro add_columns(edit_index,columns, json_fields, context) %}
+
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Columns -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->  
+    <div>
+
+        {% if columns|length>0 %}
+            {% for column in columns %}
+
+
+                {% if constant('WEB_IS_ADMIN') %}
+                    {% if column.class_name == '' %}
+                        {% set column_class_name = 'col-sm-' ~ 12 / columns|length  %}
+                    {% else %}
+                        {% set column_class_name = column.class_name %}
+                    {% endif %}
+                {% else %}
+                    {% set column_class_name = 'col-sm-' ~ 12 %}
+                {% endif %}
+
+                <div class="{{ column_class_name }}">
+                    <div class="form-column">
+                        {{ editview.add_items(edit_index,column.items, json_fields, context) }}
+                    </div>
+                </div>
+
+            {% endfor %} 
+        {% endif %}
+    </div>
+
+    <div class="clearfix"></div>
+{% endmacro %} 
+
+{% macro add_items(edit_index, items, json_fields, context) %}
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Items -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    {% if items|length>0 %}
+        {% for item in items %} 
+
+            {% if(item.tab is defined) %}
+                {{ editview.add_tabs(edit_index,item.tab, json_fields, context) }}
+            {% elseif item.group is defined %}
+                {{ editview.add_group(edit_index,item.group, json_fields, context) }}
+            {% endif %}
+        {% endfor %} 
+    {% endif %}
+{% endmacro %}
+
+{% macro add_tabs(edit_index,tabs, json_fields, context) %}
+    {% import _self as editview %}
+
+    {% set active_tab = false %}
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Tabs -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    <div class="edit-tabs">
+
+        {% for tab in tabs %} 
+            {% if not tab.hide_on_new or item.id  %}
+                {% set active_tab = true %}
+            {% endif %}       
+        {% endfor %} 
+
+        {% if active_tab  %}
+            <ul class="nav nav-tabs">
+                {% if tabs|length>0 %}
+                    {% set active_class = 'active' %}
+                    {% for tab in tabs %} 
+                        {% if not tab.hide_on_new or item.id  %}
+                            <li class="{{ active_class }} tab-{{ tab.unique_name }}">
+                                <a href="#tab-{{ tab.unique_name }}" data-toggle="tab" title="{{ tab.name }}">
+                                    {{ tab.name }}
+                                </a>
+                            </li>
+                            {% set active_class = '' %}
+                        {% endif %}       
+                    {% endfor %} 
+                {% endif %}       
+            </ul>
+            <div class="tab-content">
+                {% if tabs|length>0 %}
+                    {% set active_class = 'active' %}
+                    {% for tab in tabs %}  
+                        {% if not tab.hide_on_new or item.id %}
+                            <div class="tab-pane {{ active_class }}" id="tab-{{ tab.unique_name }}">
+                                <br>
+                                {{ editview.add_columns( edit_index,tab.tabcontent.columns, json_fields, context) }}
+                            </div> 
+                            {% set active_class = '' %}
+                        {% endif %} 
+                    {% endfor %} 
+                {% endif %} 
+            </div>
+        {% endif %} 
+    </div>
+{% endmacro %}
+
+{% macro add_group(edit_index,group, json_fields, context) %}
+
+    {% import _self as editview %}
+    {% import "form.macro.twig" as forms  %}
+
+    {% set json_object = get_context('json_object') %}
+
+    {% if constant('WEB_IS_ADMIN')  %}
+        {% set current_viewside = 'backend' %}
+    {% else %}
+        {% set current_viewside = 'frontend' %}
+    {% endif %}
+
+    <div class="form-field-group {{ group.unique_name }}-field-group">
+
+        {% if not group.hide_on_new or item.id %}
+
+            {% if group.has_title %}
+                {% if group.header_type=='well' %}
+                    <div class="well well-sm">{{ group.name }}</div>
+                {% else %}
+                    <h4 class="form-field-group-header">{{ group.name }}</h4>
+                {% endif %}
+            {% endif %}
+
+
+            <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Group -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            {% if group.fields|length>0 %}
+                {% for field in group.fields %}
+
+                    {% set field_parameter = attribute(json_fields, field) %}
+                    {% set field_label = (json_object.table_name ~ '_edit_label_' ~ field_parameter.name)|trans %}
+
+                    {% set db_field_name = field_parameter.name %}
+                    {% set html_field_name = field_parameter.name %}
+
+                    {% set name =  html_field_name %}
+                    {% set type =  field_parameter.html_type %}
+                    {% set view_side =  field_parameter.view_side %}
+                    {% set default =  field_parameter.default.edit %}
+                    {% set label =  field_label %}
+                    {% set class =  field_parameter.class %}
+                    {% set id =  null %}
+                    {% set attributes =  null %}
+                    {% set readonly =  field_parameter.readonly %}
+
+                    {% if default=='' %}
+                        {% set default = attribute(edit_index, name )%}
+                    {% endif %}
+
+                    {% if view_side=='both' or view_side=='' or current_viewside == view_side or field_parameter==null %}
+           
+
+                        {% if (field_parameter.parameters.options is not empty) %}
+                            {% set options =  field_parameter.parameters.options %}
+                        {% else %}
+                            {% set options =  null %}
+                        {% endif %}
+                        {% set setting =  field_parameter %}
+                        {% set context =  context %}
+
+                        {% if field_parameter is null %}
+                            {% include "before." ~ field ~ ".field.twig" ignore missing %}
+                            {% include field ~ ".field.twig" ignore missing %}
+                            {% include "after." ~ field ~ ".field.twig" ignore missing %}
+                        {% else %}
+
+
+                            {% if field_parameter.parameters.save.saving_type is not empty %}
+                                {#{% set html_field_name = field_parameter.name %}#}
+                            {% endif %}
+
+                            {% include "before." ~ field ~ ".field.twig" ignore missing %}
+
+                            {% include [ "edit\\"~ field ~ ".field.twig" , field ~ ".field.twig", "edit.default.field.twig"] %}
+
+                            {% include "after." ~ field ~ ".field.twig" ignore missing %}
+
+                        {% endif %}
+                    {% endif %}
+
+
+
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+

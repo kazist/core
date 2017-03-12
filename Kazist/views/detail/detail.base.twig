@@ -1,0 +1,169 @@
+{% import "form.macro.twig" as forms %}
+
+{% import _self as editview %}
+
+{% include "before.editform." ~ kazi_url.subset_name ~ ".twig" ignore missing %}
+
+<form id="{{ main_form_id }}" action="{{ friendly_url('' ~ kazi_url.app_name ~ '.' ~ kazi_url.com_name ~'&controller=' ~ kazi_url.subset_name|capitalize  ~ 'Controller&task=save') }}" class="form-horizontal" method="post" role="form">
+
+    {% include "top.editform." ~ kazi_url.subset_name ~ ".twig" ignore missing %}
+
+    {% if json_object.views.edit.structure.rows|length > 0 %}
+        {% for row in json_object.views.edit.structure.rows %}
+            {{ editview.add_row(detail_index, row, detail_structure.fields) }}
+        {% endfor %}
+    {% endif %}
+
+    <div class="clr"></div>
+
+    {% if extend_edit %}
+        {% include "extend.edit.twig" %}
+    {% endif %}
+
+    {% include "bottom.editform." ~ kazi_url.subset_name ~ ".twig" ignore missing %}
+
+    {{ forms.input('_token' ) }}  
+
+</form>
+
+{% include "after.editform." ~ kazi_url.subset_name ~ ".twig" ignore missing %}
+
+{% macro add_row(detail_index, row, json_fields) %}
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Row -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    <div class="edit-row">
+        {{ editview.add_columns(detail_index, row.columns, json_fields) }}
+    </div> 
+    <div class="clr"></div>
+{% endmacro %} 
+
+{% macro add_columns(detail_index, columns, json_fields) %}
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Columns -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->  
+    <div class="columns col-sm-12">
+        {% if columns|length>0 %}
+            {% for column in columns %}
+                {% if constant('VIEW_SIDE') == 'backend' %}
+                    {% if column.class_name == '' %}
+                        {% set column_class_name = 'col-sm-' ~ 12 / columns|length  %}
+                    {% else %}
+                        {% set column_class_name = column.class_name %}
+                    {% endif %}
+                {% else %}
+                    {% set column_class_name = 'col-sm-' ~ 12 %}
+                {% endif %}
+
+                <div class="{{ column_class_name }}">
+                    <div class="form-column">
+                        {{ editview.add_items(detail_index, column.items, json_fields) }}
+                    </div>
+                </div>
+            {% endfor %} 
+        {% endif %}
+    </div>
+
+    <div class="clr"></div>
+{% endmacro %} 
+
+{% macro add_items(detail_index, items, json_fields) %}
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Items -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    {% if items|length>0 %}
+        {% for item in items %} 
+            {% if(item.tab is defined) %}
+                {{ editview.add_tabs(detail_index, item.tab, json_fields) }}
+            {% elseif item.group is defined %}
+                {{ editview.add_group(detail_index, item.group, json_fields) }}
+            {% endif %}
+        {% endfor %} 
+    {% endif %}
+{% endmacro %}
+
+{% macro add_tabs(detail_index, tabs, json_fields) %}
+    {% import _self as editview %}
+
+    <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Tabs -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    <div class="edit-tabs">
+        <ul class="nav nav-tabs">
+            {% if tabs|length>0 %}
+                {% for tab in tabs %} 
+
+                    <li class="{% if loop.index == 1 %}active{% endif %} tab-{{ loop.index }}">
+                        <a href="#tab-{{ loop.index }}" data-toggle="tab" title='{{ tab.name }}'>
+                            {{ tab.name }}
+                        </a>
+                    </li>
+                {% endfor %} 
+            {% endif %}       
+        </ul>
+        <div class="tab-content">
+            {% if tabs|length>0 %}
+                {% for tab in tabs %}  
+                    <div class="tab-pane {% if loop.index == 1 %}active{% endif %}" id="tab-{{ loop.index }}">
+                        {{ editview.add_columns(detail_index, tab.tabcontent.columns, json_fields) }}
+                    </div> 
+                {% endfor %} 
+            {% endif %} 
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro add_group(detail_index, group, json_fields) %}
+    {% import _self as editview %}
+    {% import "form.macro.twig" as forms %}
+    {% set kazi_url = getContext('kazi_url') %}
+
+    <div class="form-field-group">
+        {% if group.has_title %}
+            {% if group.header_type=='well' %}
+                <div class="well well-sm">{{ group.name }}</div>
+            {% else %}
+                <h3>{{ group.name }}</h3>
+                <hr>
+            {% endif %}
+        {% endif %}
+
+        <!-- xxxxxxxxxxxxxxxxxxxxx -- Add Group -- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        {% if group.fields|length>0 %}
+            {% for field in group.fields %}
+
+                {% set field_parameter = attribute(json_fields, field) %}
+                {% set field_label = phrase(kazi_url.app_name ~ '_' ~ kazi_url.com_name ~ '_' ~ kazi_url.subset_name ~ '_edit_label_' ~ field_parameter.name) %}
+                {% set default =  field_parameter.default.detail %}
+                {% set view_side =  field_parameter.view_side %}
+
+                {% if default=='' %}
+                    {% set default = attribute(detail_index, name )%}
+                {% endif %}
+
+                {% if view_side=='both' or getViewSide()==view_side or field_parameter==null %}
+
+                    {% if field_parameter is null %}
+                        {% include "before." ~ field ~ ".field.twig" ignore missing %}
+                        {% include field ~ ".field.twig" ignore missing %}
+                        {% include "after." ~ field ~ ".field.twig" ignore missing %}
+                    {% else %}
+                        {% include "before." ~ field ~ ".field.twig" ignore missing %}
+                        {% if formFieldOverrideExist(field ~ ".field.twig") %}
+                            {% include field ~ ".field.twig" ignore missing %}
+                        {% else %}
+
+                            {% if field_parameter.parameters.data_source is not empty %}
+                                {{ forms.input(field_parameter.name, field_parameter.html_type, field_parameter.default.detail, field_label,  field_parameter.class, null, null, true) }}
+                            {% else %}
+                                {{ forms.input(field_parameter.name, field_parameter.html_type, field_parameter.default.detail, field_label,  field_parameter.class, null, null, true) }}
+                            {% endif %}
+
+                        {% endif %}
+                        {% include "after." ~ field ~ ".field.twig" ignore missing %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+

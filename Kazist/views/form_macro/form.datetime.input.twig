@@ -1,0 +1,74 @@
+{% macro input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+
+    {{ set_assets('assets/css/datetimepicker/jquery.datetimepicker.css') }}
+    {{ set_assets('assets/js/datetimepicker/jquery.datetimepicker.js') }}
+    {{ set_assets('assets/js/datetimepicker/kazicode.datetimepicker.js') }}
+
+    {% import _self as self_macro %}
+
+    {% if (label is empty) %}
+        {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+    {% else %}
+        <div class="form-group {{ classname(class, name, false) }}-group">
+            <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+            <div class="col-sm-9 kazicode-form-field {% if readonly %}form-control-static{% endif %}">
+
+                {% set saving_type = setting.parameters.save.saving_type %}
+                {% if saving_type is not empty and saving_type != 'single' %}
+                    <a class="btn btn-primary btn-xs multiple_add_field" href="" field_id="{{ idname(id, name)}}" title="Add More {{ name }}">
+                        <span class="glyphicon glyphicon-plus"></span>Add More {{ name }}
+                    </a>
+                    <div class="clearfix"></div>
+                    <div class="kazicode-form-field-items">
+                        {% if default is iterable %}
+                            {% if default|length>0 %}
+                                {% for single_default in default %}
+                                    {{ _self.html_input_multiple(name, type, single_default.value, label, class, id, attributes, readonly, options, setting, single_default.id) }}
+                                    <div class="clearfix"></div>
+                                {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            {{ _self.html_input_multiple(name, type, '', label, class, id, attributes, readonly, options, setting) }}
+                        {% endif %}
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="duplicate_this_field" style="display:none">
+                        {{ _self.html_input_multiple(name, type, '', label, class, id, attributes, readonly, options, setting) }}
+                        <div class="clearfix"></div>
+                    </div>
+                {% else %}
+                    {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
+                {% endif %}
+
+            </div>
+        </div>
+    {% endif %}
+
+{% endmacro %}
+
+{% macro html_input_multiple(name, type, default, label, class, id, attributes, readonly, options, setting,default_id) %}
+    {{ set_assets('assets/js/multiple.js') }}
+    {% import _self as self_macro %}
+    {% import "form.macro.twig" as forms %}
+
+    <div class="col-sm-12 kazicode-form-field-item">
+        <div class="col-sm-10">
+            {{ _self.html_input(name~'.value.'  , type, default, label, class, id, attributes, readonly, options, setting) }}
+            {{ forms.input(name~'.id.' , 'hidden', default_id) }}
+        </div>
+        <div class="col-sm-2">
+            <a class="multiple_remove_field" href="" title="Remove">
+                <span class="label label-danger multiple_remove_field" >
+                    <span class="glyphicon glyphicon-trash"></span></span>
+            </a>
+        </div>
+    </div>  
+{% endmacro %}
+
+{% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
+    {% if not readonly %}
+        <input id="{{ idname(id, name)}}" class="{{ classname(class, name) }} datetimepicker" name="{{ fieldname(name) }}" type="text" value="{{ default|e }}"  {{ attributes|raw }}/>
+    {% else %}
+        {{ default|e }}
+    {% endif %}   
+{% endmacro %}
