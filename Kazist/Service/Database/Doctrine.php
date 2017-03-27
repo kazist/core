@@ -35,7 +35,7 @@ class Doctrine {
 
         $this->container = $sc;
 
-        $this->prefix = $this->container->getParameter('database.prefix');
+        $this->prefix = ($sc->hasParameter('database.prefix')) ? $this->container->getParameter('database.prefix') : 'kazist';
     }
 
     public function getEntityManager() {
@@ -101,7 +101,7 @@ class Doctrine {
                 } else {
                     $sql = $schemaTool->getCreateSchemaSql(array($class));
                 }
-             
+
                 foreach ($sql as $statement) {
                     if (strpos($statement, "DROP TABLE") === false) {
                         $entityManager->getConnection()->exec($statement);
@@ -123,6 +123,7 @@ class Doctrine {
     function getDbConfig() {
 
         //An example configuration
+
         return array(
             'driver' => $this->container->getParameter('database.driver'),
             'user' => $this->container->getParameter('database.user'),

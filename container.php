@@ -16,12 +16,14 @@ include __DIR__ . '/config.php';
 $session = new Session();
 $session->start();
 
-if ($sc->getParameter('system.debugging')) {
+if ($sc->hasParameter('system.debugging') && $sc->getParameter('system.debugging')) {
     $debugbar = new StandardDebugBar();
 }
 
+if (!(SYSTEM_INSTALL == true)) {
+    $sc->register('doctrine', 'Kazist\Service\Database\Doctrine');
+}
 
-$sc->register('doctrine', 'Kazist\Service\Database\Doctrine');
 $sc->register('session', $session);
 
 
@@ -30,7 +32,7 @@ $sc->register('session', $session);
 $sc->setParameter('charset', 'UTF-8');
 $sc->setParameter('routes', include __DIR__ . '/app.php');
 
-if ($sc->getParameter('system.debugging')) {
+if ($sc->hasParameter('system.debugging') && $sc->getParameter('system.debugging')) {
     $sc->register('debugger', $debugbar);
 }
 
@@ -106,8 +108,9 @@ $sc->register('dispatcher', 'Symfony\Component\EventDispatcher\EventDispatcher')
         ->addMethodCall('addSubscriber', array(new Reference('listener.exception')))
 ;
 
-
-include 'listener.php';
+if (!(SYSTEM_INSTALL == true)) {
+    include 'listener.php';
+}
 
 $sc->register('framework', 'Kazist\Framework')
         ->setArguments(array(new Reference('dispatcher'), new Reference('resolver')))

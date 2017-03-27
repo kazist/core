@@ -192,10 +192,12 @@ class NewRouterCollection extends RouteCollection {
             '_controller' => 'System\\Extensions\\Code\\Controllers\\Admin\\ExtensionsController::updatesystemAction',
         )));
 
-        try {
-            $this->addFromDatabase();
-        } catch (\Exception $ex) {
-            $this->prepareTables();
+        if (!(SYSTEM_INSTALL == true)) {
+            try {
+                $this->addFromDatabase();
+            } catch (\Exception $ex) {
+                $this->prepareTables();
+            }
         }
     }
 
@@ -206,7 +208,7 @@ class NewRouterCollection extends RouteCollection {
 
         $doctrine->entity_path = JPATH_ROOT . 'applications/Setup/Countries/Code/Tables';
         $doctrine->getEntityManager();
-        
+
         $doctrine->entity_path = JPATH_ROOT . 'applications/System/Flexviews/Code/Tables';
         $doctrine->getEntityManager();
 
@@ -257,7 +259,7 @@ class NewRouterCollection extends RouteCollection {
 
         $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Users/Roles/Code/Tables';
         $doctrine->getEntityManager();
-                
+
         $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Groups/Roles/Code/Tables';
         $doctrine->getEntityManager();
 
@@ -290,7 +292,7 @@ class NewRouterCollection extends RouteCollection {
 
         $doctrine->entity_path = JPATH_ROOT . 'applications/Notification/Subscribers/Harvesters/Code/Tables';
         $doctrine->getEntityManager();
-        
+
         $doctrine->entity_path = JPATH_ROOT . 'applications/Notification/Subscribers/Groups/Code/Tables';
         $doctrine->getEntityManager();
 

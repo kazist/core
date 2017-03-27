@@ -1,6 +1,18 @@
 <?php
 
-$SYSTEM_CONFIG;
+/* -------------------------- Database settings ------------------- */
+
+$sc->setParameter('database.driver', 'pdo_mysql');
+$sc->setParameter('database.host', 'localhost');
+$sc->setParameter('database.user', 'root');
+$sc->setParameter('database.password', 'developer');
+$sc->setParameter('database.name', 'kazist');
+$sc->setParameter('database.prefix', 'kazist_');
+
+/* -------------------------- Seo settings ------------------- */
+
+$sc->setParameter('seo.title', 'Kazist');
+$sc->setParameter('seo.description', 'Framework For Cool Systems');
 $sc->setParameter('seo.system_title_on_pages', '1');
 $sc->setParameter('seo.system_title_at', 'end');
 $sc->setParameter('seo.enable', '1');
