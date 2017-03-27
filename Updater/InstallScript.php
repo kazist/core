@@ -5,7 +5,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Setup;
+namespace Updater;
 
 use Composer\Script\Event;
 
