@@ -263,13 +263,14 @@ class KazistModel {
         $tmp_data = json_decode(json_encode($data), true);
         $tmp_parameters = json_decode(json_encode($parameters), true);
         $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
-
+        
         if ($route == '') {
             return $route;
         }
 
         $new_route_collection = $this->container->getParameter('routes');
         $route_obj = $new_route_collection->get($route);
+
 
         if (method_exists($route_obj, 'getDefaults')) {
 

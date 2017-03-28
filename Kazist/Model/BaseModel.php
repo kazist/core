@@ -237,6 +237,7 @@ class BaseModel extends KazistModel {
         $data_entity = $this->getEntityObject();
 
         $form_data = $this->validateForm($form_data);
+      
 
         try {
 
@@ -812,7 +813,7 @@ class BaseModel extends KazistModel {
         $tmp_data = json_decode(json_encode($data), true);
         $tmp_parameters = json_decode(json_encode($parameters), true);
         $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
-
+     
         if (!WEB_IS_ADMIN) {
 
             $route_obj = $this->getQueryedRecord('#__system_routes', 'sr', array('unique_name=:unique_name'), array('unique_name' => $route));
@@ -824,16 +825,16 @@ class BaseModel extends KazistModel {
                 $query = new Query();
                 $query->select('tx.slug');
                 $query->from($table_name, 'tx');
-                $query->where('tx.id=id');
+                $query->where('tx.id=:id');
                 $query->setParameter('id', $parameters['id']);
                 $record = $query->loadObject();
-
+ 
                 if ($record->slug == '') {
 
                     $query = new Query();
                     $query->select('tx.*');
                     $query->from($table_name, 'tx');
-                    $query->where('tx.id=id');
+                    $query->where('tx.id=:id');
                     $query->setParameter('id', $parameters['id']);
                     $record = $query->loadObject();
 
