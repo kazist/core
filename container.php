@@ -20,7 +20,7 @@ if ($sc->hasParameter('system.debugging') && $sc->getParameter('system.debugging
     $debugbar = new StandardDebugBar();
 }
 
-if (!(SYSTEM_INSTALL == true)) {
+if (!(SYSTEM_INSTALL === true)) {
     $sc->register('doctrine', 'Kazist\Service\Database\Doctrine');
 }
 
@@ -107,8 +107,7 @@ $sc->register('dispatcher', 'Symfony\Component\EventDispatcher\EventDispatcher')
         ->addMethodCall('addSubscriber', array(new Reference('listener.response')))
         ->addMethodCall('addSubscriber', array(new Reference('listener.exception')))
 ;
-
-if (!(SYSTEM_INSTALL == true)) {
+if (!(SYSTEM_INSTALL === true)) {
     include 'listener.php';
 }
 

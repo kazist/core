@@ -192,7 +192,7 @@ class NewRouterCollection extends RouteCollection {
             '_controller' => 'System\\Extensions\\Code\\Controllers\\Admin\\ExtensionsController::updatesystemAction',
         )));
 
-        if (!(SYSTEM_INSTALL == true)) {
+        if (!(SYSTEM_INSTALL === true)) {
             try {
                 $this->addFromDatabase();
             } catch (\Exception $ex) {
