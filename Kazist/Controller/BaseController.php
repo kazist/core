@@ -95,13 +95,10 @@ abstract class BaseController extends KazistController {
 
     public function detailAction($id = '', $slug = '') {
 
-        if ($id) {
+        $record = $this->model->getRecord($id);
+        $this->data_arr['item'] = (count($this->data_arr['item'])) ? $this->data_arr['item'] : $record;
 
-            $record = $this->model->getRecord($id);
-            $this->data_arr['item'] = (count($this->data_arr['item'])) ? $this->data_arr['item'] : $record;
-
-            $this->model->saveHit($record);
-        }
+        $this->model->saveHit($record);
 
         $json_list = $this->model->getDetailedJson();
 
@@ -158,7 +155,6 @@ abstract class BaseController extends KazistController {
             if (!is_array($form_data)) {
                 $form_data = $this->request->request->get('form');
             }
-
 
             if ($activity == 'savecopy') {
                 $record = $this->model->getRecord($form_data['id']);

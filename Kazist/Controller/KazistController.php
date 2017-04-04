@@ -256,7 +256,7 @@ abstract class KazistController {
 
         $response = new Response($html);
 
-//  $response->setTtl(10);
+        $response->setTtl(10);
 
         $this->container->get('dispatcher')->dispatch('response', new ResponseEvent($response, $this->request));
 

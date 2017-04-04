@@ -167,7 +167,9 @@ class BaseModel extends KazistModel {
         $data->hit = $record->hit + 1;
         $data->hits = $record->hits + 1;
 
-        $this->saveRecord('#__' . $json['table_name'], $data);
+        if ($record->id) {
+            $this->saveRecord('#__' . $json['table_name'], $data);
+        }
     }
 
     public function updateStatus() {
@@ -829,7 +831,7 @@ class BaseModel extends KazistModel {
                 $query->setParameter('id', $parameters['id']);
                 $record = $query->loadObject();
 
-                if ($record->slug == '') {
+                if ($record->id && $record->slug == '') {
 
                     $query = new Query();
                     $query->select('tx.*');
