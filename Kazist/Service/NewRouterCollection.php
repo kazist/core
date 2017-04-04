@@ -185,9 +185,8 @@ class NewRouterCollection extends RouteCollection {
             '_controller' => 'System\\Extensions\\Code\\Controllers\\Admin\\ExtensionsController::installAction',
         )));
 
-        $this->add('system_download', new Routing\Route('/admin/system-download/{name}/{extension}/{repository_id}', array(
-            'name' => null,
-            'extension' => null,
+        $this->add('system_download', new Routing\Route('/admin/system-download/{id}/{repository_id}', array(
+            'id' => null,
             'repository_id' => null,
             '_controller' => 'System\\Extensions\\Code\\Controllers\\Admin\\ExtensionsController::updatesystemAction',
         )));
