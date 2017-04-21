@@ -1,15 +1,12 @@
 {
-    "name": "kazist/core",
-    "description": "Kazist core Manager.",
-    "keywords": ["kazist", "core manager"],
-    "homepage": "https://github.com/kazist/core",
-    "license": "LGPL-3.0",
-    "authors": [
+    "repositories": [
         {
-            "name": "Dedan Irungu",
-            "email": "info@emshyinnovate.com",
-            "homepage": "http://emshyinnovate.com",
-            "role": "Founder & Developer"
+            "type": "composer",
+            "url": "http://repo.emshyinnovate.com"
         }
-    ]
+    ],
+    "config": { "secure-http": false },
+    "require": {
+        "kazist/builder": "*@stable"
+    }
 }
