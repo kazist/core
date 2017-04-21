@@ -2,4 +2,4 @@
 *.log
 *.zip
 *config.php
-Updater/composer.json
+/Updater/composer.json

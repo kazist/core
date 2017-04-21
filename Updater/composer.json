@@ -5,8 +5,13 @@
             "url": "http://repo.emshyinnovate.com"
         }
     ],
-    "config": { "secure-http": false },
+    "config": {
+        "secure-http": false
+    },
     "require": {
-        "kazist/builder": "*@stable"
+    },
+    "extra": {
+        "installer-paths": {
+        }
     }
 }
