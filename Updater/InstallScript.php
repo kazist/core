@@ -27,6 +27,10 @@ class InstallScript {
         if (!is_dir('assets')) {
             mkdir('assets', 0755);
         }
+        
+        $src_themesPath = 'vendor/kazist/themes/';
+        $desc_themesPath = 'themes/';
+        InstallScript::copyRecursively($src_themesPath, $desc_themesPath);
 
         $bsImagePath = 'vendor/twbs/bootstrap/dist/';
         $imgAssetsPath = 'assets/';
