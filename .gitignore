@@ -1,6 +1,6 @@
-/.gitignore
+*.gitignore
 *.DS_Store
 *.log
 *.zip
 *config.php
-/Updater/composer.json
+*er/composer.json
