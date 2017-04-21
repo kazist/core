@@ -11,7 +11,13 @@ use DebugBar\StandardDebugBar;
 
 $sc = new DependencyInjection\ContainerBuilder();
 
-include __DIR__ . '/config.php';
+if (file_exists(__DIR__ . '/config.php')) {
+    include __DIR__ . '/config.php';
+}
+
+if (file_exists(__DIR__ . '/../setting/config.php')) {
+    include __DIR__ . '/../setting/config.php';
+}
 
 $session = new Session();
 $session->start();
