@@ -164,7 +164,7 @@ class UserController extends BaseController {
                 $factory->enqueueMessage($msg, 'error');
             }
 
-            $this->redirect($return_url);
+           return $this->redirect($return_url);
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf('Error: ' . $e->getMessage()));
         }

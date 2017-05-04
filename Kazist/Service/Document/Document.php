@@ -151,7 +151,6 @@ class Document {
     }
 
     public function prepareExtension($document) {
-
         //Get Extension
         $query = new Query();
         $query->from('#__system_extensions', 'r');
