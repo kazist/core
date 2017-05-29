@@ -58,7 +58,8 @@ abstract class BaseController extends KazistController {
 
 
         $json_list = $this->model->getDetailedJson();
-
+        
+        $this->data_arr['save_button_text'] = 'Save';
         $this->data_arr['json_object'] = $json_list;
         $this->data_arr['action_type'] = 'edit';
         $this->data_arr['show_action'] = (isset($this->data_arr['show_action'])) ? $this->data_arr['show_action'] : true;
