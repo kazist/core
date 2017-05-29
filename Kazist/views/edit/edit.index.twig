@@ -21,7 +21,7 @@
 
 <form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
     {% include "top.editform." ~ document.base_route ~ ".twig"  ignore missing with {'save_button_text': save_button_text}  %}
-{{ save_button_text }}
+
     {% if json_object.views.edit.structure.rows|length > 0 %}
         {% for row in json_object.views.edit.structure.rows %}
             {{ editview.add_row(edit_index,row, json_object.fields, _context) }}
