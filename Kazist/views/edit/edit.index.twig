@@ -39,10 +39,12 @@
     {{ forms.input('id', 'hidden', item.id ) }}
 
     {% if not  constant('WEB_IS_ADMIN')  %}
-        <a class="btn btn-danger btn-sm" href="{{generate_url(document.base_route) }}" title ="Cancel">Cancel</a>
-        <input class="btn btn-success btn-sm" name="id" type="submit" value="Save">
-        <br>
-        <br>
+        <div class="text-center">
+            <a class="btn btn-danger btn-sm" href="{{generate_url(document.base_route) }}" title ="Cancel">Cancel</a>
+            <input class="btn btn-success btn-sm" name="id" type="submit" value="Save">
+            <br>
+            <br>
+        </div>
     {% endif %}
 
     <input class="form-id" name="id" type="hidden" value="{{ item.id }}">
@@ -227,7 +229,7 @@
                     {% endif %}
 
                     {% if view_side=='both' or view_side=='' or current_viewside == view_side or field_parameter==null %}
-           
+
 
                         {% if (field_parameter.parameters.options is not empty) %}
                             {% set options =  field_parameter.parameters.options %}
