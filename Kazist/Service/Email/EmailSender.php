@@ -365,7 +365,7 @@ class EmailSender {
         }
 
         $transport = $this->getMailTransport();
-        $this->mailer = \Swift_Mailer::newInstance($transport);
+        $this->mailer = new \Swift_Mailer($transport);
 
         // Use AntiFlood to re-connect after 100 emails and second (30)
         $this->mailer->registerPlugin(new \Swift_Plugins_AntiFloodPlugin($this->anti_flood));
@@ -394,7 +394,7 @@ class EmailSender {
 
         if ($gateway->type == 'smtp') {
 
-            $transport = \Swift_SmtpTransport::newInstance(null);
+            $transport = new \Swift_SmtpTransport();
             $transport->setHost($gateway->smtp_host);
             $transport->setPort($gateway->smtp_port);
             $transport->setUsername($gateway->smtp_username);
@@ -405,7 +405,7 @@ class EmailSender {
                 $transport->setEncryption($gateway->smtp_secure);
             }
         } else {
-            $transport = \Swift_MailTransport::newInstance();
+            $transport = new \Swift_MailTransport();
         }
 
         return $transport;

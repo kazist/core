@@ -27,7 +27,7 @@ class InstallScript {
         if (!is_dir('assets')) {
             mkdir('assets', 0755);
         }
-        
+
         $src_themesPath = 'vendor/kazist/themes/';
         $desc_themesPath = 'themes/';
         InstallScript::copyRecursively($src_themesPath, $desc_themesPath);
@@ -58,20 +58,23 @@ class InstallScript {
     }
 
     public static function copyRecursively($source, $dest) {
+
         InstallScript::createdDir($dest);
 
-        $dir = new \DirectoryIterator($source);
+        if (is_dir($source)) {
 
-        foreach ($dir as $fileinfo) {
-            //print_r($dest);
-            //exit;
-            $file_name = $fileinfo->getFilename();
-            if ($fileinfo->isDir() && !$fileinfo->isDot()) {
-                $new_source = $source . '/' . $file_name;
-                $new_dest = $dest . '/' . $file_name;
-                InstallScript::copyRecursively($new_source, $new_dest);
-            } elseif (!$fileinfo->isDir() && !$fileinfo->isDot()) {
-                copy($source . '/' . $file_name, $dest . '/' . $file_name);
+            $dir = new \DirectoryIterator($source);
+
+            foreach ($dir as $fileinfo) {
+
+                $file_name = $fileinfo->getFilename();
+                if ($fileinfo->isDir() && !$fileinfo->isDot()) {
+                    $new_source = $source . '/' . $file_name;
+                    $new_dest = $dest . '/' . $file_name;
+                    InstallScript::copyRecursively($new_source, $new_dest);
+                } elseif (!$fileinfo->isDir() && !$fileinfo->isDot()) {
+                    copy($source . '/' . $file_name, $dest . '/' . $file_name);
+                }
             }
         }
     }

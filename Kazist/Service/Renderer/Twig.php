@@ -116,7 +116,6 @@ class Twig extends \Twig_Environment implements RendererInterface {
         $this->setTemplatesPaths($paths, true);
         $this->setTemplatesPaths($this->config['templates_base_dir'], true);
 
-        $this->setFormBridge();
 
         try {
             $this->twigLoader = new \Twig_Loader_Filesystem($this->templatesPaths);
@@ -126,6 +125,8 @@ class Twig extends \Twig_Environment implements RendererInterface {
         }
 
         parent::__construct($this->twigLoader, $this->config['environment']);
+
+        $this->setFormBridge();
     }
 
     public function setFormBridge() {
@@ -134,6 +135,7 @@ class Twig extends \Twig_Environment implements RendererInterface {
 
         // Set up the Translation component
         $translator = new Translator('en');
+
         $translator->addLoader('xlf', new XliffFileLoader());
         $translator->addResource('xlf', VENDOR_FORM_DIR . '/Resources/translations/validators.en.xlf', 'en', 'validators');
         $translator->addResource('xlf', VENDOR_VALIDATOR_DIR . '/Resources/translations/validators.en.xlf', 'en', 'validators');
@@ -153,6 +155,7 @@ class Twig extends \Twig_Environment implements RendererInterface {
 
         $formEngine = new TwigRendererEngine(array(DEFAULT_FORM_THEME));
         $formEngine->setEnvironment($this);
+        // print_r($this); exit;
         $this->addExtension(new TranslationExtension($translator));
         $this->addExtension(new MediaExtension());
         $this->addExtension(new FollowExtension());
@@ -292,7 +295,7 @@ class Twig extends \Twig_Environment implements RendererInterface {
      * @throws  \RuntimeException
      */
     public function render($template = '', array $data = array()) {
-        
+
         $factory = new KazistFactory();
 
         if (!empty($template)) {
