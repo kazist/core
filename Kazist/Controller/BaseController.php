@@ -58,7 +58,7 @@ abstract class BaseController extends KazistController {
 
 
         $json_list = $this->model->getDetailedJson();
-        
+
         $this->data_arr['save_button_text'] = 'Save';
         $this->data_arr['json_object'] = $json_list;
         $this->data_arr['action_type'] = 'edit';
@@ -74,13 +74,19 @@ abstract class BaseController extends KazistController {
 
     public function editAction($id = '') {
 
+        $document = $this->container->get('document');
+
         if ($id) {
             $record = $this->model->getRecord($id);
             $this->data_arr['item'] = (count($this->data_arr['item'])) ? $this->data_arr['item'] : $record;
         }
 
+        $document->title = $this->model->renderString($document->title, $this->data_arr);
+        $document->description = $this->model->renderString($document->description, $this->data_arr);
+
         $json_list = $this->model->getDetailedJson();
 
+        $this->data_arr['save_button_text'] = 'Save';
         $this->data_arr['json_object'] = $json_list;
         $this->data_arr['action_type'] = 'edit';
         $this->data_arr['show_action'] = (isset($this->data_arr['show_action'])) ? $this->data_arr['show_action'] : true;
@@ -96,8 +102,13 @@ abstract class BaseController extends KazistController {
 
     public function detailAction($id = '', $slug = '') {
 
+        $document = $this->container->get('document');
+
         $record = $this->model->getRecord($id);
         $this->data_arr['item'] = (count($this->data_arr['item'])) ? $this->data_arr['item'] : $record;
+
+        $document->title = $this->model->renderString($document->title, $this->data_arr);
+        $document->description = $this->model->renderString($document->description, $this->data_arr);
 
         $this->model->saveHit($record);
 

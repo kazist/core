@@ -38,7 +38,7 @@ class Document {
         $document->subset = $this->prepareSubset($document);
         $document->extension = $this->prepareExtension($document);
         // $document->permissions = $this->preparePermission($document);
-
+        
         $document->main_route = $this->request->getRequestUri();
         $all_query = $this->request->query->all();
 
