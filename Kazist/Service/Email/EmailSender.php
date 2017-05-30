@@ -49,13 +49,14 @@ class EmailSender {
         $this->mailer = $this->getMailer();
     }
 
-    public function sendEmailList() {
+    public function sendEmailList($priority = '') {
+
         ignore_user_abort(true);
         set_time_limit(0);
 
         $factory = new KazistFactory();
 
-        $records = $this->getEmailList();
+        $records = $this->getEmailList($priority);
 
         foreach ($records as $record) {
 
@@ -85,7 +86,7 @@ class EmailSender {
         }
     }
 
-    public function getEmailList() {
+    public function getEmailList($priority = '') {
 
         $random_number = uniqid();
         $factory = new KazistFactory();
@@ -96,6 +97,10 @@ class EmailSender {
         $uptquery->where('completed=0 OR completed IS NULL');
         $uptquery->andWhere('send_date < :send_date');
         $uptquery->andWhere('uniq_name IS NULL OR uniq_name = \'\'');
+        if ((int) $priority) {
+            $uptquery->andWhere('priority = :priority');
+            $uptquery->setParameter('priority', $priority);
+        }
         $uptquery->setParameter('send_date', date('Y-m-d H:i:s'));
         $uptquery->setParameter('random_number', $random_number);
         $uptquery->setMaxResults($this->sql_limit);
@@ -118,8 +123,8 @@ class EmailSender {
 
             $factory->saveRecord('#__notification_emails', $record);
         }
-        
-        
+
+
         $resetquery = new Query();
         $resetquery->update('#__notification_emails', 'ne');
         $resetquery->set('ne.uniq_name', '\'\'');

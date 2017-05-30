@@ -25,6 +25,7 @@ use Kazist\Service\System\Template\Assets;
 use Kazist\Service\System\Template\Debugger;
 use Kazist\Service\System\Cron;
 use Kazist\Service\System\System;
+use Kazist\Service\Email\EmailSender;
 use Kazist\KazistFactory;
 
 class KazistKernelListener implements EventSubscriberInterface {
@@ -85,7 +86,7 @@ class KazistKernelListener implements EventSubscriberInterface {
         $type = $response->headers->get('content-type');
 
         $response_content = $response->getContent();
-        
+
         $response_content = $this->loadPropareImageUrl($response_content);
 
         if ($type !== 'application/json' && $response->getStatusCode() == 200) {
@@ -151,8 +152,11 @@ class KazistKernelListener implements EventSubscriberInterface {
 
         $this->container = $sc;
 
+        $emailSender = new EmailSender($this->container, $request);
         $system = new System($this->container, $request);
         $cron = new Cron($this->container, $request);
+
+        $emailSender->sendEmailList(1);
 
         $system->callCurlByUniqueName('notification.emails.cronemailsender');
 
