@@ -21,6 +21,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Kazist\Service\Database\Query;
 use Kazist\Service\Media\MediaManager;
 use Kazist\Service\Form\DefaultField;
+use Kazist\Service\Form\Validation;
 use Kazist\KazistFactory;
 use Kazist\StringModification;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -229,6 +230,7 @@ class BaseModel extends KazistModel {
 
     public function save($form_data = '') {
 
+
         $factory = new KazistFactory();
 
         $form_data = (!empty($form_data)) ? $form_data : $this->request->get('form');
@@ -263,6 +265,7 @@ class BaseModel extends KazistModel {
 
         $query = new Query();
         $factory = new KazistFactory();
+        $validation = new Validation();
         $string = new StringModification();
 
         $json = $this->getJson($table_name);
@@ -276,6 +279,7 @@ class BaseModel extends KazistModel {
 
             $field_name = $table_field->getName();
             $field_type = (isset($json['fields'][$field_name])) ? $json['fields'][$field_name]['mysql_type'] : '';
+            $html_type = (isset($json['fields'][$field_name])) ? $json['fields'][$field_name]['html_type'] : '';
             $field_length = $table_field->getLength();
             $field_not_null = $table_field->getNotnull();
 
@@ -283,6 +287,7 @@ class BaseModel extends KazistModel {
                 continue;
             }
 
+            $validation->validate($field_name, $form_data, $html_type, $field_type);
 
             switch ($field_type) {
                 case 'date':

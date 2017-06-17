@@ -37,17 +37,23 @@ class Assets {
         $asset_list = $this->container->get('session')->get('kazist_assets');
         $asset_merge = $this->container->getParameter('asset.merge');
 
+
         foreach ($asset_list as $file_ext => $type_files) {
+
 
             foreach ($type_files as $priority => $files) {
                 foreach ($files as $file_key => $file) {
                     $asset_html .= $this->getLinkHtml($file_ext, $file, $response_content);
                 }
             }
+
+            $response_content = $this->appendAssetsToContent($response_content, $asset_html, $file_ext);
+           
+            $asset_html = '';
         }
 
-        $response_content = $this->appendAssetsToContent($response_content, $asset_html);
         $response_content = $this->appendObject($response_content);
+
 
         return $response_content;
     }
@@ -124,16 +130,18 @@ class Assets {
         return $response_content;
     }
 
-    public function appendAssetsToContent($response_content, $asset_html) {
+    public function appendAssetsToContent($response_content, $asset_html, $file_ext) {
 
-        if (strpos($response_content, '</body>')) {
+        if ($file_ext === 'css' && strpos($response_content, '</body>')) {
+            $response_content = str_replace('</head>', $asset_html . "\n" . '</head>', $response_content);
+        } elseif (strpos($response_content, '</body>')) {
             $response_content = str_replace('</body>', $asset_html . "\n" . '</body>', $response_content);
         } elseif (strpos($response_content, '</html>')) {
             $response_content = str_replace('</html>', $asset_html . "\n" . '</html>', $response_content);
         } else {
             $response_content = $response_content . $asset_html;
         }
-     
+
         return $response_content;
     }
 
@@ -143,7 +151,7 @@ class Assets {
 
         $system_path = JPATH_ROOT . $file;
         $web_path = WEB_ROOT . $file . '?' . filemtime($system_path);
-      
+
         if (!strpos($response_content, $file)) {
             switch ($type) {
                 case 'css':

@@ -1,0 +1,37 @@
+{{ set_assets('assets/js/highcharts/highcharts.js','main') }}
+{{ set_assets('assets/js/kazist/kazist_chart.js','other') }}
+
+{% set random_no = random(500) %}
+
+<div class="chart">
+    <div  id="kazi_area_chart" style="height: 250px; position: relative;"></div>
+    <div class="clearfix"></div>
+    <script>
+        var kazi_area_chart;
+        jQuery(document).ready(function () {
+            // Use Morris.Bar
+            var width = jQuery('#kazi_area_chart').parent().css('width');
+            console.log(width);
+
+            kazi_area_chart = Morris.Area({
+                element: 'kazi_area_chart',
+                resize: true,
+                data: [{% if items|length > 0 %}
+        {% for item in items %}
+                        {y: '{{ item.text }}', item1: {{ item.summation }}  },{% endfor %}
+            {% endif %}
+
+                        ],
+                        xkey: 'y',
+                        ykeys: ['item1'],
+                        labels: ['Item 1'],
+                        lineColors: ['#a0d0e0'],
+                        hideHover: 'auto'
+                    }).on('click', function (i, row) {
+                        console.log(i, row);
+                    });
+                    kazi_area_chart.redraw();
+                })
+            </script>
+            This is a test.
+        </div>

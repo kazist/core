@@ -158,13 +158,23 @@ abstract class KazistController {
 
         $is_granted = $this->model->denyAccessUnlessGranted();
         $user = $this->model->getUser();
+ 
+        $admin_access = false;
 
+        foreach ($user->roles as $key => $role) {
+            if ($role->admin_access) {
+                $admin_access = true;
+                break;
+            }
+        }
+   
         if ($this->model->checkTokenValid()) {
-
+  
             if (!$is_granted) {
                 if (is_object($user) && $user->id) {
                     $link_route = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
                     $link_route = ($router == 'admin.home') ? 'home' : 'admin.home';
+ 
                     $this->specialRedirectToRoute($link_route);
                 } else {
                     $link_route = (WEB_IS_ADMIN) ? 'admin.login' : 'login';
@@ -172,13 +182,15 @@ abstract class KazistController {
                 }
             } else {
                 if (is_object($user) && $user->id) {
-                    if (WEB_IS_ADMIN && !$user->is_admin) {
+
+                    if (WEB_IS_ADMIN && !$user->is_admin && !$admin_access) {
                         $link_route = 'home';
                         $this->addFlash('danger', 'You Dont have right to access this Area.');
                         $this->specialRedirectToRoute($link_route);
                     }
                 }
             }
+            
         } else {
             $link_route = 'home';
             $this->addFlash('danger', 'You Tokens is invalid. Fill and re-submit you form again.');

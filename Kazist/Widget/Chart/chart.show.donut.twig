@@ -1,0 +1,32 @@
+
+{{ set_assets('assets/js/highcharts/highcharts.js','main') }}
+{{ set_assets('assets/js/kazist/kazist_chart.js','other') }}
+
+{% set random_no = random(500) %}
+
+<div class="chart">
+    <div  id="kazi_donut_chart" style="height: 250px;" > </div>
+    <div class="clearfix"></div>
+    <script>
+        var kazi_donut_chart;
+        jQuery(document).ready(function () {
+            var width = jQuery('#kazi_donut_chart').parent().css('width');
+            console.log(width);
+            // Use Morris.Bar
+            kazi_donut_chart = Morris.Donut({
+                element: 'kazi_donut_chart',
+                resize: true,
+                colors: ["#3c8dbc", "#f56954", "#00a65a"],
+                data: [{% if items|length > 0 %}
+        {% for item in items %}
+                        {label: '{{ item.text }}', value: {{ item.summation }}  },{% endfor %}
+            {% endif %}
+                        ],
+                        //hideHover: 'auto'
+                    }).on('click', function (i, row) {
+                        console.log(i, row);
+                    });
+                    kazi_donut_chart.redraw();
+                })
+            </script>
+        </div>

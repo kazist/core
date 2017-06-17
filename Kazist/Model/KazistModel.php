@@ -176,6 +176,19 @@ class KazistModel {
         $document = $this->container->get('document');
         $user = $document->user;
 
+        $admin_access = false;
+
+        foreach ($user->roles as $key => $role) {
+            if ($role->admin_access) {
+                $admin_access = true;
+                break;
+            }
+        }
+
+        if ($admin_access && ($router == 'admin.home' || $router == 'admin.home.slash')) {
+            return true;
+        }
+ 
         if (in_array($router, $exempt_route)) {
             return true;
         }
@@ -209,7 +222,7 @@ class KazistModel {
         } else {
             $query->andWhere('1=-1');
         }
-        $query->andWhere('srp.route_id =' . $route_id);
+        $query->andWhere('srp.route_id =' . (int) $route_id);
 
         if (!empty($permissions_arr)) {
             foreach ($permissions_arr as $permission_item) {
@@ -263,7 +276,7 @@ class KazistModel {
         $tmp_data = json_decode(json_encode($data), true);
         $tmp_parameters = json_decode(json_encode($parameters), true);
         $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
-        
+
         if ($route == '') {
             return $route;
         }

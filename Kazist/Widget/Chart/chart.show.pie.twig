@@ -1,0 +1,26 @@
+{{ set_assets('assets/js/highcharts/highcharts.js','main') }}
+{{ set_assets('assets/js/kazist/kazist_chart.js','other') }}
+
+{% set random_no = random(500) %}
+
+<div>
+    <div class="pie-chart-{{ random_no }}" style=" height:{{ chart_height|default('200') }}px; width:100%"></div>
+</div>
+
+<script>
+    jQuery(document).ready(function () {
+
+        this_element = jQuery('.pie-chart-{{ random_no }}');
+
+        data = {{ data|raw }};
+                legend = {
+                    align: 'left',
+                    layout: 'horizontal',
+                    verticalAlign: 'bottom',
+                    floating: false
+                }
+
+        kazist_chart.loadChart(this_element, 'pie', null, 'Result', data, legend);
+    });
+
+</script>

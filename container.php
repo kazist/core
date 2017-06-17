@@ -123,22 +123,26 @@ $sc->register('framework', 'Kazist\Framework')
 
 $sc->setParameter('debug', true);
 
-/**
-  // Fetch from Folder
-  $files = scandir(JPATH_ROOT . 'include/Kazist/Listener');
 
-  foreach ($files as $key => $file_name) {
-  if (strpos($file_name, '.php')) {
+// Fetch from Folder
+$files = scandir(JPATH_ROOT . 'include/Kazist/Listener');
 
-  $name = str_replace('.php', '', $file_name);
-  $listener_name = 'listener.' . strtolower($name);
-  $class_name = 'Kazist\\Listener\\' . $name;
+foreach ($files as $key => $file_name) {
+    
+    if (strpos($file_name, '.php')) {
 
-  $sc->register($listener_name, $class_name);
-  $sc->getDefinition('dispatcher')
-  ->addMethodCall('addSubscriber', array(new Reference($listener_name)))
-  ;
-  }
-  }
- */
+        $name = str_replace('.php', '', $file_name);
+        $listener_name = 'listener.' . strtolower($name);
+        $class_name = 'Kazist\\Listener\\' . $name;
+
+        if ($name !== 'KazistKernelListener') {
+
+            $sc->register($listener_name, $class_name);
+            $sc->getDefinition('dispatcher')
+                    ->addMethodCall('addSubscriber', array(new Reference($listener_name)))
+            ;
+        }
+    }
+}
+
 return $sc;
