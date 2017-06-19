@@ -35,27 +35,29 @@ class Cron {
 
         $this->deleteEmptyCrons();
 
-        $this->printSeparator();
-
-        $send_cron = $this->getCronUniqueName('notification.emails.cronemailsender');
-        $this->callCronByCurl($send_cron);
-
-        $this->printSeparator();
-
         $crons = $this->getCronList();
+
+        $this->printSeparator();
+
         if (!empty($crons)) {
             foreach ($crons as $key => $cron) {
-
                 $cron_str = $this->getCronStr($cron);
                 $this->updateNextRunTime($cron->id, $cron_str);
+            }
+        }
+    
+        if (!empty($crons)) {
+            foreach ($crons as $key => $cron) {
 
                 $this->printSeparator();
                 $this->callCronByCurl($cron);
                 $this->printSeparator();
             }
         }
-
+        
         $this->printSeparator();
+        
+      
     }
 
     public function callCronByCurl($cron) {
@@ -65,7 +67,7 @@ class Cron {
         $http_host = $this->request->server->get('HTTP_HOST');
         $request_uri = $this->request->server->get('REQUEST_URI');
         $unique_name = $cron->unique_name;
-
+        
         $this->printSeparator();
         $this->printLog($unique_name);
 
@@ -138,7 +140,7 @@ class Cron {
 
         $cron = CronExpression::factory($cron_str);
         $next_run_time = $cron->getNextRunDate()->format('Y-m-d H:i:s');
-
+       
         $stdclass = new \stdClass();
         $stdclass->id = $id;
         $stdclass->is_new = 0;
@@ -177,15 +179,19 @@ class Cron {
 
     public function getCronList() {
 
+        $random_number = uniqid();
+
         $query = new Query();
         $query->select('*');
         $query->from('#__system_crons');
         $query->where('published=1');
-        $query->andWhere('next_run_time<\'' . date('Y-m-d H:i:s') . '\'');
+        $query->andWhere('next_run_time<\'' . date('Y-m-d H:i:s') . '\' OR '
+                . 'unique_name = \'notification.emails.cronemailsender\'');
         $query->setFirstResult(0);
-        $query->setMaxResults(1);
+        $query->setMaxResults(2);
 
         $crons = $query->loadObjectList();
+
 
         return $crons;
     }

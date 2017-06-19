@@ -152,24 +152,29 @@ class KazistKernelListener implements EventSubscriberInterface {
 
         $this->container = $sc;
 
+        $factory = new KazistFactory();
         $emailSender = new EmailSender($this->container, $request);
         $system = new System($this->container, $request);
         $cron = new Cron($this->container, $request);
 
         $emailSender->sendEmailList(1);
 
-        $system->callCurlByUniqueName('notification.emails.cronemailsender');
+        if ($factory->getSetting('system_cron_run_page_load')) {
 
-        $cron_list = $cron->getCronList();
+            $cron_list = $cron->getCronList();
 
-        foreach ($cron_list as $single_cron) {
+            if (!empty($crons)) {
+                foreach ($crons as $key => $cron) {
+                    $cron_str = $cron->getCronStr($cron);
+                    $cron->updateNextRunTime($single_cron->id, $cron_str);
+                }
+            }
 
-            $cron_str = $cron->getCronStr($single_cron);
-            $cron->updateNextRunTime($single_cron->id, $cron_str);
-
-            if ($single_cron->unique_name) {
-                $system->callCurlByUniqueName($single_cron->unique_name);
-                $cron->updateCompleted($single_cron->id);
+            foreach ($cron_list as $single_cron) {
+                if ($single_cron->unique_name) {
+                    $system->callCurlByUniqueName($single_cron->unique_name);
+                    $cron->updateCompleted($single_cron->id);
+                }
             }
         }
 
