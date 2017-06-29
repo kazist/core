@@ -158,7 +158,7 @@ abstract class KazistController {
 
         $is_granted = $this->model->denyAccessUnlessGranted();
         $user = $this->model->getUser();
- 
+
         $admin_access = false;
 
         foreach ($user->roles as $key => $role) {
@@ -167,14 +167,14 @@ abstract class KazistController {
                 break;
             }
         }
-   
+
         if ($this->model->checkTokenValid()) {
-  
+
             if (!$is_granted) {
                 if (is_object($user) && $user->id) {
                     $link_route = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
                     $link_route = ($router == 'admin.home') ? 'home' : 'admin.home';
- 
+
                     $this->specialRedirectToRoute($link_route);
                 } else {
                     $link_route = (WEB_IS_ADMIN) ? 'admin.login' : 'login';
@@ -190,7 +190,6 @@ abstract class KazistController {
                     }
                 }
             }
-            
         } else {
             $link_route = 'home';
             $this->addFlash('danger', 'You Tokens is invalid. Fill and re-submit you form again.');
@@ -259,7 +258,13 @@ abstract class KazistController {
             $document->messages_content = $objectList['messages_content'] = $kazistModel->renderData('Kazist:views:general:messages.index.twig', $objectList, $this->twig_paths);
         }
 
-        $html .= $kazistModel->renderData($template, $objectList, $this->twig_paths);
+        $tmp_html = $kazistModel->renderData($template, $objectList, $this->twig_paths);
+
+        if ($objectList['action_type'] <> '') {
+            $html .= '<div class="response-content">' . $tmp_html . '</div>';
+        } else {
+            $html .= '<div class="block-content">' .$tmp_html . '</div>';
+        }
 
         return $html;
     }

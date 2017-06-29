@@ -6,7 +6,6 @@
 <div id="kazi-calendar-{{ rand_str }}"></div> 
 
 
-
 <script type="text/javascript">
     jQuery(document).ready(function () {
         /* initialize the calendar
@@ -31,10 +30,10 @@
                 day: 'D'
             },
             //Random default events
-            events:{{ data|raw }},
-                    eventRender: function (event, element) {
-                        jQuery(element).tooltip({title:event.description, html: true, container: "body"});
-                    },
+            events:{{ data|raw }} ,
+            eventRender: function (event, element) {
+                jQuery(element).tooltip({title: event.description, html: true, container: "body"});
+            },
             editable: false,
             droppable: false
         });

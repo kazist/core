@@ -95,27 +95,29 @@
 
         </div>
 
-        <div class="filter-summary pull-right">
+        {% if search|length > 0 %}
+            <div class="filter-summary pull-right">
 
-            <b>Filter Fields:</b> 
+                <b>Filter Fields:</b> 
 
-            {% for key,search_item in search %}
-                {% if search_item is iterable %}
-                    
-                    {% for key_inner,search_item_single in search_item %}
-                        {% if search_item_single is not empty and search_item_single|slice(0, 4) != '____' %}
-                           { {{ key_inner }} }
+                {% for key,search_item in search %}
+                    {% if search_item is iterable %}
+
+                        {% for key_inner,search_item_single in search_item %}
+                            {% if search_item_single is not empty and search_item_single|slice(0, 4) != '____' %}
+                                { {{ key_inner }} }
+                            {% endif %}
+                        {% endfor %}
+
+                    {% else %}
+                        {% if search_item is not empty %}
+                            {{ key }},
                         {% endif %}
-                    {% endfor %}
-                    
-                {% else %}
-                    {% if search_item is not empty %}
-                        {{ key }},
                     {% endif %}
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-        </div>
+            </div>
+        {% endif %}
 
         {{ forms.input('_token' ) }} 
 

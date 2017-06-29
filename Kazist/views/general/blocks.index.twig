@@ -27,7 +27,7 @@
     {% if nodiv %}
         {{ _self.get_block_html(block) }}
     {% else %}
-        <div class="{% if is_boxed %}box{% endif %} kazi-block{{ block.class }}">
+        <div class=" kazi-block{{ block.class }}">
             {{ _self.get_block_html(block) }}
         </div>
 

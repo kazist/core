@@ -1,14 +1,14 @@
 
 {% import "form.macro.twig" as forms %}
 
+
 {% if web_is_admin %}
     {% set view_url = 'admin.'~json_object.table_name|replace({'_': '.'}) %}
 {% else %}
     {% set view_url = json_object.table_name|replace({'_': '.'}) %}
 {% endif %}
 
-
-<form id="{{ main_form_id }}" action="{{ generate_url(view_url) }}" method="post" >
+<form id="{{ main_form_id }}" class="{{ main_form_id }}" action="{{ generate_url(view_url) }}" method="post" >
 
     <script src="{{ web_root }}assets/js/recordpicker.js"></script>
 
@@ -116,4 +116,5 @@
     {{ forms.input('_token' ) }}  
 
 </form>
+
 

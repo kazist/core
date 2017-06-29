@@ -4,10 +4,10 @@
 
 {% set item = get_context('item') %}
 
-
 {% set field_parameter = attribute(json_fields, field) %}
 
 {% include "before.editform." ~ document.base_route ~ ".twig" ignore missing %}
+
 
 {% if not  constant('WEB_IS_ADMIN') %}
     <h1>{{ document.title }}</h1>
@@ -57,8 +57,8 @@
 
 </form>
 
-{% include "after.editform." ~ document.base_route ~ ".twig" ignore missing %}
 
+{% include "after.editform." ~ document.base_route ~ ".twig" ignore missing %}
 
 {% if get_media_exist() %}
     {{ addTwigPath('include.Kazist.views.edit') }}

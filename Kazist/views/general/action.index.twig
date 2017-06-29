@@ -1,10 +1,10 @@
 {% set url_link = generate_url(document.base_route) %}
 
 {% if action_type == 'edit' or action_type == 'add'  %}
-    <a class="btn btn-success btn-xs kazi-save" href="#" title="Save"><span class="glyphicon glyphicon-plus"></span> Save</a>
-    <a class="btn btn-danger btn-xs" href="{{ url_link }}" title="Cancel"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
+    <a class="btn btn-success btn-sm kazi-save" href="#" title="Save"><span class="glyphicon glyphicon-plus"></span> Save</a>
+    <a class="btn btn-danger btn-sm" href="{{ url_link }}" title="Cancel"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
     <span class="dropdown"> 
-        <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"  href="#" title="More Actions">
+        <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  href="#" title="More Actions">
             <span class="glyphicon glyphicon-cog"></span> More Actions<span class="caret"></span> </a>
         <ul class="dropdown-menu">
             <li>
@@ -20,11 +20,11 @@
     </span>
 {% elseif action_type == 'detail' %}
 
-    <a class="btn btn-danger btn-xs kazi-cancel" href="{{ url_link }}" title="Go Back">
+    <a class="btn btn-danger btn-sm kazi-cancel" href="{{ url_link }}" title="Go Back">
         <span class="glyphicon glyphicon-arrow-left"></span>
         Go Back
     </a>
-    <a class="btn btn-success btn-xs kazi-save" href="{{ url_link ~ '&view=edit&id=' ~ kazi_url.record_id }}" title="Edit">
+    <a class="btn btn-success btn-sm kazi-save" href="{{ url_link ~ '&view=edit&id=' ~ kazi_url.record_id }}" title="Edit">
         <span class="glyphicon glyphicon-plus"></span>
         Edit
     </a>
@@ -32,13 +32,13 @@
 {% else %}
 
 
-    <a class="btn btn-success btn-xs" href="{{ generate_url(document.base_route~'.add') }}">
+    <a class="btn btn-success btn-sm" href="{{ generate_url(document.base_route~'.add') }}">
         <span class="glyphicon glyphicon glyphicon-plus"></span> Add
     </a>
 
     {% if twig_file != 'recordpicker' %}
         <span class="dropdown"> 
-            <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"  href="#">
+            <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  href="#">
                 <span class="glyphicon glyphicon-cog"></span> More Actions<span class="caret"></span> 
             </a>
             <ul class="dropdown-menu">

@@ -6,6 +6,7 @@
 
 {% set field_parameter = attribute(json_fields, field) %}
 
+
 {% include "before.detailform." ~ document.base_route ~ ".twig" ignore missing %}
 
 {% if not  constant('WEB_IS_ADMIN') %}
