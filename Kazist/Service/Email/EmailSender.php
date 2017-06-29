@@ -15,6 +15,10 @@ use Kazist\Service\StringModification;
 use Kazist\Service\Database\Query;
 use Kazist\Service\System\System;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\DNSCheckValidation;
+use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 //use Kazist\Service\Email\Phpmailer\PHPMailer;
 
@@ -184,16 +188,24 @@ class EmailSender {
 
     public function sendEmail($subject, $body, $recipient, $attachments) {
 
+        require_once JPATH_ROOT . 'vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+
         $new_body = $this->getCssInlined($body);
         $new_body = $this->getImageReformated($body);
 
-        if (\Swift_Validate::email($recipient)) {
+        $validator = new EmailValidator();
+        $multipleValidations = new MultipleValidationWithAnd([
+            new RFCValidation(),
+            new DNSCheckValidation()
+        ]);
+
+        if ($validator->isValid($recipient, $multipleValidations)) {
 
             $breaks = array("<br />", "<br>", "<br/>");
             $plain = str_ireplace($breaks, "\r\n", $new_body);
             $plain = strip_tags($plain);
 
-            $message = \Swift_Message::newInstance(' -f %s');
+            $message = new \Swift_Message($subject);
 
             $message->setSubject($subject);
             $message->setTo($recipient);
