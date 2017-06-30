@@ -38,7 +38,7 @@ class Document {
         $document->subset = $this->prepareSubset($document);
         $document->extension = $this->prepareExtension($document);
         // $document->permissions = $this->preparePermission($document);
-        
+
         $document->main_route = $this->request->getRequestUri();
         $all_query = $this->request->query->all();
 
@@ -75,11 +75,11 @@ class Document {
         $url_queries = $this->request->query->all();
 
         foreach ($url_queries as $key => $url_query) {
-            if (!isset($search[$key])) {
+            if (!isset($search[$key]) && $key <> 'page') {
                 $search[$key] = $url_query;
             }
         }
-
+     
         if (!empty($search)) {
             $session->set($router . '.search', $search);
         } else {
