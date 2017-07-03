@@ -11,5 +11,8 @@
             "homepage": "http://emshyinnovate.com",
             "role": "Founder & Developer"
         }
-    ]
+    ],
+    "require": {
+        "phpmailer/phpmailer": "@stable"
+    }
 }
