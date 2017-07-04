@@ -189,6 +189,7 @@ class KazistFactory {
 
     public function getSetting($setting_name, $block_id = '') {
 
+
         $query = new Query();
 
         $query->select('ss.*');
