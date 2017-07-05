@@ -2,11 +2,11 @@
 
 {% import "form.macro.twig" as forms %}
 
-<div>
-    <div class="col-md-2">
-        {{ forms.input(' list_limit', 'select', pagination.limit, null, ' pagination-select', null, null, null, pagination.options) }}
-    </div>
-    {% if pagination.links|length > 3 %}
+{% if pagination.links|length > 3 %}
+    <div>
+        <div class="col-md-2">
+            {{ forms.input(' list_limit', 'select', pagination.limit, null, ' pagination-select', null, null, null, pagination.options) }}
+        </div>
         <div class="col-md-10">
             <ul class="pagination pagination-sm">
                 {% for page in pagination.links %}
@@ -30,11 +30,11 @@
                 {% endfor %}
             </ul>
         </div>
-    {% endif %}
-</div>
+    </div>
+{% endif %}
 
-  <div class="clearfix"></div>
-  
+<div class="clearfix"></div>
+
 <style>
     .pagination-select{width: 80px;}
 </style>
