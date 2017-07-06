@@ -32,6 +32,7 @@ class BaseModel extends KazistModel {
     public $limit = 10;
     public $offset = 0;
     public $ordering = 'DESC';
+    public $query_failed_attempt = 0;
 
     public function getRecords($offset, $limit) {
 
@@ -49,7 +50,19 @@ class BaseModel extends KazistModel {
 
         $query->addOrderBy($this->table_alias . '.id', 'DESC');
 
-        $records = $query->loadObjectList();
+        try {
+            $records = $query->loadObjectList();
+        } catch (\Exception $ex) {
+
+            if (!$this->query_failed_attempt) {
+                $this->autoInstallTable($document->extension_path);
+                $this->getRecords($offset, $limit);
+                $this->query_failed_attempt++;
+            }
+
+            $this->loggingException($ex);
+            throw $ex;
+        }
 
         return json_decode(json_encode($records));
     }
@@ -79,6 +92,7 @@ class BaseModel extends KazistModel {
 
         $where_arr = array();
         $parameter_arr = array();
+        $document = $this->container->get('document');
 
         $query = (is_object($query)) ? $query : $this->getQueryBuilder();
 
@@ -95,7 +109,19 @@ class BaseModel extends KazistModel {
             $query->andWhere('1=-1');
         }
 
-        $record = $query->loadObject();
+        try {
+            $records = $query->loadObject();
+        } catch (\Exception $ex) {
+
+            if (!$this->query_failed_attempt) {
+                $this->autoInstallTable($document->extension_path);
+                $this->getRecord($id, $query);
+                $this->query_failed_attempt++;
+            }
+
+            $this->loggingException($ex);
+            throw $ex;
+        }
 
         $document = $this->container->get('document');
         $document->record_id = $record->id;
@@ -766,7 +792,7 @@ class BaseModel extends KazistModel {
         $parameter_arr = array();
 
         $json = $this->getJson();
-     
+
         if (!empty($search)) {
 
             $keyword = $search['keyword'];
@@ -1058,6 +1084,16 @@ class BaseModel extends KazistModel {
         }
 
         return '';
+    }
+
+    public function autoInstallTable($extension_path) {
+
+        $this->doctrine->refresh = true;
+        $this->doctrine->entity_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/Tables';
+
+        if (is_dir($this->doctrine->entity_path)) {
+            $this->doctrine->getEntityManager();
+        }
     }
 
 }
