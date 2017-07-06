@@ -110,7 +110,7 @@ class BaseModel extends KazistModel {
         }
 
         try {
-            $records = $query->loadObject();
+            $record = $query->loadObject();
         } catch (\Exception $ex) {
 
             if (!$this->query_failed_attempt) {
@@ -969,6 +969,7 @@ class BaseModel extends KazistModel {
         $item = $this->getRecord($id);
 
         $json = $this->getJson($table_name);
+     
 
         foreach ($json['fields'] as $field_name => $field) {
 
