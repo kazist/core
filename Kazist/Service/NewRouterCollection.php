@@ -193,7 +193,7 @@ class NewRouterCollection extends RouteCollection {
 
         if (!(SYSTEM_INSTALL === true)) {
             try {
-                $this->addFromDatabase();
+                $this->addRoutes();
             } catch (\Exception $ex) {
                 $this->prepareTables();
             }
@@ -298,10 +298,11 @@ class NewRouterCollection extends RouteCollection {
         $this->addFromDatabase();
     }
 
-    public function addFromDatabase() {
+    public function addRoutes() {
         // print_r($pathinfo); exit;
         $this->processPagesTable();
-        $this->processRoutesTable();
+        // $this->processRoutesTable();
+        $this->processRoutesJsons();
     }
 
     public function processPagesTable() {
@@ -322,6 +323,42 @@ class NewRouterCollection extends RouteCollection {
         }
     }
 
+    public function processRoutesJsons() {
+
+        $dir = new \DirectoryIterator(JPATH_ROOT . 'applications');
+
+        foreach ($dir as $fileinfo) {
+
+            $file_name = $fileinfo->getFilename();
+            if ($fileinfo->isDir() && !$fileinfo->isDot()) {
+
+                $app_path = JPATH_ROOT . 'applications/' . $file_name;
+
+
+                if (file_exists($app_path . '/namespace.json')) {
+                    $namespace_arr = json_decode(file_get_contents($app_path . '/namespace.json'), true);
+
+                    foreach ($namespace_arr as $key => $namespace) {
+
+                        $code_folder = JPATH_ROOT . 'applications/' . str_replace('\\', '/', $namespace['namespace']);
+
+                        if (file_exists($code_folder . '/Code/route.json')) {
+                            $route_arr = json_decode(file_get_contents($code_folder . '/Code/route.json'), true);
+
+                            foreach ($route_arr['frontend'] as $key => $route) {
+                                $this->addRouteToObject($route);
+                            }
+
+                            foreach ($route_arr['backend'] as $key => $route) {
+                                $this->addRouteToObject($route);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function processRoutesTable() {
 
         $string = new StringModification();
@@ -329,38 +366,43 @@ class NewRouterCollection extends RouteCollection {
 
         if (!empty($routes)) {
             foreach ($routes as $key => $route_single) {
+                $this->addRouteToObject($route_single);
+            }
+        }
+    }
 
-                $seo_url_path = ($route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
-                $seo_arguments = json_decode($route_single['seo_arguments'], true);
-                $route_path = '/' . trim($route_single['route'], '/');
-                $arguments = json_decode($route_single['arguments'], true);
-                $unique_name = str_replace('.', '_', $route_single['unique_name']);
-
-                $route_params = array(
-                    '_controller' => $route_single['controller'],
-                );
+    public function addRouteToObject($route_single) {
 
 
-                if ($seo_url_path <> '') {
 
-                    if (!empty($seo_arguments)) {
-                        foreach ($seo_arguments as $key => $seo_argument) {
-                            $route_params[$key] = ($seo_argument == '') ? null : $seo_argument;
-                        }
-                    }
+        $seo_url_path = ($route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
+        $seo_arguments = json_decode($route_single['seo_arguments'], true);
+        $route_path = '/' . trim($route_single['route'], '/');
+        $arguments = (is_array($route_single['arguments'])) ? $route_single['arguments'] : json_decode($route_single['arguments'], true);
+        $unique_name = str_replace('.', '_', $route_single['unique_name']);
 
-                    $this->add($route_single['unique_name'], new Routing\Route($seo_url_path, $route_params));
-                } else {
+        $route_params = array(
+            '_controller' => $route_single['controller'],
+        );
 
-                    if (!empty($arguments)) {
-                        foreach ($arguments as $key => $argument) {
-                            $route_params[$key] = ($argument == '') ? null : $argument;
-                        }
-                    }
+        if ($seo_url_path <> '') {
 
-                    $this->add($route_single['unique_name'], new Routing\Route($route_path, $route_params));
+            if (!empty($seo_arguments)) {
+                foreach ($seo_arguments as $key => $seo_argument) {
+                    $route_params[$key] = ($seo_argument == '') ? null : $seo_argument;
                 }
             }
+
+            $this->add($route_single['unique_name'], new Routing\Route($seo_url_path, $route_params));
+        } else {
+
+            if (!empty($arguments)) {
+                foreach ($arguments as $key => $argument) {
+                    $route_params[$key] = ($argument == '') ? null : $argument;
+                }
+            }
+
+            $this->add($route_single['unique_name'], new Routing\Route($route_path, $route_params));
         }
     }
 

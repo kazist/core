@@ -79,7 +79,7 @@ class Document {
                 $search[$key] = $url_query;
             }
         }
-     
+
         if (!empty($search)) {
             $session->set($router . '.search', $search);
         } else {
@@ -125,15 +125,36 @@ class Document {
     public function prepareDocument() {
 
         $router = $this->request->attributes->get('_route');
+        $controller = $this->request->attributes->get('_controller');
+        $controller_arr = explode('Code', $controller);
 
-        // Get Document Object
+        /** @TODO Remove calling document from database */
         $query = new Query();
         $query->from('#__system_routes', 'r');
         $query->select('r.*');
         $query->where('r.unique_name=:unique_name');
         $query->setParameter('unique_name', $router);
         $document = $query->loadObject();
+       
 
+        if (empty($document)) {
+
+            $extension_path = rtrim(str_replace('\\', '/', $controller_arr[0]), '/');
+
+            $route_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/route.json';
+            if (file_exists($route_path)) {
+                $route_list = (json_decode(file_get_contents($route_path)));
+
+                $routes = array_merge($route_list->frontend, $route_list->backend);
+
+                foreach ($routes as $key => $route) {
+                    if ($router == $route->unique_name) {
+                        $route->extension_path = $extension_path;
+                        return $route;
+                    }
+                }
+            }
+        }
 
         return $document;
     }
