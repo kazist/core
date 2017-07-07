@@ -847,13 +847,20 @@ class BaseModel extends KazistModel {
         $tmp_parameters = json_decode(json_encode($parameters), true);
         $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
 
+        $routes = $this->container->getParameter('routes');
+        $route_obj = $routes->get($route);
+        $defaults = $route_obj->getDefaults();
+
+        $controller = $defaults['_controller'];
+        $controller_arr = explode('Code', $controller);
+        $extension_path = str_replace('\\', '/', rtrim($controller_arr[0], '\\'));
+
+
         if (!WEB_IS_ADMIN) {
 
-            $route_obj = $this->getQueryedRecord('#__system_routes', 'sr', array('unique_name=:unique_name'), array('unique_name' => $route));
+            if ($extension_path <> '' && $parameters['id'] && array_key_exists("slug", $defaults)) {
 
-            if ($route_obj->extension_path <> '' && $parameters['id'] && $route_obj->seo_url <> '') {
-
-                $table_name = '#__' . str_replace('/', '_', strtolower($route_obj->extension_path));
+                $table_name = '#__' . str_replace('/', '_', strtolower($extension_path));
 
                 $query = new Query();
                 $query->select('tx.slug');
@@ -874,8 +881,7 @@ class BaseModel extends KazistModel {
                     $record_arr = json_decode(json_encode($record), true);
                     $tmp_record = $this->updateSlug($route, $record_arr);
                 } else {
-
-                    if ($route_obj->seo_url <> '') {
+                    if (array_key_exists("slug", $defaults)) {
                         unset($parameters['id']);
                     }
 
@@ -969,7 +975,7 @@ class BaseModel extends KazistModel {
         $item = $this->getRecord($id);
 
         $json = $this->getJson($table_name);
-     
+
 
         foreach ($json['fields'] as $field_name => $field) {
 

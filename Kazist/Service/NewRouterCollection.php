@@ -376,7 +376,7 @@ class NewRouterCollection extends RouteCollection {
 
 
         $seo_url_path = ($route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
-        $seo_arguments = json_decode($route_single['seo_arguments'], true);
+        $seo_arguments = (is_array($route_single['seo_arguments'])) ? $route_single['seo_arguments'] : json_decode($route_single['seo_arguments'], true);
         $route_path = '/' . trim($route_single['route'], '/');
         $arguments = (is_array($route_single['arguments'])) ? $route_single['arguments'] : json_decode($route_single['arguments'], true);
         $unique_name = str_replace('.', '_', $route_single['unique_name']);
