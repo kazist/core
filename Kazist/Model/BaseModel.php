@@ -855,7 +855,6 @@ class BaseModel extends KazistModel {
         $controller_arr = explode('Code', $controller);
         $extension_path = str_replace('\\', '/', rtrim($controller_arr[0], '\\'));
 
-
         if (!WEB_IS_ADMIN) {
 
             if ($extension_path <> '' && $parameters['id'] && array_key_exists("slug", $defaults)) {
