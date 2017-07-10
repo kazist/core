@@ -397,6 +397,8 @@ class EmailSender {
 
     public function getMailTransport() {
 
+        require_once JPATH_ROOT . 'vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+
         $gateway = $this->getEmailGateway();
 
         $this->anti_flood = $gateway->anti_flood;
@@ -416,8 +418,15 @@ class EmailSender {
             if ($gateway->smtp_auth) {
                 $transport->setEncryption($gateway->smtp_secure);
             }
+        } elseif ($gateway->type == 'sendmail') {
+
+            if ($gateway->sendmail_command <> '') {
+                $transport = new Swift_SendmailTransport($gateway->sendmail_command);
+            } else {
+                $transport = new Swift_SendmailTransport();
+            }
         } else {
-            $transport = new \Swift_MailTransport();
+            $transport = new \Swift_SmtpTransport();
         }
 
         return $transport;

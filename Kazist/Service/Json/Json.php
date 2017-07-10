@@ -163,15 +163,31 @@ class Json {
 
     public function configObject($file) {
 
+        $factory = new KazistFactory;
+
+        $session = $factory->getSession();
+
+        $structure_files = ($session->has('structure_files')) ? $session->get('structure_files') : array();
+
         // Verify the configuration exists and is readable.
         if (!is_readable($file) || !file_exists($file)) {
             throw new \RuntimeException('file does not exist or is unreadable.' . $file);
         }
 
-        $file_content = file_get_contents($file);
+        if (file_exists($file)) {
+            if (!array_key_exists($file, $structure_files)) {
+                $file_content = file_get_contents($file);
+                $configObject = json_decode($file_content, true);
+                $structure_files[$file] = $configObject;
+                $session->set('structure_files', $structure_files);
+            } else {
+                return $structure_files[$file];
+            }
+        } else {
+            $configObject = null;
+        }
 
         // Load the configuration file into an object.
-        $configObject = json_decode($file_content, true);
         // print_r($file_content); exit;
         if ($configObject === null) {
             throw new \RuntimeException(sprintf('Unable to parse the view.' . $this->subset_name . '.json file %s.', $file));

@@ -843,61 +843,67 @@ class BaseModel extends KazistModel {
 
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $data = array()) {
 
-        $tmp_data = json_decode(json_encode($data), true);
-        $tmp_parameters = json_decode(json_encode($parameters), true);
-        $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
+        if ($route <> null || $route <> '') {
 
-        $routes = $this->container->getParameter('routes');
-        $route_obj = $routes->get($route);
-        $defaults = $route_obj->getDefaults();
+            $tmp_data = json_decode(json_encode($data), true);
+            $tmp_parameters = json_decode(json_encode($parameters), true);
+            $data_arr = array_merge((array) $tmp_data, (array) $tmp_parameters);
 
-        $controller = $defaults['_controller'];
-        $controller_arr = explode('Code', $controller);
-        $extension_path = str_replace('\\', '/', rtrim($controller_arr[0], '\\'));
+            $routes = $this->container->getParameter('routes');
+            $route_obj = $routes->get($route);
+            $defaults = $route_obj->getDefaults();
 
-        if (!WEB_IS_ADMIN) {
+            $controller = $defaults['_controller'];
+            $controller_arr = explode('Code', $controller);
+            $extension_path = str_replace('\\', '/', rtrim($controller_arr[0], '\\'));
 
-            if ($extension_path <> '' && $parameters['id'] && array_key_exists("slug", $defaults)) {
+            if (!WEB_IS_ADMIN) {
 
-                $table_name = '#__' . str_replace('/', '_', strtolower($extension_path));
+                if ($extension_path <> '' && $parameters['id'] && array_key_exists("slug", $defaults)) {
 
-                $query = new Query();
-                $query->select('tx.slug');
-                $query->from($table_name, 'tx');
-                $query->where('tx.id=:id');
-                $query->setParameter('id', $parameters['id']);
-                $record = $query->loadObject();
-
-                if ($record->id && $record->slug == '') {
+                    $table_name = '#__' . str_replace('/', '_', strtolower($extension_path));
 
                     $query = new Query();
-                    $query->select('tx.*');
+                    $query->select('tx.slug');
                     $query->from($table_name, 'tx');
                     $query->where('tx.id=:id');
                     $query->setParameter('id', $parameters['id']);
                     $record = $query->loadObject();
 
-                    $record_arr = json_decode(json_encode($record), true);
-                    $tmp_record = $this->updateSlug($route, $record_arr);
-                } else {
-                    if (array_key_exists("slug", $defaults)) {
-                        unset($parameters['id']);
+                    if ($record->id && $record->slug == '') {
+
+                        $query = new Query();
+                        $query->select('tx.*');
+                        $query->from($table_name, 'tx');
+                        $query->where('tx.id=:id');
+                        $query->setParameter('id', $parameters['id']);
+                        $record = $query->loadObject();
+
+                        $record_arr = json_decode(json_encode($record), true);
+                        $tmp_record = $this->updateSlug($route, $record_arr);
+                    } else {
+                        if (array_key_exists("slug", $defaults)) {
+                            unset($parameters['id']);
+                        }
+
+                        $tmp_record = json_decode(json_encode($record), true);
                     }
 
-                    $tmp_record = json_decode(json_encode($record), true);
+                    $data_arr = array_merge((array) $data_arr, (array) $tmp_record);
+
+                    unset($data_arr['id']);
                 }
-
-                $data_arr = array_merge((array) $data_arr, (array) $tmp_record);
-
-                unset($data_arr['id']);
             }
-        }
 
-        if (array_key_exists('slug', $data_arr) && $data_arr['slug'] == '') {
-            $data_arr = $this->updateSlug($route, $data_arr);
-        }
+            if (array_key_exists('slug', $data_arr) && $data_arr['slug'] == '') {
+                $data_arr = $this->updateSlug($route, $data_arr);
+            }
+            return parent::generateUrl($route, $parameters, $referenceType, $data_arr);
+        } else {
 
-        return parent::generateUrl($route, $parameters, $referenceType, $data_arr);
+            $home_name = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
+            return parent::generateUrl($home_name, $parameters, $referenceType, $data_arr);
+        }
     }
 
     public function updateSlug($route, $data) {

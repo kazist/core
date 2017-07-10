@@ -36,6 +36,14 @@ class Doctrine {
         $this->container = $sc;
 
         $this->prefix = ($sc->hasParameter('database.prefix')) ? $this->container->getParameter('database.prefix') : 'kazist';
+
+        if (!$this->container->hasParameter('database.cache')) {
+            $this->container->setParameter('database.cache', false);
+        }
+        
+        if (!$this->container->hasParameter('database.cache.lifetime')) {
+            $this->container->setParameter('database.cache.lifetime', 7200);
+        }
     }
 
     public function getEntityManager() {
@@ -44,6 +52,8 @@ class Doctrine {
         $config = new Configuration;
         $cache = new ArrayCache;
         $evm = new EventManager;
+
+        $this->container->set('doctrine.cache', $cache);
 
         $config->setMetadataCacheImpl($cache);
         $config->setQueryCacheImpl($cache);
@@ -109,6 +119,10 @@ class Doctrine {
                 }
             }
         }
+
+        // if ($this->container->getParameter('database.cache')) {
+        //  $entityManager->useResultCache(true);
+        //  }
 
         $this->container->set('entity.manager', $entityManager);
 

@@ -5,6 +5,7 @@ namespace Kazist\Service\Database;
 defined('KAZIST') or exit('Not Kazist Framework');
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Cache\QueryCacheProfile;
 
 /*
  * This file is part of Kazist Framework.
@@ -70,11 +71,10 @@ class Query extends QueryBuilder {
 
         $query_str = ($this->query_str <> '') ? $this->query_str : $this->getQuery();
 
-        $stmt = $this->db->prepare($query_str);
-
+        $cache_profile = $this->getQueryCacheProfile($query_str);
         $parameters = $this->getParameters();
 
-        $stmt->execute($parameters);
+        $stmt = $this->db->executeQuery($query_str, $parameters, null, $cache_profile);
 
         return $stmt;
     }
@@ -180,23 +180,24 @@ class Query extends QueryBuilder {
     }
 
     public function fetch() {
-        $stmt = $this->getStatement();
+        try {
 
-        $record = $stmt->fetch();
+            $stmt = $this->getStatement();
 
-        $this->closeDatabase();
+            $record = $stmt->fetch();
 
-        return $record;
+            $stmt->closeCursor();
+
+            return $record;
+        } catch (Exception $ex) {
+            throw new $ex;
+        }
     }
 
     public function loadObjectList() {
-
         try {
-            $stmt = $this->getStatement();
 
-            $records = $stmt->fetchAll();
-
-            $this->closeDatabase();
+            $records = $this->fetchAll();
 
             $new_records = json_decode(json_encode($records));
 
@@ -205,46 +206,67 @@ class Query extends QueryBuilder {
             $this->loggingException($ex);
             throw $ex;
         }
-        return false;
     }
 
     public function fetchAll() {
-        $stmt = $this->getStatement();
 
-        $records = $stmt->fetchAll();
-
-        $this->closeDatabase();
-
-        return $records;
-    }
-
-    public function fetchObject() {
         try {
+
             $stmt = $this->getStatement();
 
-            $record = $stmt->fetch();
+            $records = $stmt->fetchAll();
 
-            $this->closeDatabase();
+            $stmt->closeCursor();
 
-            return json_decode(json_encode($record));
-        } catch (Exception $ex) {
-            throw new $ex;
+            return $records;
+        } catch (\Exception $ex) {
+            $this->loggingException($ex);
+            throw $ex;
         }
+
+        return false;
     }
 
     public function loadObject() {
         try {
-            $record = $this->fetchObject();
 
-            return $record;
-        } catch (Exception $ex) {
-            throw new $ex;
+            $record = $this->fetch();
+
+            $new_record = json_decode(json_encode($record));
+
+            return $new_record;
+        } catch (\Exception $ex) {
+            $this->loggingException($ex);
+            throw $ex;
+        }
+    }
+
+    public function fetchObject() {
+        try {
+
+            $record = $this->fetch();
+
+            $new_record = json_decode(json_encode($record));
+
+            return $new_record;
+        } catch (\Exception $ex) {
+            $this->loggingException($ex);
+            throw $ex;
         }
     }
 
     public function loggingException($ex) {
         $factory = new KazistFactory();
         $factory->loggingException($ex);
+    }
+
+    public function getQueryCacheProfile($query_str = '') {
+
+        $query_str_key = md5($query_str);
+        $cache = $this->container->get('doctrine.cache');
+        $cache_lifetime = $this->container->getParameter('database.cache.lifetime');
+
+        return new QueryCacheProfile($cache_lifetime, $query_str_key, $cache);
     }
 
     public function getTableAlias($table_name = '') {
@@ -274,7 +296,7 @@ class Query extends QueryBuilder {
 
     public function closeDatabase() {
 
-       // $this->db->close();
+        // $this->db->close();
     }
 
 }

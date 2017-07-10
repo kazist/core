@@ -59,6 +59,7 @@ class KazistKernelListener implements EventSubscriberInterface {
 
         $request = $event->getRequest();
 
+        $this->container->get('session')->remove('structure_files');
         $this->container->get('session')->remove('twig_context');
         $this->container->get('session')->remove('kazist_assets');
         $this->container->get('session')->remove('follow_exist');
