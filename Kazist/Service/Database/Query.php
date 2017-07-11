@@ -72,9 +72,10 @@ class Query extends QueryBuilder {
         $query_str = ($this->query_str <> '') ? $this->query_str : $this->getQuery();
 
         $cache_profile = $this->getQueryCacheProfile($query_str);
-        $parameters = $this->getParameters();
+        $tmp_parameters = $this->getParameters();
+        $parameters = (!empty($tmp_parameters)) ? $tmp_parameters : array();
 
-        $stmt = $this->db->executeQuery($query_str, $parameters, null, $cache_profile);
+        $stmt = $this->db->executeQuery($query_str, $parameters, array(), $cache_profile);
 
         return $stmt;
     }

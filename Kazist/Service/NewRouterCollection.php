@@ -345,12 +345,16 @@ class NewRouterCollection extends RouteCollection {
                         if (file_exists($code_folder . '/Code/route.json')) {
                             $route_arr = json_decode(file_get_contents($code_folder . '/Code/route.json'), true);
 
-                            foreach ($route_arr['frontend'] as $key => $route) {
-                                $this->addRouteToObject($route);
+                            if (array_key_exists("frontend", $route_arr)) {
+                                foreach ($route_arr['frontend'] as $key => $route) {
+                                    $this->addRouteToObject($route);
+                                }
                             }
 
-                            foreach ($route_arr['backend'] as $key => $route) {
-                                $this->addRouteToObject($route);
+                            if (array_key_exists("backend", $route_arr)) {
+                                foreach ($route_arr['backend'] as $key => $route) {
+                                    $this->addRouteToObject($route);
+                                }
                             }
                         }
                     }
@@ -374,9 +378,18 @@ class NewRouterCollection extends RouteCollection {
     public function addRouteToObject($route_single) {
 
 
+        if (array_key_exists("seo_url", $route_single)) {
+            $seo_url_path = ( $route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
+        } else {
+            $seo_url_path = '';
+        }
 
-        $seo_url_path = ($route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
-        $seo_arguments = (is_array($route_single['seo_arguments'])) ? $route_single['seo_arguments'] : json_decode($route_single['seo_arguments'], true);
+        if (array_key_exists("seo_arguments", $route_single)) {
+            $seo_arguments = (is_array($route_single['seo_arguments'])) ? $route_single['seo_arguments'] : json_decode($route_single['seo_arguments'], true);
+        } else {
+            $seo_arguments = '';
+        }
+
         $route_path = '/' . trim($route_single['route'], '/');
         $arguments = (is_array($route_single['arguments'])) ? $route_single['arguments'] : json_decode($route_single['arguments'], true);
         $unique_name = str_replace('.', '_', $route_single['unique_name']);
