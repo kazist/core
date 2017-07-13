@@ -191,7 +191,7 @@ class EmailSender {
         require_once JPATH_ROOT . 'vendor/swiftmailer/swiftmailer/lib/swift_required.php';
 
         $new_body = $this->getCssInlined($body);
-        $new_body = $this->getImageReformated($body);
+        $new_body = $this->getImageReformated($new_body);
 
         $validator = new EmailValidator();
         $multipleValidations = new MultipleValidationWithAnd([
@@ -496,7 +496,6 @@ class EmailSender {
                         $body, $css
                 );
             }
-
 
             return $body;
         } catch (\Exception $exc) {
