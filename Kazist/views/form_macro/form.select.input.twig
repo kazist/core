@@ -51,6 +51,7 @@
             </select>  
 
         {% else %}
+
             {% if not readonly %}
 
                 <select id="{{ idname(id, name)}}" class="{{ classname(class, name) }}"  name="{{ fieldname(name) }}"  {{ attributes }} >
@@ -73,27 +74,39 @@
             {% endif %}
         {% endif %}
     {% else %}
+       
+        {% if options is iterable %}
+            {% for key, option in options %}
 
-        {% for key, option in options %}
-
-            {% set is_checked = false %}
-            {% if default is iterable %}
                 {% set is_checked = false %}
+                {% if default is iterable %}
+                    {% set is_checked = false %}
+                    {% for key, single_default in default %}
+                        {% if single_default.value == option.value or single_default == option.value  %}
+                            {% set is_checked = true %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if default == option.value %}
+                    {{ option.text|raw }}
+                {% elseif is_checked   %}
+                    {{ option.text|raw }},
+                {% endif %}
+
+
+            {% endfor %}  
+        {% else %}
+            {% if default is iterable %}
                 {% for key, single_default in default %}
                     {% if single_default.value == option.value or single_default == option.value  %}
-                        {% set is_checked = true %}
-                    {% endif %}
+                        {{ option.value|raw }}
+                    {% endif %},
                 {% endfor %}
+            {% else %}
+                {{ default|raw }}
             {% endif %}
-
-            {% if default == option.value %}
-                {{ option.text|raw }}
-            {% elseif is_checked   %}
-                {{ option.text|raw }},
-            {% endif %}
-
-
-        {% endfor %}  
+        {% endif %}
     {% endif %}
 
 {% endmacro %}
