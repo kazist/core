@@ -12,8 +12,7 @@ defined('KAZIST') or exit('Not Kazist Framework');
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Kazist\Service\Database\Query;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+
 use Kazist\Model\BaseModel;
 use Kazist\Service\Media\MediaManager;
 
@@ -304,62 +303,14 @@ class KazistFactory {
 
     public function loggingMessage($msg, $type = '') {
 
-        if ($this->container->getParameter('system.logging')) {
-            $error_directory = JPATH_ROOT . 'error_log/';
-
-            $this->makeDir($error_directory);
-
-            $log = new Logger('kazist');
-            $log->pushHandler(new StreamHandler($error_directory . 'kazist-error.log', Logger::WARNING));
-
-
-            if ($this->container->getParameter('system.debugging')) {
-                $this->container->get('debugger')['messages']->info($msg);
-            } else {
-                switch ($type) {
-                    case 'error':
-                        $log->error($msg);
-                        break;
-                    case 'error':
-                        $log->warning($msg);
-                        break;
-
-                    default:
-                        $log->alert($msg);
-                        break;
-                }
-            }
-        }
+        $baseModel = new BaseModel();
+        $baseModel->loggingMessage($msg, $type);
     }
 
     public function loggingException($exception) {
-        if ($this->container->getParameter('system.logging')) {
-            $msg = $exception->getMessage() . ' ' . $exception->getFile() . ' ' . $exception->getLine();
 
-            if ($this->container->getParameter('system.debugging')) {
-
-                $log = new Logger('kazist');
-                $log->pushHandler(new StreamHandler($error_directory . 'kazist-error.log', Logger::WARNING));
-
-                $this->container->get('debugger')['exceptions']->setChainExceptions(true);
-                $this->container->get('debugger')['exceptions']->addException($exception);
-
-                switch ($type) {
-                    case 'error':
-                        $log->error($msg);
-                        break;
-                    case 'warning':
-                        $log->warning($msg);
-                        break;
-
-                    default:
-                        $log->alert($msg);
-                        break;
-                }
-            } else {
-                $this->loggingMessage($msg, 'error');
-            }
-        }
+        $baseModel = new BaseModel();
+        $baseModel->loggingException($exception);
     }
 
     private function getTwigObject($object_arr, $paths = '') {

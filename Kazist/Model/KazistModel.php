@@ -16,8 +16,6 @@ namespace Kazist\Model;
 
 defined('KAZIST') or exit('Not Kazist Framework');
 
-use Kazist\Service\Renderer\Twig;
-use Kazist\Service\Renderer\TwigExtension;
 use Kazist\Service\Json\Json;
 use Assetic\AssetManager;
 use Assetic\Asset\AssetCollection;
@@ -27,13 +25,13 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
-use Symfony\Component\Form\Extension\Core\Type;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Kazist\Service\Database\Query;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class KazistModel {
 
@@ -188,7 +186,7 @@ class KazistModel {
         if ($admin_access && ($router == 'admin.home' || $router == 'admin.home.slash')) {
             return true;
         }
- 
+
         if (in_array($router, $exempt_route)) {
             return true;
         }
@@ -518,6 +516,68 @@ class KazistModel {
 
 
         return $structure;
+    }
+
+    public function loggingException($exception) {
+
+        $baseModel = new BaseModel();
+        if ($this->container->getParameter('system.logging')) {
+            $msg = $exception->getMessage() . ' ' . $exception->getFile() . ' ' . $exception->getLine();
+
+            if ($this->container->getParameter('system.debugging')) {
+
+                $log = new Logger('kazist');
+                $log->pushHandler(new StreamHandler($error_directory . 'kazist-error.log', Logger::WARNING));
+
+                $this->container->get('debugger')['exceptions']->setChainExceptions(true);
+                $this->container->get('debugger')['exceptions']->addException($exception);
+
+                switch ($type) {
+                    case 'error':
+                        $log->error($msg);
+                        break;
+                    case 'warning':
+                        $log->warning($msg);
+                        break;
+
+                    default:
+                        $log->alert($msg);
+                        break;
+                }
+            } else {
+                $this->loggingMessage($msg, 'error');
+            }
+        }
+    }
+
+    public function loggingMessage($msg, $type = '') {
+
+        if ($this->container->getParameter('system.logging')) {
+            $error_directory = JPATH_ROOT . 'error_log/';
+
+            $this->makeDir($error_directory);
+
+            $log = new Logger('kazist');
+            $log->pushHandler(new StreamHandler($error_directory . 'kazist-error.log', Logger::WARNING));
+
+
+            if ($this->container->getParameter('system.debugging')) {
+                $this->container->get('debugger')['messages']->info($msg);
+            } else {
+                switch ($type) {
+                    case 'error':
+                        $log->error($msg);
+                        break;
+                    case 'warning':
+                        $log->warning($msg);
+                        break;
+
+                    default:
+                        $log->alert($msg);
+                        break;
+                }
+            }
+        }
     }
 
 }

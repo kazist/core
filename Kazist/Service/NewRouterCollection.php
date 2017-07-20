@@ -334,7 +334,6 @@ class NewRouterCollection extends RouteCollection {
 
                 $app_path = JPATH_ROOT . 'applications/' . $file_name;
 
-
                 if (file_exists($app_path . '/namespace.json')) {
                     $namespace_arr = json_decode(file_get_contents($app_path . '/namespace.json'), true);
 

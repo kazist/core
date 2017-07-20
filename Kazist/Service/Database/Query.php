@@ -44,7 +44,9 @@ class Query extends QueryBuilder {
 
         $query = str_replace('#__', $this->prefix, $string);
 
-        $factory->loggingMessage($query);
+        if ($this->container->getParameter('system.debugging')) {
+            $factory->loggingMessage($query);
+        }
 
         return $query;
     }
@@ -74,9 +76,8 @@ class Query extends QueryBuilder {
         $cache_profile = $this->getQueryCacheProfile($query_str);
         $tmp_parameters = $this->getParameters();
         $parameters = (!empty($tmp_parameters)) ? $tmp_parameters : array();
-
         $stmt = $this->db->executeQuery($query_str, $parameters, array(), $cache_profile);
-
+        
         return $stmt;
     }
 
@@ -212,7 +213,7 @@ class Query extends QueryBuilder {
     public function fetchAll() {
 
         try {
-
+          
             $stmt = $this->getStatement();
 
             $records = $stmt->fetchAll();

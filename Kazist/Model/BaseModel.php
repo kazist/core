@@ -49,21 +49,23 @@ class BaseModel extends KazistModel {
         $query->setMaxResults($limit);
 
         $query->addOrderBy($this->table_alias . '.id', 'DESC');
-        
+
         try {
             $records = $query->loadObjectList();
         } catch (\Exception $ex) {
-
+          
             if (!$this->query_failed_attempt) {
+                
+                $this->query_failed_attempt = $this->query_failed_attempt + 1;
+               
                 $this->autoInstallTable($document->extension_path);
                 $this->getRecords($offset, $limit);
-                $this->query_failed_attempt++;
             }
 
             $this->loggingException($ex);
             throw $ex;
         }
-
+  
         return json_decode(json_encode($records));
     }
 

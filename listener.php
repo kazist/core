@@ -22,6 +22,7 @@ foreach ($files as $key => $file_name) {
 $query = new Kazist\Service\Database\Query();
 
 try {
+   
     $records = $query->select('sl.*')
             ->from('#__system_listeners', 'sl')
             ->where('sl.published=1')

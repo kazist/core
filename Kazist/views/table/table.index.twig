@@ -104,7 +104,17 @@
         {% include "items.pagination.twig"%}
         <br>
     {% else %}
-        No Records to show
+        <div class="no-record">
+            No Records to show
+            <br>
+            <br>
+            {% if is_granted_access(view_url, 'add') %}
+                <a class="btn btn-primary" href="{{ generate_url(view_url ~ '.add') }}" class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    Add Record
+                </a>
+            {% endif %}
+        </div>
     {% endif %}
 
 

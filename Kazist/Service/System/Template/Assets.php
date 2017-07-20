@@ -48,7 +48,7 @@ class Assets {
             }
 
             $response_content = $this->appendAssetsToContent($response_content, $asset_html, $file_ext);
-           
+
             $asset_html = '';
         }
 
@@ -60,6 +60,11 @@ class Assets {
 
     public function appendObject($response_content) {
 
+        $document = $this->container->get('document');
+
+        unset($document->user);
+        unset($document->user);
+
         $kazist['web_root'] = WEB_ROOT;
         $kazist['web_base'] = WEB_BASE;
         $kazist['web_home'] = WEB_HOME;
@@ -67,7 +72,12 @@ class Assets {
         $kazist['web_front_home'] = WEB_FRONT_HOME;
         $kazist['web_is_admin'] = WEB_IS_ADMIN;
         $kazist['web_is_homepage'] = WEB_IS_HOMEPAGE;
-        $kazist['document'] = $this->container->get('document');
+        $kazist['extension_path'] = $document->extension_path;
+        $kazist['main_route'] = $document->main_route;
+        $kazist['root_route'] = $document->root_route;
+        $kazist['base_route'] = $document->base_route;
+        $kazist['current_url'] = $document->current_url;
+        $kazist['user_id'] = $document->user->id;
 
         $response_content = $response_content . '<script> var kazist_document = ' . json_encode($kazist) . ';</script>';
 

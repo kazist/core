@@ -34,7 +34,6 @@ abstract class BaseController extends KazistController {
 
     public function indexAction($offset = 0, $limit = 10) {
 
-
         $records = $this->model->getRecords($offset, $limit);
         $json_object = $this->model->getDetailedJson();
 

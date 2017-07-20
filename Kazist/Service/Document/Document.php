@@ -57,12 +57,24 @@ class Document {
         $document->root_route = (in_array($router, $ignore_route)) ? $router : $this->formatBaseRoute($document->class);
         $document->base_route = (WEB_IS_ADMIN) ? 'admin.' . $document->root_route : $document->root_route;
 
-        $document->user = $factory->getUser();
+        $document->user = $this->getUser();
 
         $this->setPageDetail($document);
         $this->setSearchCriteria($document);
 
         return $document;
+    }
+
+    public function getUser() {
+
+        $factory = new KazistFactory();
+
+        $temp_user = $factory->getUser();
+        $new_user = $factory->getRecord('#__users_users', 'uu', array('uu.id=:id'), array('id' => $temp_user->id));
+
+        $user = (object) array_merge((array) $temp_user, (array) $new_user);
+        
+        return $user;
     }
 
     public function setSearchCriteria($document) {
@@ -127,6 +139,7 @@ class Document {
         $router = $this->request->attributes->get('_route');
         $controller = $this->request->attributes->get('_controller');
         $controller_arr = explode('Code', $controller);
+        $extension_path = rtrim(str_replace('\\', '/', $controller_arr[0]), '/');
 
         /** @TODO Remove calling document from database */
         $query = new Query();
@@ -135,17 +148,17 @@ class Document {
         $query->where('r.unique_name=:unique_name');
         $query->setParameter('unique_name', $router);
         $document = $query->loadObject();
-       
 
         if (empty($document)) {
 
-            $extension_path = rtrim(str_replace('\\', '/', $controller_arr[0]), '/');
-
             $route_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/route.json';
+
             if (file_exists($route_path)) {
                 $route_list = (json_decode(file_get_contents($route_path)));
+                $front_routes = (isset($route_list->backend) && !empty($route_list->frontend)) ? $route_list->frontend : array();
+                $back_routes = (isset($route_list->backend) && !empty($route_list->backend)) ? $route_list->backend : array();
 
-                $routes = array_merge($route_list->frontend, $route_list->backend);
+                $routes = array_merge($front_routes, $back_routes);
 
                 foreach ($routes as $key => $route) {
                     if ($router == $route->unique_name) {
@@ -155,6 +168,8 @@ class Document {
                 }
             }
         }
+
+        $route->extension_path = ( $route->extension_path <> '') ? $route->extension_path : $extension_path;
 
         return $document;
     }
