@@ -53,11 +53,11 @@ class BaseModel extends KazistModel {
         try {
             $records = $query->loadObjectList();
         } catch (\Exception $ex) {
-          
+
             if (!$this->query_failed_attempt) {
-                
+
                 $this->query_failed_attempt = $this->query_failed_attempt + 1;
-               
+
                 $this->autoInstallTable($document->extension_path);
                 $this->getRecords($offset, $limit);
             }
@@ -65,7 +65,7 @@ class BaseModel extends KazistModel {
             $this->loggingException($ex);
             throw $ex;
         }
-  
+
         return json_decode(json_encode($records));
     }
 
@@ -116,9 +116,11 @@ class BaseModel extends KazistModel {
         } catch (\Exception $ex) {
 
             if (!$this->query_failed_attempt) {
+
+                $this->query_failed_attempt = $this->query_failed_attempt + 1;
+
                 $this->autoInstallTable($document->extension_path);
                 $this->getRecord($id, $query);
-                $this->query_failed_attempt++;
             }
 
             $this->loggingException($ex);
