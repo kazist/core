@@ -1,6 +1,6 @@
 {
     "name": "kazist/core",
-    "description": "Kazist core Manager.",
+    "description": "Kazist Core/Include Manager.",
     "keywords": ["kazist", "core manager"],
     "homepage": "https://github.com/kazist/core",
     "license": "LGPL-3.0",
