@@ -205,6 +205,9 @@ class NewRouterCollection extends RouteCollection {
 
         $doctrine = $sc->get('doctrine');
 
+        $doctrine->entity_path = JPATH_ROOT . 'applications/Media/Media/Code/Tables';
+        $doctrine->getEntityManager();
+
         $doctrine->entity_path = JPATH_ROOT . 'applications/Setup/Countries/Code/Tables';
         $doctrine->getEntityManager();
 
@@ -295,7 +298,7 @@ class NewRouterCollection extends RouteCollection {
         $doctrine->entity_path = JPATH_ROOT . 'applications/Notification/Subscribers/Groups/Code/Tables';
         $doctrine->getEntityManager();
 
-        $this->addFromDatabase();
+        $this->addRoutes();
     }
 
     public function addRoutes() {
