@@ -227,8 +227,9 @@ class Template {
         $kazimodel->request = $this->request;
         $kazimodel->doctrine = $this->container->get('doctrine');
 
-        $controller = $factory->getRecord('#__system_routes', 'sr', array('unique_name=:unique_name'), array('unique_name' => $unique_name));
-        $controller_class = $controller->controller;
+        $route = $this->container->getParameter('routes')->get($unique_name);
+        $defaults = $route->getDefaults();
+        $controller_class = $defaults['_controller'];
 
         if ($controller_class != '') {
 

@@ -306,6 +306,7 @@ class NewRouterCollection extends RouteCollection {
         $this->processPagesTable();
         // $this->processRoutesTable();
         $this->processRoutesJsons();
+        $this->processAddonsRoutesJsons();
     }
 
     public function processPagesTable() {
@@ -326,6 +327,52 @@ class NewRouterCollection extends RouteCollection {
         }
     }
 
+    public function processAddonsRoutesJsons() {
+
+        $dir = new \DirectoryIterator(JPATH_ROOT . 'applications');
+
+        foreach ($dir as $appfileinfo) {
+
+            $app_file_name = $appfileinfo->getFilename();
+
+            if ($appfileinfo->isDir() && !$appfileinfo->isDot()) {
+
+                $app_path = JPATH_ROOT . 'applications/' . $app_file_name;
+
+                if (is_dir($app_path . '/Addons')) {
+
+                    $addon_dir = new \DirectoryIterator($app_path . '/Addons');
+
+                    foreach ($addon_dir as $addonfileinfo) {
+                        if ($addonfileinfo->isDir() && !$addonfileinfo->isDot()) {
+
+                            $addon_file_name = $addonfileinfo->getFilename();
+
+                            $code_folder = $app_path . '/Addons/' . $addon_file_name;
+
+                            if (file_exists($code_folder . '/route.json')) {
+
+                                $route_arr = json_decode(file_get_contents($code_folder . '/route.json'), true);
+
+                                if (array_key_exists("frontend", $route_arr)) {
+                                    foreach ($route_arr['frontend'] as $key => $route) {
+                                        $this->addRouteToObject($route);
+                                    }
+                                }
+
+                                if (array_key_exists("backend", $route_arr)) {
+                                    foreach ($route_arr['backend'] as $key => $route) {
+                                        $this->addRouteToObject($route);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function processRoutesJsons() {
 
         $dir = new \DirectoryIterator(JPATH_ROOT . 'applications');
@@ -333,6 +380,7 @@ class NewRouterCollection extends RouteCollection {
         foreach ($dir as $fileinfo) {
 
             $file_name = $fileinfo->getFilename();
+
             if ($fileinfo->isDir() && !$fileinfo->isDot()) {
 
                 $app_path = JPATH_ROOT . 'applications/' . $file_name;
@@ -378,7 +426,6 @@ class NewRouterCollection extends RouteCollection {
     }
 
     public function addRouteToObject($route_single) {
-
 
         if (array_key_exists("seo_url", $route_single)) {
             $seo_url_path = ( $route_single['seo_url'] <> '') ? '/' . trim($route_single['seo_url'], '/') : '';
