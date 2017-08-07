@@ -85,6 +85,8 @@ class UserController extends BaseController {
 
         $factory = new KazistFactory();
 
+        $this->model = new UsersModel();
+
         $authenticationManager = $this->container->get('security.authenticate');
         $tokenStorage = $this->container->get('security.token_storage');
         $session = $this->container->get('session');
@@ -107,9 +109,7 @@ class UserController extends BaseController {
             $route_str = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
 
             $user = $token->getUser();
-            $tmp_arr = array('id' => $user->id, 'last_date_active' => date('Y-m-d H:i:s'));
-
-            $factory->saveRecordByEntity('#__users_users', $tmp_arr);
+            $this->model->logUserTimeIp($user);
 
             return $this->redirectToRoute($route_str);
         } catch (AuthenticationException $e) {
@@ -164,7 +164,7 @@ class UserController extends BaseController {
                 $factory->enqueueMessage($msg, 'error');
             }
 
-           return $this->redirect($return_url);
+            return $this->redirect($return_url);
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf('Error: ' . $e->getMessage()));
         }

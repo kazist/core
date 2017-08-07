@@ -75,6 +75,25 @@ class UsersModel extends BaseModel {
         $session->clear('user_id');
     }
 
+    public function logUserTimeIp($user) {
+
+        $factory = new KazistFactory();
+
+        /* Save record to user database */
+        $tmp_arr = array('id' => $user->id, 'ip' => $_SERVER['REMOTE_ADDR'], 'last_date_active' => date('Y-m-d H:i:s'));
+        $factory->saveRecordByEntity('#__users_users', $tmp_arr);
+
+        /* Save record to user logger database */
+        $tmp_arr = array('user_id' => $user->id, 'ip' => $_SERVER['REMOTE_ADDR']);
+        $factory->saveRecordByEntity('#__users_users_logs', $tmp_arr);
+    }
+
+    /**
+     * Function for processing verifications that are sent via email
+     * 
+     * @param type $verification
+     * @return boolean
+     */
     public function accountVerification($verification) {
         $factory = new KazistFactory();
 

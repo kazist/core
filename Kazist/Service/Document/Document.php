@@ -67,13 +67,26 @@ class Document {
 
     public function getUser() {
 
+        $doctrine = $this->container->get('doctrine');
+
         $factory = new KazistFactory();
-
         $temp_user = $factory->getUser();
-        $new_user = $factory->getRecord('#__users_users', 'uu', array('uu.id=:id'), array('id' => $temp_user->id));
 
+        try {
+            $new_user = $factory->getRecord('#__users_users', 'uu', array('uu.id=:id'), array('id' => $temp_user->id));
+        } catch (\Exception $ex) {
+            $doctrine->refresh = true;
+            $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Users/Code/Tables';
+
+            if (is_dir($doctrine->entity_path)) {
+                $doctrine->getEntityManager();
+            }
+
+            $new_user = $factory->getRecord('#__users_users', 'uu', array('uu.id=:id'), array('id' => $temp_user->id));
+        }
+       
         $user = (object) array_merge((array) $temp_user, (array) $new_user);
-        
+
         return $user;
     }
 
