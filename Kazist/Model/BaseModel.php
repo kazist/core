@@ -760,19 +760,7 @@ class BaseModel extends KazistModel {
             foreach ($where_arr as $key => $where) {
 
                 if ($add_alias && !(int) strpos($where, 'AND') && !(int) strpos($where, 'OR')) {
-
-                    $where_sub_arr = explode('=', $where);
-                    $field_name = $where_sub_arr[0];
-                    $field_name_arr = explode('.', $field_name);
-
-                    $factory = new \Kazist\KazistFactory();
-                    $factory->loggingMessage($where_sub_arr);
-                    $factory->loggingMessage($where_sub_arr[0]);
-
-                    if (!is_numeric($where_sub_arr[0])) {
-                        $new_field_name = (!strpos($field_name, '.')) ? $this->table_alias . '.' . $field_name_arr[0] : $field_name;
-                        $where = $new_field_name . '=' . $where_sub_arr[1];
-                    }
+                    $where = $this->addTableAliasToWhere($where, $parameter_arr);
                 }
 
                 if (!$key) {
@@ -784,6 +772,30 @@ class BaseModel extends KazistModel {
         }
 
         return $query;
+    }
+
+    public function addTableAliasToWhere($where, $parameter_arr) {
+
+        $operator_arr = array('>=', '<=', '!=', '>', '<', '=', 'like', 'not like', 'LIKE', 'NOT LIKE');
+
+        foreach ($operator_arr as $key => $operator_single) {
+
+            $where_sub_arr = explode($operator_single, $where);
+
+            if (count($where_sub_arr) > 1) {
+
+                $field_name = $where_sub_arr[0];
+                $field_name_arr = explode('.', $field_name);
+
+                if (!is_numeric($where_sub_arr[0])) {
+                    $new_field_name = (!strpos($field_name, '.')) ? $this->table_alias . '.' . $field_name_arr[0] : $field_name;
+                    $where = $new_field_name . ' ' . $operator_single . ' ' . $where_sub_arr[1];
+                }
+                break;
+            }
+        }
+
+        return $where;
     }
 
     public function appendSearchQuery($query) {

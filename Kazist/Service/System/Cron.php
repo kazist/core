@@ -33,6 +33,7 @@ class Cron {
 
         $factory = new KazistFactory();
 
+        $this->processFileCrontoDatabase();
         $this->deleteEmptyCrons();
 
         $crons = $this->getCronList();
@@ -45,7 +46,7 @@ class Cron {
                 $this->updateNextRunTime($cron->id, $cron_str);
             }
         }
-    
+
         if (!empty($crons)) {
             foreach ($crons as $key => $cron) {
 
@@ -54,10 +55,8 @@ class Cron {
                 $this->printSeparator();
             }
         }
-        
+
         $this->printSeparator();
-        
-      
     }
 
     public function callCronByCurl($cron) {
@@ -67,11 +66,11 @@ class Cron {
         $http_host = $this->request->server->get('HTTP_HOST');
         $request_uri = $this->request->server->get('REQUEST_URI');
         $unique_name = $cron->unique_name;
-        
+
         $this->printSeparator();
         $this->printLog($unique_name);
 
-        $url = $http_host  . $factory->generateUrl($unique_name);
+        $url = $http_host . $factory->generateUrl($unique_name);
         $url = str_replace('cron.', 'index.', $url);
         $url = str_replace('cron-dev.', 'index-dev.', $url);
 
@@ -140,7 +139,7 @@ class Cron {
 
         $cron = CronExpression::factory($cron_str);
         $next_run_time = $cron->getNextRunDate()->format('Y-m-d H:i:s');
-       
+
         $stdclass = new \stdClass();
         $stdclass->id = $id;
         $stdclass->is_new = 0;
@@ -177,6 +176,55 @@ class Cron {
         return $cron;
     }
 
+    public function processFileCrontoDatabase() {
+
+        $cron_list = array();
+
+        $factory = new KazistFactory();
+
+        //Fetch Cron from folder list
+        $dir = new \DirectoryIterator(JPATH_ROOT . '/applications');
+
+        foreach ($dir as $fileinfo) {
+            if ($fileinfo->isDir() && !$fileinfo->isDot()) {
+
+                $folder_path = JPATH_ROOT . '/applications/' . ucfirst($fileinfo->getFilename());
+
+                if (file_exists($folder_path . '/cron.json')) {
+
+                    $crons = json_decode(file_get_contents($folder_path . '/cron.json'));
+
+                    foreach ($crons as $cron) {
+                        $cron_list[$cron->unique_name] = $cron;
+                    }
+                }
+            }
+        }
+
+        //Fetch Cron from database
+        $query = new Query();
+        $query->select('*');
+        $query->from('#__system_crons');
+        $db_crons = $query->loadObjectList();
+
+        foreach ($db_crons as $db_cron) {
+            if (array_key_exists($db_cron->unique_name, $cron_list)) {
+                unset($cron_list[$db_cron->unique_name]);
+            }
+        }
+
+        //Add Cron files to database
+        foreach ($cron_list as $cron) {
+
+            $class_arr = explode('Code', $cron->controller);
+
+            $cron->locked_key = '';
+            $cron->extension_path = rtrim($class_arr[0], '\\');
+
+            $factory->saveRecord('#__system_crons', $cron);
+        }
+    }
+
     public function getCronList() {
 
         $random_number = uniqid();
@@ -185,10 +233,10 @@ class Cron {
         $query->select('*');
         $query->from('#__system_crons');
         $query->where('published=1');
-        $query->andWhere('next_run_time<\'' . date('Y-m-d H:i:s') . '\' OR '
+        $query->andWhere('next_run_time IS NULL OR next_run_time = \'\' OR next_run_time<\'' . date('Y-m-d H:i:s') . '\' OR '
                 . 'unique_name = \'notification.emails.cronemailsender\'');
         $query->setFirstResult(0);
-        $query->setMaxResults(2);
+        $query->setMaxResults(3);
 
         $crons = $query->loadObjectList();
 

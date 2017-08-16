@@ -7,7 +7,7 @@
 {% set field_parameter = attribute(json_fields, field) %}
 
 {% include "before.editform." ~ document.base_route ~ ".twig" ignore missing %}
-
+{% include "before.editform.twig" ignore missing %}
 
 {% if not  constant('WEB_IS_ADMIN') %}
     <h1>{{ document.title }}</h1>
@@ -21,6 +21,7 @@
 
 <form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
     {% include "top.editform." ~ document.base_route ~ ".twig"  ignore missing with {'save_button_text': save_button_text}  %}
+    {% include "top.editform.twig" ignore missing %}
 
     {% if json_object.views.edit.structure.rows|length > 0 %}
         {% for row in json_object.views.edit.structure.rows %}
@@ -35,6 +36,7 @@
     {% endif %}
 
     {% include "bottom.editform." ~ document.base_route ~ ".twig" ignore missing %}
+    {% include "bottom.editform.twig" ignore missing %}
 
     {{ forms.input('id', 'hidden', item.id ) }}
 
@@ -59,6 +61,7 @@
 
 
 {% include "after.editform." ~ document.base_route ~ ".twig" ignore missing %}
+{% include "after.editform.twig" ignore missing %}
 
 {% if get_media_exist() %}
     {{ addTwigPath('include.Kazist.views.edit') }}
