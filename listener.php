@@ -46,7 +46,7 @@ foreach ($dir as $fileinfo) {
 
         $records = $query->select('sl.*')
                 ->from('#__system_listeners', 'sl')
-                ->orderBy('sl.ordering', 'DESC')
+                ->orderBy('sl.ordering', 'ASC')
                 ->loadObjectList();
 
         if (!empty($records)) {

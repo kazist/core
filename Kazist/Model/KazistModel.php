@@ -97,7 +97,9 @@ class KazistModel {
         $groups = $query->loadObjectList();
 
         foreach ($groups as $key => $group) {
-            $tmp_array[] = $group->id;
+            if ($group->id) {
+                $tmp_array[] = $group->id;
+            }
         }
 
         $user->group_ids = $tmp_array;
@@ -120,8 +122,11 @@ class KazistModel {
         $query->select(' DISTINCT ur.*');
         $query->from('#__users_roles', 'ur');
         $query->leftJoin('ur', '#__users_groups_roles', 'ugr', 'ur.id=ugr.role_id');
-        if (!empty($user->group_ids)) {
-            $query->where('ugr.group_id IN (' . implode(',', $user->group_ids) . ')');
+
+        $group_ids_str = (!empty($user->group_ids)) ? implode(',', $user->group_ids) : '';
+
+        if ($group_ids_str != '') {
+            $query->where('ugr.group_id IN (' . $group_ids_str . ')');
         } else {
             $query->where('1=-1');
         }
