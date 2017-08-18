@@ -202,7 +202,7 @@ abstract class BaseController extends KazistController {
                 $return_url_decode = base64_decode($return_url);
 
                 if (base64_encode($return_url_decode) == $return_url) {
-                    return $this->redirect($return_url);
+                    return $this->redirect($return_url_decode);
                 } else {
                     return $this->redirect($form_data['return_url']);
                 }
