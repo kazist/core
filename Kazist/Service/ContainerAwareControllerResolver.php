@@ -66,6 +66,7 @@ class ContainerAwareControllerResolver extends ControllerResolver {
 
         if (count($controller_arr) > 1) {
             $class_arr = $initial_arr = array_filter(explode('\\', $controller_arr[0]));
+          
             $class_arr[] = 'Code';
             $class_arr[] = 'Models';
             $class_arr[] = end($initial_arr) . 'Model';
