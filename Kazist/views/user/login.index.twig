@@ -18,6 +18,10 @@
             <div class="well well-sm"> Login Detail</div>        
         {% endif %}
 
+        {% if login_attempts %}
+            <div class="well well-sm"> Login Attempts {{ login_attempts }} of {{ max_login_attempts }}</div>        
+        {% endif %}
+
         <div class="form-horizontal">
 
             <div class="col-sm-12">

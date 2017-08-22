@@ -23,20 +23,69 @@ use Kazist\Model\UsersModel;
 
 class UserController extends BaseController {
 
+    public function doubleauthAction() {
+        $factory = new KazistFactory();
+
+        $session = $factory->getSession();
+
+        $return_url = $this->request->get('return_url');
+
+        $doubleauth_code = $session->get('doubleauth_code');
+        $user_doubleauth_code = $session->get('user_doubleauth_code');
+
+        $data_arr['return_url'] = base64_decode($return_url);
+        $data_arr['show_title'] = 1;
+        $data_arr['show_cancel'] = 1;
+        $data_arr['login_using'] = $factory->getSetting('users_users_login_using');
+
+        if ($doubleauth_code == '' || $doubleauth_code <> $user_doubleauth_code) {
+            $this->html .= $this->render('Kazist:views:user:doubleauth.index.twig', $data_arr);
+
+            $response = $this->response($this->html);
+
+            return $response;
+        } else {
+            return $this->redirect($return_url);
+        }
+    }
+
+    public function doubleauthCheckAction() {
+
+        $session = $this->container->get('session');
+
+        $form_data = $this->request->request->get('form');
+
+        $session->set('user_doubleauth_code', $form_data['doubleauth_code']);
+        
+        return $this->redirect($form_data['return_url']);
+    }
+
     public function loginAction() {
 
         $factory = new KazistFactory();
 
+        $session = $factory->getSession();
         $user = $factory->getUser();
 
+        $max_login_attempts = $factory->getSetting('users_users_login_attempts');
+        $login_attempts = $session->get('login_attempts');
+
+        $data_arr['max_login_attempts'] = $max_login_attempts;
+        $data_arr['login_attempts'] = $login_attempts;
         $data_arr['show_title'] = 1;
         $data_arr['show_cancel'] = 1;
         $data_arr['login_using'] = $factory->getSetting('users_users_login_using');
 
 
         if ($user->id) {
+            $session->remove('login_attempts');
             return $this->redirectToRoute('admin.home');
         } else {
+            if ($login_attempts && $login_attempts >= $max_login_attempts) {
+                $factory->enqueueMessage('maximum Login Attempt Reached.Change your password and try again or login after one hour.');
+                return $this->redirectToRoute('home');
+            }
+
             $this->html .= $this->render('Kazist:views:user:login.index.twig', $data_arr);
 
             $response = $this->response($this->html);
@@ -91,7 +140,11 @@ class UserController extends BaseController {
         $tokenStorage = $this->container->get('security.token_storage');
         $session = $this->container->get('session');
 
+        $login_attempts = $session->get('login_attempts');
+
         $form_data = $this->request->request->get('form');
+
+        $session->set('login_attempts', $login_attempts + 1);
 
         try {
 

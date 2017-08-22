@@ -1,0 +1,63 @@
+{# empty Twig template #}
+
+{% import "form.macro.twig" as forms %}
+
+{{ set_assets('applications/Users/assets/css/login.css') }}
+
+{% if web_is_admin %}
+    {% set view_url = 'admin.doubleauth_check' %}
+{% else%}
+    {% set view_url = 'doubleauth_check' %}
+{% endif%}
+
+<div class="user_login_bg">
+
+    <form  method="post" action="{{ generate_url(view_url) }}" role="form">
+
+        {% if show_title %}
+            <div class="well well-sm"> Login Detail</div>        
+        {% endif %}
+
+        <blockquote >
+            Enter Code that was sent to your Email address.
+        </blockquote> 
+
+        <div class="form-horizontal">
+
+
+            <div class="col-sm-12">
+                <label>Code</label>
+                {{ forms.input('doubleauth_code', 'password', null) }}
+            </div>
+
+            <div class="form-group form_links-group">
+                <div class="col-sm-12">
+
+
+                    <div>
+                        
+                        <br>
+                        <br>
+                        
+                        <button type="submit" class="btn btn-success btn-sm btn-flat">
+                            <i class="fa fa-arrow-right"></i> Verify Code
+                        </button>
+
+                        {% if show_cancel %}
+                            <a class="btn btn-danger btn-sm btn-flat" href="{{generate_url('home') }}" title='Cancel'>
+                                <i class=" fa fa-mail-reply"></i> Cancel
+                            </a>
+                        {% endif %} 
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        {{ forms.input('return_url', 'hidden', return_url|raw ) }}
+
+        {{ forms.input('_token' ) }} 
+
+    </form>
+</div>

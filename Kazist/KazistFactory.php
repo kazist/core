@@ -12,7 +12,6 @@ defined('KAZIST') or exit('Not Kazist Framework');
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Kazist\Service\Database\Query;
-
 use Kazist\Model\BaseModel;
 use Kazist\Service\Media\MediaManager;
 
@@ -281,6 +280,13 @@ class KazistFactory {
 
 
         return $media_ids;
+    }
+
+    public function urlExist($route) {
+
+        $baseModel = new BaseModel();
+
+        return $baseModel->urlExist($route);
     }
 
     /**

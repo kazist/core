@@ -857,6 +857,20 @@ class BaseModel extends KazistModel {
         return $query;
     }
 
+    public function urlExist($route) {
+        if ($route <> null || $route <> '') {
+
+            $routes = $this->container->getParameter('routes');
+            $route_obj = $routes->get($route);
+            
+            if (is_object($route_obj)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $data = array()) {
 
         if ($route <> null || $route <> '') {

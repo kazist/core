@@ -92,6 +92,8 @@ class TwigExtension extends \Twig_Extension {
         $functions[] = new \Twig_SimpleFunction('is_granted_access', array($this, 'isGrantedAcess'));
         $functions[] = new \Twig_SimpleFunction('resized_image', array($this, 'resizedImage'));
         $functions[] = new \Twig_SimpleFunction('generate_url', array($this, 'generateUrl'));
+        $functions[] = new \Twig_SimpleFunction('url', array($this, 'generateUrl'));
+        $functions[] = new \Twig_SimpleFunction('url_exist', array($this, 'urlExist'));
         $functions[] = new \Twig_SimpleFunction('get_session', array($this, 'getSession'));
         $functions[] = new \Twig_SimpleFunction('get_context', array($this, 'getContext'));
         $functions[] = new \Twig_SimpleFunction('get_setting', array($this, 'getSetting'));
@@ -160,7 +162,7 @@ class TwigExtension extends \Twig_Extension {
         } else {
             $web_filename = $image;
         }
-        
+
         return WEB_ROOT . $web_filename . '?' . filemtime($image_path);
     }
 
@@ -241,6 +243,12 @@ class TwigExtension extends \Twig_Extension {
         $context = $this->container->get('session')->get('twig_context');
 
         return $context[$item_name];
+    }
+
+    public function urlExist($route) {
+        $factory = new KazistFactory();
+
+        return $factory->urlExist($route);
     }
 
     public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $data = '') {

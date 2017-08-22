@@ -48,17 +48,17 @@
                                 <td class="dropdown">
                                     <a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#" title="More Actions"> <span class="glyphicon glyphicon glyphicon-cog"></span>&nbsp; <span class="caret"></span> </a>
                                     <ul class="dropdown-menu">
-                                        {% if is_granted_access(view_url, 'view') %}
+                                        {% if is_granted_access(view_url, 'view') and url_exist(view_url~'.detail') %}
                                             <li>
                                                 <a href="{{ generate_url(view_url ~ '.detail', {'id':item.id }) }}" title="Show Detail<">Show Detail</a>
                                             </li>
                                         {% endif %}
-                                        {% if is_granted_access(view_url, 'write') %}
+                                        {% if is_granted_access(view_url, 'write') and url_exist(view_url~'.edit') %}
                                             <li>
                                                 <a href="{{ generate_url(view_url ~ '.edit', {'id':item.id }) }}" title="Edit">Edit</a>
                                             </li>
                                         {% endif %}
-                                        {% if is_granted_access(view_url, 'delete') %}
+                                        {% if is_granted_access(view_url, 'delete') and url_exist(view_url~'.delete') %}
                                             <li>
                                                 <a class="confirm_delete" href="{{ generate_url(view_url ~ '.delete', {'id':item.id }) }}" title="Delete">Delete</a>
                                             </li>

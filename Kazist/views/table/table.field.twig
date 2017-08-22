@@ -1,7 +1,7 @@
 
 {% import _self as tablefield %}
 
-{% if first_record %}
+{% if first_record and url_exist(view_url~'.edit') %}
     <a href="{{ generate_url(view_url ~ '.edit', {'id':item.id }) }}" title="View Detail">
     {% endif %}
 
@@ -9,7 +9,7 @@
 
     {{ tablefield.field(field_parameter, item) }}
 
-    {% if first_record %}
+    {% if first_record  and url_exist(view_url~'.edit') %}
     </a>
 {% endif %}
 

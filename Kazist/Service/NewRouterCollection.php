@@ -107,6 +107,22 @@ class NewRouterCollection extends RouteCollection {
         $this->add('admin.login_check', new Routing\Route('/admin/login-check', array(
             '_controller' => 'Kazist\Controller\\UserController::loginCheckAction',
         )));
+        
+        $this->add('doubleauth', new Routing\Route('/doubleauth', array(
+            '_controller' => 'Kazist\Controller\\UserController::doubleauthAction',
+        )));
+
+        $this->add('admin.doubleauth', new Routing\Route('/admin/doubleauth', array(
+            '_controller' => 'Kazist\Controller\\UserController::doubleauthAction',
+        )));
+
+        $this->add('doubleauth_check', new Routing\Route('/doubleauth-check', array(
+            '_controller' => 'Kazist\Controller\\UserController::doubleauthCheckAction',
+        )));
+
+        $this->add('admin.doubleauth_check', new Routing\Route('/admin/doubleauth-check', array(
+            '_controller' => 'Kazist\Controller\\UserController::doubleauthCheckAction',
+        )));
 
         $this->add('user_invite', new Routing\Route('/invite/{username}', array(
             'username' => null,

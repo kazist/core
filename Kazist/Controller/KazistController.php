@@ -183,6 +183,13 @@ abstract class KazistController {
             } else {
                 if (is_object($user) && $user->id) {
 
+                    $return_url = $this->generateUrl($router, null, 0);
+
+                    if (!$this->model->verifyDoubleAuth($user, $router, $return_url)) {
+                        $link_route = (WEB_IS_ADMIN) ? 'admin.doubleauth' : 'doubleauth';
+                        $this->specialRedirectToRoute($link_route, array('return_url' => base64_encode($return_url)));
+                    }
+
                     if (WEB_IS_ADMIN && !$user->is_admin && !$admin_access) {
                         $link_route = 'home';
                         $this->addFlash('danger', 'You Dont have right to access this Area.');
@@ -263,7 +270,7 @@ abstract class KazistController {
         if ($objectList['action_type'] <> '') {
             $html .= '<div class="response-content">' . $tmp_html . '</div>';
         } else {
-            $html .= '<div class="block-content">' .$tmp_html . '</div>';
+            $html .= '<div class="block-content">' . $tmp_html . '</div>';
         }
 
         return $html;

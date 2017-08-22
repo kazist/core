@@ -16,6 +16,7 @@ namespace Kazist\Model;
 
 defined('KAZIST') or exit('Not Kazist Framework');
 
+use Kazist\Service\Email\Email;
 use Kazist\Service\Json\Json;
 use Assetic\AssetManager;
 use Assetic\Asset\AssetCollection;
@@ -47,6 +48,44 @@ class KazistModel {
         $this->doctrine = $this->container->get('doctrine');
         $this->request = $this->container->get('request');
         ;
+    }
+
+    /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Check Double Auth xxxxxxxxxxxxxxxx */
+
+    public function verifyDoubleAuth($user, $router, $return_url) {
+
+        $email = new Email();
+
+        $session = $this->container->get('session');
+        $doubleauth_code = $session->get('doubleauth_code');
+        $user_doubleauth_code = $session->get('user_doubleauth_code');
+
+        $query = new Query();
+        $query->select('udr.*');
+        $query->from('#__users_doubleauth_routes', 'udr')->where('udr.route=:route')->setParameter('route', $router);
+        $route = $query->loadObject();
+
+        if (is_object($route)) {
+
+            if ($doubleauth_code <> '' && $user_doubleauth_code == $doubleauth_code) {
+                return true;
+            } else {
+                $link_route = (WEB_IS_ADMIN) ? 'admin.doubleauth' : 'doubleauth';
+
+                $parameters = array();
+                $parameters['user'] = $user;
+                $parameters['doubleauth_code'] = $doubleauth_code = rand(10000, 100000);
+                $parameters['doubleauth_url'] = $this->generateUrl($link_route, array('return_url' => base64_encode($return_url)), 0);
+
+                $email->sendDefinedLayoutEmail('users.users.doubleauth', $user->email, $parameters);
+                $session->set('doubleauth_code', $doubleauth_code);
+                $this->enqueueMessage($doubleauth_code);
+
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Start Process User Object xxxxxxxxxxxxxxxx */

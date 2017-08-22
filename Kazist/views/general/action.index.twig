@@ -31,11 +31,12 @@
 
 {% else %}
 
-
-    <a class="btn btn-success btn-sm" href="{{ generate_url(document.base_route~'.add') }}">
-        <span class="glyphicon glyphicon glyphicon-plus"></span> Add
-    </a>
-
+    {% if url_exist(document.base_route~'.add') %}
+        <a class="btn btn-success btn-sm" href="{{ generate_url(document.base_route~'.add') }}">
+            <span class="glyphicon glyphicon glyphicon-plus"></span> Add
+        </a>
+    {% endif %}
+    
     {% if twig_file != 'recordpicker' %}
         <span class="dropdown"> 
             <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  href="#">
