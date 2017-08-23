@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Kazist\Service\Database\Query;
 use Kazist\Model\BaseModel;
 use Kazist\Service\Media\MediaManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Database service provider
@@ -305,6 +306,16 @@ class KazistFactory {
         $baseModel = new BaseModel();
 
         return $baseModel->generateUrl($route, $parameters, $referenceType, $data);
+    }
+
+    public function redirectToRoute($route, $parameters = '', $status = '302') {
+
+        $this->getSession()->set('is_redirect', true);
+
+        $url = $this->generateUrl($route, $parameters);
+        $redirect_response = new RedirectResponse($url, $status);
+        $redirect_response->sendHeaders();
+        exit;
     }
 
     public function loggingMessage($msg, $type = '') {

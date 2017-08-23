@@ -217,7 +217,7 @@ class Document {
 
         $tmp_permission_arr = array();
 
-        $query->from('#__system_routes_permissions', 'p');
+        $query->from('#__users_permission', 'p');
         $query->select('r.alias, p.can_add, p.can_view, p.can_write, p.can_delete, p.can_viewown, p.can_writeown, p.can_deleteown');
         $query->where('p.route_id=:route_id');
         $query->leftjoin('p', '#__users_roles', 'r', 'p.role_id=r.id');

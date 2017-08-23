@@ -238,9 +238,10 @@ class KazistModel {
         if ($user->is_admin) {
             return true;
         }
+        
 
         if (($document->login_required || WEB_IS_ADMIN)) {
-            $is_allowed = $this->getUserActiveRole($document->id, $user, $document->permissions);
+            $is_allowed = $this->getUserActiveRole($document->unique_name, $user, $document->permissions);
 
             return $is_allowed;
         } else {
@@ -250,7 +251,7 @@ class KazistModel {
         return false;
     }
 
-    public function getUserActiveRole($route_id, $user, $permissions) {
+    public function getUserActiveRole($route_name, $user, $permissions) {
 
         $where_arr = array();
 
@@ -258,13 +259,13 @@ class KazistModel {
 
         $query = new Query();
         $query->select(' DISTINCT srp.*');
-        $query->from('#__system_routes_permissions', 'srp');
+        $query->from('#__users_permission', 'srp');
         if (!empty($user->role_ids)) {
             $query->andWhere('srp.role_id IN (' . implode(',', $user->role_ids) . ')');
         } else {
             $query->andWhere('1=-1');
         }
-        $query->andWhere('srp.route_id =' . (int) $route_id);
+        $query->andWhere('srp.route =' . (int) $route_name);
 
         if (!empty($permissions_arr)) {
             foreach ($permissions_arr as $permission_item) {
