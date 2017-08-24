@@ -107,7 +107,7 @@ class NewRouterCollection extends RouteCollection {
         $this->add('admin.login_check', new Routing\Route('/admin/login-check', array(
             '_controller' => 'Kazist\Controller\\UserController::loginCheckAction',
         )));
-        
+
         $this->add('doubleauth', new Routing\Route('/doubleauth', array(
             '_controller' => 'Kazist\Controller\\UserController::doubleauthAction',
         )));
@@ -263,6 +263,9 @@ class NewRouterCollection extends RouteCollection {
         $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Groups/Code/Tables';
         $doctrine->getEntityManager();
 
+        $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Doubleauth/Routes/Code/Tables';
+        $doctrine->getEntityManager();
+
         $doctrine->entity_path = JPATH_ROOT . 'applications/Users/Users/Code/Tables';
         $doctrine->getEntityManager();
 
@@ -350,7 +353,7 @@ class NewRouterCollection extends RouteCollection {
         foreach ($dir as $appfileinfo) {
 
             $app_file_name = $appfileinfo->getFilename();
-
+        
             if ($appfileinfo->isDir() && !$appfileinfo->isDot()) {
 
                 $app_path = JPATH_ROOT . 'applications/' . $app_file_name;
