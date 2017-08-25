@@ -29,7 +29,7 @@ abstract class BaseController extends KazistController {
      * Function for initializing Common Code for the system call to work properly.
      */
     public function __construct() {
-        
+      
     }
 
     public function indexAction($offset = 0, $limit = 10) {

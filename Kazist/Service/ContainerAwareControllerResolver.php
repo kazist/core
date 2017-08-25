@@ -43,7 +43,7 @@ class ContainerAwareControllerResolver extends ControllerResolver {
         $new_class = new $class();
 
         $this->container->register('request', $this->request);
-
+        
         $this->setDefaultParameters();
         $new_class->setContainer($this->container);
         $new_class->setRequest($this->request);
