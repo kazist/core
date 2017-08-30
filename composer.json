@@ -4,7 +4,7 @@
     "keywords": ["kazist", "core manager"],
     "homepage": "https://github.com/kazist/core",
     "license": "LGPL-3.0",
-    "version": "1.0.50",
+    "version": "1.0.51",
     "authors": [ 
         {
             "name": "Dedan Irungu",
