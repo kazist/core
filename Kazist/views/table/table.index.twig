@@ -1,7 +1,6 @@
 
 {% import "form.macro.twig" as forms %}
 
-
 {% if web_is_admin %}
     {% set view_url = 'admin.'~json_object.table_name|replace({'_': '.'}) %}
 {% else %}
@@ -40,6 +39,7 @@
                 </thead>
                 <tbody>
                     {% for item in items %}
+                        
                         <tr>
                             {% if twig_file != 'recordpicker' %}
                                 <td>

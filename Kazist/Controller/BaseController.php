@@ -29,7 +29,7 @@ abstract class BaseController extends KazistController {
      * Function for initializing Common Code for the system call to work properly.
      */
     public function __construct() {
-      
+        
     }
 
     public function indexAction($offset = 0, $limit = 10) {
@@ -37,6 +37,11 @@ abstract class BaseController extends KazistController {
         $records = $this->model->getRecords($offset, $limit);
         $json_object = $this->model->getDetailedJson();
 
+        $twig_file = $this->request->get('twig_file');
+        $displayfields = explode(',', $this->request->get('displayfield'));
+
+        $this->data_arr['displayfields'] = $displayfields;
+        $this->data_arr['twig_file'] = $twig_file;
         $this->data_arr['items'] = (count($this->data_arr['items'])) ? $this->data_arr['items'] : $records;
         $this->data_arr['json_object'] = $json_object;
         $this->data_arr['action_type'] = 'table';
@@ -44,7 +49,7 @@ abstract class BaseController extends KazistController {
         $this->data_arr['show_search'] = (isset($this->data_arr['show_search'])) ? $this->data_arr['show_search'] : true;
         $this->data_arr['show_messages'] = (isset($this->data_arr['show_messages'])) ? $this->data_arr['show_messages'] : true;
         $this->data_arr['total'] = $this->model->getTotal();
-      
+
 
         $this->html .= $this->render('Kazist:views:table:table.index.twig', $this->data_arr);
 
@@ -84,7 +89,7 @@ abstract class BaseController extends KazistController {
         $document->description = $this->model->renderString($document->description, $this->data_arr);
 
         $json_list = $this->model->getDetailedJson();
-
+        //print_r($json_list); exit;
         $this->data_arr['save_button_text'] = 'Save';
         $this->data_arr['json_object'] = $json_list;
         $this->data_arr['action_type'] = 'edit';

@@ -124,7 +124,7 @@ class KazistKernelListener implements EventSubscriberInterface {
 
             $response_content = $template->applyTemplateToResponse($response_content);
         }
-
+        
         return $response_content;
     }
 

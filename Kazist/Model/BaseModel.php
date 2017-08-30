@@ -1026,7 +1026,6 @@ class BaseModel extends KazistModel {
 
         $json = $this->getJson($table_name);
 
-
         foreach ($json['fields'] as $field_name => $field) {
 
             if ($field['dropdown_filter'] && !in_array($field['html_type'], $exempt_arr)) {
