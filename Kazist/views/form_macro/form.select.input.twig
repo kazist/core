@@ -49,7 +49,7 @@
                     <option value="{{ option.value|raw }}" {{ selected }}>{{ option.text|raw }}</option>
                 {% endfor %}    
             </select>  
-
+            
         {% else %}
 
             {% if not readonly %}
@@ -74,7 +74,7 @@
             {% endif %}
         {% endif %}
     {% else %}
-       
+
         {% if options is iterable %}
             {% for key, option in options %}
 

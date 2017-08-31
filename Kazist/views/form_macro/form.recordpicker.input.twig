@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="modal fade large form-horizontal" id="recordpicker{{ name }}Modal" tabindex="-1" role="dialog" aria-labelledby="recordpicker{{ name }}ModalLabel" aria-hidden="true">
+    <div class="modal fade large form-horizontal recordpicker" id="recordpicker{{ name }}Modal" tabindex="-1" role="dialog" aria-labelledby="recordpicker{{ name }}ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -50,7 +50,7 @@
                     <h4 class="modal-title" id="subsetModalLabel">Choose Record</h4>
                 </div>
                 <div class="modal-body">
-                    <iframe src="{{ generate_url('admin.' ~ 'users.users', {'twig_file':'recordpicker', 'displayfield' : setting.parameters.source.display_field|join(',')}) }}" style="width:100%;height: 500px;" scrolling="yes">
+                    <iframe src="{{ generate_url('admin.' ~ 'users.users', {'twig_file':'recordpicker', 'displayfield' : setting.parameters.source.display_field|join(',')}) }}" style="width:100%;height: 500px;" scrolling="yes" frameBorder="0">
 
                     </iframe>
                 </div>

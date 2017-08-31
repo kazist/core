@@ -29,8 +29,17 @@
         {% set subset = path.2 %}
     {% endif %}
 
-    {{ forms.input(name~'_autocomplete', 'text', null, label, class, id, attributes~' auto_field="' ~ name|replace({'.':'_'}) ~ '"', readonly, yes_no_options, setting, context) }}
-    {{ forms.input(name, 'hidden', default) }}
+    <div class="form-group {{ classname(class, name, false) }}-group autocompletes">
+        <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
+        <div class="col-sm-9 {% if readonly %}form-control-static{% endif %}">
+            <input id="{{ name }}_autocomplete" class="form-control input-sm {{ name }}_autocomplete ui-autocomplete-input" name="form[{{ name }}_autocomplete]" value="" auto_field="{{ name }}" autocomplete="off" type="text">
+
+            {{ forms.input(name, 'hidden', default) }}
+            <a href="#">
+                <i class="fa fa-plus"></i>
+            </a>
+        </div>
+    </div>
 
     <script>
 
@@ -62,7 +71,7 @@
 
                     var field_name = jQuery('input.{{ name|replace({'.':'_'}) }}_autocomplete').attr('auto_field');
 
-console.log(field_name);
+                    console.log(field_name);
                     var terms = kazist_autocomplete.split(this.value);
                     jQuery("#" + field_name).val(ui.item.value);
                     jQuery(this).val(ui.item.label);
