@@ -6,7 +6,6 @@
 
     {{ set_assets('assets/js/media.js') }}
     {{ set_assets('assets/js/tinymce/tinymce.js') }}
-    {{ set_assets('assets/js/tinymce/editorpopup.js') }}
 
     {% if (label is empty) %}
         <textarea id="{{ idname(id, name)}}" class="{{ classname(class, name) }}  kazi-editor" name="{{ fieldname(name) }}" row="{{ row }}"> {{ default|e }} </textarea>

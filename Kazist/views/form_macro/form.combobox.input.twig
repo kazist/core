@@ -28,10 +28,10 @@
             <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
             <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
             <script>
-                $(function () {
-                    $.widget("custom.combobox", {
+                jQuery(function () {
+                    jQuery.widget("custom.combobox", {
                         _create: function () {
-                            this.wrapper = $("<span>")
+                            this.wrapper = jQuery("<span>")
                                     .addClass("custom-combobox")
                                     .insertAfter(this.element);
 
@@ -44,7 +44,7 @@
                             var selected = this.element.children(":selected"),
                                     value = selected.val() ? selected.text() : "";
 
-                            this.input = $("<input>")
+                            this.input = jQuery("<input>")
                                     .appendTo(this.wrapper)
                                     .val(value)
                                     .attr("title", "")
@@ -52,7 +52,7 @@
                                     .autocomplete({
                                         delay: 0,
                                         minLength: 0,
-                                        source: $.proxy(this, "_source")
+                                        source: jQuery.proxy(this, "_source")
                                     })
                                     .tooltip({
                                         classes: {
@@ -76,7 +76,7 @@
                             var input = this.input,
                                     wasOpen = false;
 
-                            $("<a>")
+                            jQuery("<a>")
                                     .attr("tabIndex", -1)
                                     .attr("title", "Show All Items")
                                     .tooltip()
@@ -106,9 +106,9 @@
                         },
 
                         _source: function (request, response) {
-                            var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+                            var matcher = new RegExp(jQuery.ui.autocomplete.escapeRegex(request.term), "i");
                             response(this.element.children("option").map(function () {
-                                var text = $(this).text();
+                                var text = jQuery(this).text();
                                 if (this.value && (!request.term || matcher.test(text)))
                                     return {
                                         label: text,
@@ -130,7 +130,7 @@
                                     valueLowerCase = value.toLowerCase(),
                                     valid = false;
                             this.element.children("option").each(function () {
-                                if ($(this).text().toLowerCase() === valueLowerCase) {
+                                if (jQuery(this).text().toLowerCase() === valueLowerCase) {
                                     this.selected = valid = true;
                                     return false;
                                 }
@@ -159,9 +159,9 @@
                         }
                     });
 
-                    $("#combobox").combobox();
-                    $("#toggle").on("click", function () {
-                        $("#combobox").toggle();
+                    jQuery("#combobox").combobox();
+                    jQuery("#toggle").on("click", function () {
+                        jQuery("#combobox").toggle();
                     });
                 });
             </script>

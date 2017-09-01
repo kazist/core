@@ -69,8 +69,15 @@
 
 {% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
     {% if not readonly %}
+        <div class="input-group">
         <input id="{{ idname(id, name)}}" class="{{ classname(class, name) }} timepicker" name="{{ fieldname(name) }}" type="text" value="{{ default|e }}"  {{ attributes|raw }}/>
-    {% else %}
+        <div class="input-group-btn">
+                        <a class="btn btn-default btn-sm" href="#">
+                            <i class="fa fa-calendar"></i>
+                        </a>
+        </div><!-- /btn-group -->
+            </div>
+        {% else %}
         {{ default|e }}
     {% endif %}   
 {% endmacro %}
