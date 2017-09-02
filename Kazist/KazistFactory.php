@@ -186,7 +186,7 @@ class KazistFactory {
         return $request;
     }
 
-    public function getSetting($setting_name, $block_id = '') {
+    public function getSetting($setting_name, $default = '') {
 
 
         $query = new Query();
@@ -195,16 +195,9 @@ class KazistFactory {
         $query->from('#__system_settings', 'ss');
         $query->where('ss.name=:name');
         $query->setParameter('name', $setting_name);
-
-        if ($block_id) {
-            $query->andWhere('ss.block_id=:block_id OR ss.block_id IS NULL ');
-            $query->setParameter('block_id', $block_id);
-            $query->orderBy('block_id DESC');
-        }
-
         $record = $query->loadObject();
 
-        return (is_object($record)) ? $record->value : '';
+        return (is_object($record)) ? $record->value : $default;
     }
 
     public function getPhrase($phrase_name) {

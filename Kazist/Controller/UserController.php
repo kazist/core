@@ -56,7 +56,7 @@ class UserController extends BaseController {
         $form_data = $this->request->request->get('form');
 
         $session->set('user_doubleauth_code', $form_data['doubleauth_code']);
-        
+
         return $this->redirect($form_data['return_url']);
     }
 
@@ -146,6 +146,9 @@ class UserController extends BaseController {
 
         $session->set('login_attempts', $login_attempts + 1);
 
+        $frontend_redirector = $factory->getSetting('users_users_frontend_login_redirector', 'home');
+        $backend_redirector = $factory->getSetting('users_users_backend_login_redirector', 'admin.home');
+
         try {
 
             $username = $form_data['username'];
@@ -159,7 +162,7 @@ class UserController extends BaseController {
 
             $session->set('security.token', $token);
 
-            $route_str = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
+            $route_str = (WEB_IS_ADMIN) ? $backend_redirector : $frontend_redirector;
 
             $user = $token->getUser();
             $this->model->logUserTimeIp($user);
