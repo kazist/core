@@ -12,7 +12,7 @@
     {% else %}
         <div class="form-group {{ classname(class, name, false) }}-group ">
             <label for="{{ name }}" class=" control-label" style="text-align:left;">{{ label }}</label>
-            <div class="kazicode-form-field">
+            <div>
                 {% set saving_type = setting.parameters.save.saving_type %}
                 {% if saving_type is not empty and saving_type != 'single' %}
                     <a class="btn btn-primary btn-xs multiple_add_field" href="" field_id="{{ idname(id, name)}}" title="Add More {{ name }}">
