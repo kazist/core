@@ -57,12 +57,11 @@ class Document {
         $document->root_route = (in_array($router, $ignore_route)) ? $router : $this->formatBaseRoute($document->class);
         $document->base_route = (WEB_IS_ADMIN) ? 'admin.' . $document->root_route : $document->root_route;
 
-         
         $document->user = $this->getUser();
 
         $this->setPageDetail($document);
         $this->setSearchCriteria($document);
-
+   //  print_r($document); exit;
         return $document;
     }
 
