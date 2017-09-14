@@ -59,16 +59,28 @@ class Document {
 
         $document->user = $this->getUser();
 
+        $this->setTimeZone($document);
         $this->setPageDetail($document);
         $this->setSearchCriteria($document);
-   //  print_r($document); exit;
+        //  print_r($document); exit;
         return $document;
+    }
+
+    public function setTimeZone($document) {
+
+        $timezone = 'Africa/Nairobi';
+
+        if ($this->container->hasParameter('system.timezone')) {
+            $timezone = $this->container->getParameter('system.timezone');
+        }
+
+        $document->timezone = $timezone;
     }
 
     public function getUser() {
 
         $doctrine = $this->container->get('doctrine');
-   
+
         $factory = new KazistFactory();
         $temp_user = $factory->getUser();
 
@@ -84,7 +96,7 @@ class Document {
 
             $new_user = $factory->getRecord('#__users_users', 'uu', array('uu.id=:id'), array('id' => $temp_user->id));
         }
-       
+
         $user = (object) array_merge((array) $temp_user, (array) $new_user);
 
         return $user;
