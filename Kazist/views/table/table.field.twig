@@ -23,7 +23,7 @@
         {{ _self.field_media(field, item) }}
     {% elseif field_type == 'yesno' %}
         {{ _self.field_yesno(field, item) }}
-    {% elseif field_type == 'select' or field_type == 'autocomplete' or field_type == 'radio'  %}
+    {% elseif field_type == 'select' or field_type == 'autocomplete' or field_type == 'recordpicker' or field_type == 'radio'  %}
         {{ _self.field_select(field, item) }}
     {% elseif field_type == 'datetime' %}
         {{ _self.field_datetime(field, item) }}
