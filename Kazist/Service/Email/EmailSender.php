@@ -62,64 +62,57 @@ class EmailSender {
 
         $records = $this->getEmailList($priority);
 
-        foreach ($records as $record) {
+        if (!empty($records)) {
+            foreach ($records as $record) {
 
-            $this->has_error = false;
-            $this->sql_offset = (int) $record->sent_counter;
-            $priority = $record->priority;
+                $this->has_error = false;
+                $this->sql_offset = (int) $record->sent_counter;
+                $priority = $record->priority;
 
-            $subject = $record->subject;
-            $body = $record->body;
-            $recipients = json_decode($record->recipients);
-            $parameters = json_decode($record->parameters);
-            $attachments = json_decode($record->attachments);
+                $subject = $record->subject;
+                $body = $record->body;
+                $recipients = json_decode($record->recipients);
+                $parameters = json_decode($record->parameters);
+                $attachments = json_decode($record->attachments);
 
-            $this->preSendParameterize($subject, $body, $recipients, $parameters, $attachments, $priority);
+                $this->preSendParameterize($subject, $body, $recipients, $parameters, $attachments, $priority);
 
-            $this->sql_offset = (int) $record->sent_counter + $this->sql_limit;
-            $record->sent_counter = $this->sql_offset;
-            $record->completed = $this->send_completed;
+                $this->sql_offset = (int) $record->sent_counter + $this->sql_limit;
+                $record->sent_counter = $this->sql_offset;
+                $record->completed = $this->send_completed;
 
-            if ($this->send_completed) {
-                $factory->deleteRecords('#__notification_emails', array('id=:id'), array('id' => $record->id));
-            } else {
-                $record->uniq_name = NULL;
-                $record->send_date = date('Y-m-d H:i:s');
-                $factory->saveRecord('#__notification_emails', $record);
+                if ($this->send_completed) {
+                    $factory->deleteRecords('#__notification_emails', array('id=:id'), array('id' => $record->id));
+                } else {
+                    $record->uniq_name = NULL;
+                    $record->send_date = date('Y-m-d H:i:s');
+                    $factory->saveRecord('#__notification_emails', $record);
+                }
             }
         }
     }
 
     public function getEmailList($priority = '') {
 
-        $random_number = uniqid();
         $factory = new KazistFactory();
 
-        $uptquery = new Query();
-        $uptquery->update('#__notification_emails', 'ne');
-        $uptquery->set('ne.uniq_name', ':random_number');
-        $uptquery->where('completed=0 OR completed IS NULL');
-        $uptquery->andWhere('send_date < :send_date');
-        $uptquery->andWhere('uniq_name IS NULL OR uniq_name = \'\'');
+        $query = $factory->getQueryBuilder('#__notification_emails', 'ne');
         if ((int) $priority) {
-            $uptquery->andWhere('priority = :priority');
-            $uptquery->setParameter('priority', $priority);
+            $query->andWhere('ne.priority = :priority');
+            $query->andWhere('ne.uniq_name = :uniq_name');
+            $query->setParameter('uniq_name', session_id());
+            $query->setParameter('priority', $priority);
+        } else {
+            $query->andWhere('ne.completed=0 OR ne.completed IS NULL');
+            $query->andWhere('ne.send_date < :send_date');
+            $query->setParameter('send_date', date('Y-m-d H:i:s')); 
         }
-        $uptquery->setParameter('send_date', date('Y-m-d H:i:s'));
-        $uptquery->setParameter('random_number', $random_number);
-        $uptquery->setMaxResults($this->sql_limit);
-        $uptquery->execute();
-
-        $query = new Query();
-        $query->select('*');
-        $query->from('#__notification_emails');
-        $query->andWhere('uniq_name = :uniq_name');
-        $query->setParameter('uniq_name', $random_number);
-        $query->orderBy('priority', 'ASC');
-        $query->addOrderBy('date_created', 'ASC');
+        $query->orderBy('ne.priority', 'ASC');
+        $query->addOrderBy('ne.date_created', 'ASC');
         $query->setMaxResults($this->sql_limit);
 
         $records = $query->loadObjectList();
+    
 
         foreach ($records as $record) {
 
@@ -128,15 +121,6 @@ class EmailSender {
             $factory->saveRecord('#__notification_emails', $record);
         }
 
-
-        $resetquery = new Query();
-        $resetquery->update('#__notification_emails', 'ne');
-        $resetquery->set('ne.uniq_name', '\'\'');
-        $resetquery->where('ne.uniq_name IS NOT NULL');
-        $resetquery->andWhere('send_date < :send_date');
-        $resetquery->setParameter('send_date', date('Y-m-d H:i:s', strtotime('-5 minute')));
-        $resetquery->setMaxResults(5);
-        $resetquery->execute();
 
         return $records;
     }

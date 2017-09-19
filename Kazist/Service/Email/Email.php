@@ -272,7 +272,7 @@ class Email {
         }
     }
 
-    public function sendEmail($subject, $body, $recipient, $parameters = array(), $attachments = array(), $priority = 3, $template_id = '') {
+    public function sendEmail($subject, $body, $recipient, $parameters = array(), $attachments = array(), $priority = 0, $template_id = '') {
 
 
         $factory = new KazistFactory();
@@ -283,8 +283,9 @@ class Email {
         $data_obj->recipients = json_encode($recipient);
         $data_obj->parameters = json_encode($parameters);
         $data_obj->attachments = json_encode($attachments);
-        $data_obj->priority = ($this->priority) ? $this->priority : $priority;
+        $data_obj->priority = ($priority) ? $priority : $this->priority;
         $data_obj->email_type = 'direct';
+        $data_obj->uniq_name = session_id();
         $data_obj->send_date = $this->send_date;
 
         $factory->saveRecord('#__notification_emails', $data_obj);
@@ -323,7 +324,7 @@ class Email {
      * $recipients and $parameters can be either array or sql base64 encode string.
      * if $parameters has recipient field $recipients list will be ignored.
      */
-    public function sendPreparedEmail($subject, $body, $recipients = array(), $parameters = array(), $attachments = array(), $priority = 3, $template_id = '', $email_id = '') {
+    public function sendPreparedEmail($subject, $body, $recipients = array(), $parameters = array(), $attachments = array(), $priority = 0, $template_id = '', $email_id = '') {
 
 
         $factory = new KazistFactory();
@@ -334,8 +335,9 @@ class Email {
         $data_obj->recipients = json_encode($recipients);
         $data_obj->parameters = json_encode($parameters);
         $data_obj->attachments = json_encode($attachments);
-        $data_obj->priority = ($this->priority) ? $this->priority : $priority;
+        $data_obj->priority = ($priority) ? $priority : $this->priority;
         $data_obj->email_type = 'prepared';
+        $data_obj->uniq_name = session_id();
         $data_obj->send_date = $this->send_date;
 
         $factory->saveRecord('#__notification_emails', $data_obj);
@@ -352,11 +354,13 @@ class Email {
      * $recipients and $parameters can be either array or sql base64 encode string.
      * if $parameters has recipient field $recipients list will be ignored.
      */
-    public function sendDefinedLayoutEmail($unique_name, $recipients = array(), $parameters = array(), $attachments = array(), $priority = 3, $template_id = '', $email_id = '') {
+    public function sendDefinedLayoutEmail($unique_name, $recipients = array(), $parameters = array(), $attachments = array(), $priority = 0, $template_id = '', $email_id = '') {
 
         $factory = new KazistFactory();
 
         $layout = $this->getLayout($unique_name);
+
+        $this->priority = ($priority) ? $priority : $this->priority;
 
         if (!empty($layout)) {
 
