@@ -88,6 +88,7 @@ class EmailSender {
                     $record->send_date = date('Y-m-d H:i:s');
                     $factory->saveRecord('#__notification_emails', $record);
                 }
+                // print_r($record); exit;
             }
         }
     }
@@ -105,14 +106,14 @@ class EmailSender {
         } else {
             $query->andWhere('ne.completed=0 OR ne.completed IS NULL');
             $query->andWhere('ne.send_date < :send_date');
-            $query->setParameter('send_date', date('Y-m-d H:i:s')); 
+            $query->setParameter('send_date', date('Y-m-d H:i:s'));
         }
         $query->orderBy('ne.priority', 'ASC');
         $query->addOrderBy('ne.date_created', 'ASC');
         $query->setMaxResults($this->sql_limit);
 
         $records = $query->loadObjectList();
-    
+
 
         foreach ($records as $record) {
 
@@ -329,6 +330,7 @@ class EmailSender {
 
         $failedRecipients = array();
 
+        $factory = new KazistFactory();
         $mailer = $this->getMailer();
 
         $message->setReplyTo($this->from_email);
@@ -340,7 +342,7 @@ class EmailSender {
                 print_r($failedRecipients);
                 throw new \Exception('Error While sending Emails.' . json_encode($failedRecipients));
             } else {
-                echo "Successful.";
+                $factory->enqueueMessage('Email sent successfully');
             }
         } catch (Exception $e) {
             echo $this->logger->dump();
