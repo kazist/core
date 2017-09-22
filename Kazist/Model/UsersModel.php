@@ -418,7 +418,6 @@ class UsersModel extends BaseModel {
 
         $factory = new KazistFactory();
 
-
         $item_id = $this->request->request->get('item_id');
         $item_status = $this->request->request->get('item_status');
         $item_field = $this->request->request->get('item_field');

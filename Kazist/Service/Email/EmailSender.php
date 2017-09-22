@@ -55,9 +55,6 @@ class EmailSender {
 
     public function sendEmailList($priority = '') {
 
-        ignore_user_abort(true);
-        set_time_limit(0);
-
         $factory = new KazistFactory();
 
         $records = $this->getEmailList($priority);
@@ -88,7 +85,6 @@ class EmailSender {
                     $record->send_date = date('Y-m-d H:i:s');
                     $factory->saveRecord('#__notification_emails', $record);
                 }
-                // print_r($record); exit;
             }
         }
     }
