@@ -1,7 +1,7 @@
 {% macro input(name, type, default, label, class, id, attributes, readonly, options, setting, context) %}
 
     {% import "form.macro.twig" as forms %}
-    {{ set_assets('assets/js/recordpicker.js') }}
+    {{ set_assets('assets/js/recordpicker_main.js') }}
 
     {% set edit_index = get_context('edit_index') %}
     {% set user = get_context('user') %}
@@ -39,10 +39,10 @@
             {% if not readonly %}
                 <div class="input-group">
                     <input class="recordpicker_text form-control input-sm" type="text" name="" value="{{ recordpicker_text|default('Select Record.') }}" readonly="readonly">
-                    <input class="recordpicker_value" type="hidden" name="form[{{ name }}]" value="{{ attribute(edit_index, name) }}">
+                    <input class="recordpicker_value" type="hidden" name="form[{{ name }}]" value="{{ default }}">
                     <div class="input-group-btn ">
                         {% if not readonly and table_name != json_object.table_name %}
-                            <a class="btn btn-primary btn-sm add-recordpicker" href="#" data-toggle="modal" data-target="#recordpicker{{ name }}Modal" field_name="{{ name }}" title="Choose Record">Choose</a>
+                            <a class="btn btn-primary btn-sm add-recordpicker" href="#" data-toggle="modal" data-target="#recordpicker{{ name }}Modal" field_name="{{ name }}" displayfields="{{ setting.parameters.source.display_field|join(',') }}" title="Choose Record">Choose</a>
                         {% endif %}
                     </div><!-- /btn-group -->
                 </div>
@@ -63,7 +63,7 @@
                         <h4 class="modal-title" id="subsetModalLabel">Choose Record</h4>
                     </div>
                     <div class="modal-body">
-                        <iframe src="{{ generate_url('admin.' ~ root_path, {'twig_file':'recordpicker', 'displayfield' : setting.parameters.source.display_field|join(',')}) }}" style="width:100%;height: 500px;" scrolling="yes" frameBorder="0">
+                        <iframe class="lazy_load_iframe" data-src="{{ generate_url('admin.' ~ root_path, {'twig_file':'recordpicker', 'displayfield' : setting.parameters.source.display_field|join(',')}) }}" style="width:100%;height: 500px;" scrolling="yes" frameBorder="0">
 
                         </iframe>
                     </div>
@@ -80,8 +80,13 @@
     <style>
         #recordpicker{{ name }}Modal .modal-dialog {
             width: 90% !important;
-        }
-    </style>
 
-{% endmacro %}
+        }
+
+        #recordpicker{{ name }}Modal iframe{
+            background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100% 100%"><text fill="%23FF0000" x="50%" y="50%" font-family="\'Lucida Grande\', sans-serif" font-size="24" text-anchor="middle">Loading...</text></svg>') 0px 0px no-repeat;
+                }
+            </style>
+
+        {% endmacro %}
 

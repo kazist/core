@@ -9,8 +9,6 @@
 
 <form id="{{ main_form_id }}" class="{{ main_form_id }}" action="{{ generate_url(view_url) }}" method="post" >
 
-    <script src="{{ web_root }}assets/js/recordpicker.js"></script>
-
     {% include "top.table." ~ document.base_route ~ ".twig" ignore missing %}
 
     {% import "table\\table.field.twig" as tablefield %}
@@ -39,7 +37,7 @@
                 </thead>
                 <tbody>
                     {% for item in items %}
-                        
+
                         <tr>
                             {% if twig_file != 'recordpicker' %}
                                 <td>
@@ -117,6 +115,10 @@
         </div>
     {% endif %}
 
+    {% if twig_file == 'recordpicker' %}
+        <script src="{{ web_root }}assets/js/recordpicker.js"></script>
+        <input class="displayfields" type="hidden" name="displayfield" value="{{ displayfields|join(',') }}">
+    {% endif %}
 
     {% include "bottom.table." ~ document.unique_name ~ ".twig" ignore missing %}
     {#
@@ -127,4 +129,11 @@
 
 </form>
 
+<script>
+    if (top != self) {
+        jQuery(document).ready(function () {
+            jQuery('form').append('<input class="" type="hidden" name="twig_file" value="recordpicker">');
+        });
+    }
+</script>
 
