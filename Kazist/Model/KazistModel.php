@@ -77,7 +77,7 @@ class KazistModel {
 
                 $email->sendDefinedLayoutEmail('users.users.doubleauth', $user->email, $parameters, null, 1);
                 $session->set('doubleauth_code', $doubleauth_code);
-                $this->enqueueMessage($doubleauth_code);
+                //$this->enqueueMessage($doubleauth_code);
 
                 return false;
             }
