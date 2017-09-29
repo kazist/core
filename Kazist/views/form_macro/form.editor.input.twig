@@ -2,13 +2,14 @@
 
     {% import _self as self_macro %}
 
+    {% set editor_type = setting.parameters.general.editor_type %}
+
     {{ addTwigPath('include.Kazist.views.edit') }}
 
     {{ set_assets('assets/js/media.js') }}
     {{ set_assets('assets/js/tinymce/tinymce.js') }}
-
     {% if (label is empty) %}
-        <textarea id="{{ idname(id, name)}}" class="{{ classname(class, name) }}  kazi-editor" name="{{ fieldname(name) }}" row="{{ row }}"> {{ default|e }} </textarea>
+        <textarea id="{{ idname(id, name)}}" class="{{ classname(class, name) }}  kazi-editor-{{ editor_type|default('basic') }}" name="{{ fieldname(name) }}" row="{{ row }}"> {{ default|e }} </textarea>
     {% else %}
         <div class="form-group {{ classname(class, name, false) }}-group ">
             <label for="{{ name }}" class=" control-label" style="text-align:left;">{{ label }}</label>
@@ -69,9 +70,10 @@
 {% macro html_input(name, type, default, label, class, id, attributes, readonly, options, setting) %}
 
     {% set height = setting.parameters.general.row|default('300') %}
-
+    {% set editor_type = setting.parameters.general.editor_type %}
+ 
     {% if not readonly %}
-        <textarea id="{{ idname(id, name)}}" class="{{ classname(class, name) }} kazi-editor" name="{{ fieldname(name) }}"  row="{{ row }}" {{ attributes|raw }} height="{{ height }}px" style="height:{{ height }}px;"> {{ default|e }} </textarea>
+        <textarea id="{{ idname(id, name)}}" class="{{ classname(class, name) }} kazi-editor-{{ editor_type|default('basic')}}" name="{{ fieldname(name) }}"  row="{{ row }}" {{ attributes|raw }} height="{{ height }}px" style="height:{{ height }}px;"> {{ default|e }} </textarea>
     {% else %}
         {{ default|raw }}
     {% endif %} 

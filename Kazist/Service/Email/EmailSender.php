@@ -228,8 +228,7 @@ class EmailSender {
             $parameters['recipient'] = $recipient;
             $prepared_body = $email->prepareBody($new_subject, $new_body, $parameters);
         } catch (\Exception $ex) {
-            echo $this->logger->dump();
-            $this->error_message = $ex->getMessage();
+            $this->error_message = $ex->getMessage() . $this->logger->dump();
             $this->has_error = true;
             return false;
         }
@@ -300,8 +299,12 @@ class EmailSender {
         }
 
         if ($this->has_error) {
-            $new_subject = 'Error Email Not sent :- ' . $this->error_message;
+            $new_subject = 'Error Email Not sent :- ' ;
             $new_body = '<h1>Error Not sent</h1> '
+                    . '<br>===========================================================================<br>'
+                    . '<b>Error:</b> '
+                    . '<br>=======================================<br>'
+                    . $this->error_message
                     . '<br>===========================================================================<br>'
                     . '<b>Header:</b> '
                     . '<br>=======================================<br>'
@@ -316,7 +319,7 @@ class EmailSender {
 
             $this->sendEmail($new_subject, $new_body, 'dedanirungu@gmail.com');
 
-            $this->send_completed = true;
+            //$this->send_completed = true;
 
             return;
         }
