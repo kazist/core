@@ -70,9 +70,9 @@ class UsersModel extends BaseModel {
      * @throws  \RuntimeException
      */
     public function logoutUser() {
-        $session = new Session();
-        $session->clear('user');
-        $session->clear('user_id');
+        $session = $this->container->get('session');
+
+        $session->clear();
     }
 
     public function logUserTimeIp($user) {
@@ -265,9 +265,11 @@ class UsersModel extends BaseModel {
                     $user_obj->password = md5($form['new_password']);
                     $factory->saveRecord('#__users_users', $user_obj);
 
-                    $msg = 'Your Password Was Change Successfully.';
+                    $msg = 'Your Password Was Changed Successfully.';
                     $factory->enqueueMessage($msg, 'info');
                     $return_url = ($form['return_url']) ? $return_url : $this->generateUrl('home');
+
+                    $this->logoutUser();
                 } else {
                     $msg = 'The password that in "Current Password" is Wrong. ';
                     $factory->enqueueMessage($msg, 'error');

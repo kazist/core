@@ -224,7 +224,9 @@ class BaseModel extends KazistModel {
     }
 
     public function delete($delete_ids = array()) {
-
+        
+      
+        
         $entityManager = $this->container->get('doctrine')->getEntityManager();
 
         $form_data = $this->request->get('form');
@@ -256,6 +258,7 @@ class BaseModel extends KazistModel {
 
         $entityManager->flush();
         $entityManager->getConnection()->close();
+
     }
 
     public function save($form_data = '') {

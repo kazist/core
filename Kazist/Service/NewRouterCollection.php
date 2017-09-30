@@ -353,7 +353,7 @@ class NewRouterCollection extends RouteCollection {
         foreach ($dir as $appfileinfo) {
 
             $app_file_name = $appfileinfo->getFilename();
-        
+
             if ($appfileinfo->isDir() && !$appfileinfo->isDot()) {
 
                 $app_path = JPATH_ROOT . 'applications/' . $app_file_name;

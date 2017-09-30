@@ -14,6 +14,7 @@
 
 namespace Kazist\Controller;
 
+use Kazist\KazistFactory;
 use Kazist\Model\BaseModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -133,6 +134,8 @@ abstract class BaseController extends KazistController {
 
     public function deleteAction($id = 0) {
 
+        $factory = new KazistFactory();
+
         $document = $this->container->get('document');
         $extension_path = $document->extension_path;
 
@@ -144,6 +147,8 @@ abstract class BaseController extends KazistController {
         }
 
         $this->model->delete();
+
+        $factory->enqueueMessage('Record Deleted Successfully');
 
         if (!isset($form_data) || !$form_data['return_url']) {
             $return_url = ((WEB_IS_ADMIN) ? 'admin.' : '') .
@@ -182,6 +187,8 @@ abstract class BaseController extends KazistController {
 
             $id = $this->model->save($form_data);
 
+            $factory->enqueueMessage('Record Saved Successfully');
+
             if ($this->return_url <> '') {
                 return $this->redirectToRoute($this->return_url);
             } elseif (!$form_data['return_url']) {
@@ -191,6 +198,7 @@ abstract class BaseController extends KazistController {
 
                 switch ($activity) {
                     case 'savecopy':
+                        $factory->enqueueMessage('Record is  Saved Copy.');
                         return $this->redirectToRoute($return_url . '.edit', array('id' => $id));
                     case 'savenew':
                         return $this->redirectToRoute($return_url . '.add');

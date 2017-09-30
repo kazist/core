@@ -35,6 +35,7 @@ class Document {
         $controller_arr = explode('Controllers', $controller);
 
         $document = $this->prepareDocument();
+
         $document->subset = $this->prepareSubset($document);
         $document->extension = $this->prepareExtension($document);
         // $document->permissions = $this->preparePermission($document);
@@ -166,37 +167,28 @@ class Document {
         $controller_arr = explode('Code', $controller);
         $extension_path = rtrim(str_replace('\\', '/', $controller_arr[0]), '/');
 
-        /** @TODO Remove calling document from database */
-        $query = new Query();
-        $query->from('#__system_routes', 'r');
-        $query->select('r.*');
-        $query->where('r.unique_name=:unique_name');
-        $query->setParameter('unique_name', $router);
-        $document = $query->loadObject();
+        $route_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/route.json';
 
-        if (empty($document)) {
+        if (file_exists($route_path)) {
+            
+            $route_list = (json_decode(file_get_contents($route_path)));
 
-            $route_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/route.json';
+            $front_routes = (isset($route_list->frontend) && !empty($route_list->frontend)) ? $route_list->frontend : array();
+            $back_routes = (isset($route_list->backend) && !empty($route_list->backend)) ? $route_list->backend : array();
 
-            if (file_exists($route_path)) {
-                $route_list = (json_decode(file_get_contents($route_path)));
-                $front_routes = (isset($route_list->backend) && !empty($route_list->frontend)) ? $route_list->frontend : array();
-                $back_routes = (isset($route_list->backend) && !empty($route_list->backend)) ? $route_list->backend : array();
-
-                $routes = array_merge($front_routes, $back_routes);
-
-                foreach ($routes as $key => $route) {
-                    if ($router == $route->unique_name) {
-                        $route->extension_path = $extension_path;
-                        return $route;
-                    }
+            $routes = array_merge($front_routes, $back_routes);
+            
+            foreach ($routes as $key => $route) {
+                if ($router == $route->unique_name) {
+                    $route->extension_path = $extension_path;
+                    return $route;
                 }
             }
         }
 
         $route->extension_path = ( $route->extension_path <> '') ? $route->extension_path : $extension_path;
 
-        return $document;
+        return $route;
     }
 
     public function prepareSubset($document) {
