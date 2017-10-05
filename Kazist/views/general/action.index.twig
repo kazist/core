@@ -1,7 +1,7 @@
 {% set url_link = generate_url(document.base_route) %}
 
 {% if action_type == 'edit' or action_type == 'add'  %}
-    
+
     <a class="btn btn-success btn-sm kazi-save" href="#" title="Save"><span class="glyphicon glyphicon-plus"></span> Save</a>
     <a class="btn btn-danger btn-sm" href="{{ url_link }}" title="Cancel"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
     <span class="dropdown"> 
@@ -19,7 +19,7 @@
             </li>
         </ul> 
     </span>
-    
+
 {% elseif action_type == 'detail' %}
 
     <a class="btn btn-danger btn-sm kazi-cancel" href="{{ url_link }}" title="Go Back">
@@ -27,11 +27,13 @@
         Go Back
     </a>
         
-    <a class="btn btn-success btn-sm kazi-save" href="{{ generate_url(document.base_route ~ '.edit', {'id':document.record_id})  }}" title="Edit">
-        <span class="glyphicon glyphicon-plus"></span>
-        Edit
-    </a>
-
+    {% if url_exist(document.base_route~'.edit') %}
+        <a class="btn btn-success btn-sm kazi-save" href="{{ generate_url(document.base_route ~ '.edit', {'id':document.record_id})  }}" title="Edit">
+            <span class="glyphicon glyphicon-plus"></span>
+            Edit
+        </a>
+    {% endif %}
+    
 {% else %}
 
     {% if url_exist(document.base_route~'.add') %}
@@ -39,7 +41,7 @@
             <span class="glyphicon glyphicon glyphicon-plus"></span> Add
         </a>
     {% endif %}
-    
+
     {% if twig_file != 'recordpicker' %}
         <span class="dropdown"> 
             <a class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"  href="#">

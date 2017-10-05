@@ -19,7 +19,7 @@
 {% endif %}
 
 
-<form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
+<form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.detail') }}" method="post" role="form"  enctype="multipart/form-data">
     {% include "top.detailform." ~ document.base_route ~ ".twig" ignore missing %}
 
     {% if json_object.views.edit.structure.rows|length > 0 %}
