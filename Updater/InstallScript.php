@@ -31,30 +31,6 @@ class InstallScript {
         $src_themesPath = 'vendor/kazist/themes/';
         $desc_themesPath = 'themes/';
         InstallScript::copyRecursively($src_themesPath, $desc_themesPath);
-
-        $bsImagePath = 'vendor/twbs/bootstrap/dist/';
-        $imgAssetsPath = 'assets/';
-        InstallScript::copyRecursively($bsImagePath, $imgAssetsPath);
-
-        $src_tinymcePath = 'vendor/tinymce/';
-        $desc_tinymcePath = 'assets/js/';
-        InstallScript::copyRecursively($src_tinymcePath, $desc_tinymcePath);
-
-        $src_adminltePath = 'vendor/almasaeed2010/adminlte/plugins/';
-        $desc_adminltePath = 'themes/backend/adminlte/plugins/';
-        InstallScript::copyRecursively($src_adminltePath, $desc_adminltePath);
-
-        $src_adminltePath = 'vendor/almasaeed2010/adminlte/dist/';
-        $desc_adminltePath = 'themes/backend/adminlte/';
-        InstallScript::copyRecursively($src_adminltePath, $desc_adminltePath);
-
-        $src_fontawesomePath = 'vendor/fortawesome/font-awesome/css/';
-        $desc_fontawesomePath = 'assets/css/';
-        InstallScript::copyRecursively($src_fontawesomePath, $desc_fontawesomePath);
-
-        $src_fontawesomePath = 'vendor/fortawesome/font-awesome/fonts/';
-        $desc_fontawesomePath = 'assets/fonts/';
-        InstallScript::copyRecursively($src_fontawesomePath, $desc_fontawesomePath);
     }
 
     public static function copyRecursively($source, $dest) {
