@@ -95,7 +95,7 @@ class EmailSender {
 
         $query = $factory->getQueryBuilder('#__notification_emails', 'ne');
         if ((int) $priority) {
-            $query->andWhere('ne.priority = :priority');
+            $query->andWhere('ne.priority <= :priority');
             $query->andWhere('ne.uniq_name = :uniq_name');
             $query->setParameter('uniq_name', session_id());
             $query->setParameter('priority', $priority);

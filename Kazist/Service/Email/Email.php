@@ -27,7 +27,7 @@ class Email {
     var $parameter_name = '';
     var $parameters = array();
     var $container = "";
-    var $priority = 7;
+    var $priority = 3;
     var $send_date = "";
 
     public function __construct() {
