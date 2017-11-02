@@ -69,6 +69,27 @@ class Query extends QueryBuilder {
         return $query_str;
     }
 
+    public function getRawQuery() {
+
+        $query_str = $this->getQuery();
+        $params = $this->getParameters();
+     
+        foreach ($params as $param_name => $param) {
+            if (is_numeric($param)) {
+                $queryString = $param;
+            } elseif (is_bool($param)) {
+                $queryString = param * 1;
+            } else {
+                $queryString = '\'' . $param . '\'';
+            }
+
+            $query_str = str_replace(':' . $param_name, $queryString, $query_str);
+        }
+
+
+        return $query_str;
+    }
+
     public function getStatement() {
 
         $query_str = ($this->query_str <> '') ? $this->query_str : $this->getQuery();

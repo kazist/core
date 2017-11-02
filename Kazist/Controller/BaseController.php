@@ -167,6 +167,9 @@ abstract class BaseController extends KazistController {
 
         $factory = new \Kazist\KazistFactory();
 
+        $session = $this->container->get('session');
+        $session_form = $session->get('session_form');
+
         $document = $this->container->get('document');
         $extension_path = $document->extension_path;
         $activity = $this->request->query->get('activity');
@@ -176,6 +179,9 @@ abstract class BaseController extends KazistController {
             if (!is_array($form_data)) {
                 $form_data = $this->request->request->get('form');
             }
+
+            $new_form = (!empty($session_form)) ? array_merge($session_form, $form_data) : $form_data;
+            $session->set('session_form', $new_form);
 
             if ($activity == 'savecopy') {
                 $record = $this->model->getRecord($form_data['id']);
@@ -188,6 +194,7 @@ abstract class BaseController extends KazistController {
             $id = $this->model->save($form_data);
 
             $factory->enqueueMessage('Record Saved Successfully');
+            $session->clear('session_form');
 
             if ($this->return_url <> '') {
                 return $this->redirectToRoute($this->return_url);
