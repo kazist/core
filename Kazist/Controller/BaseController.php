@@ -194,7 +194,7 @@ abstract class BaseController extends KazistController {
             $id = $this->model->save($form_data);
 
             $factory->enqueueMessage('Record Saved Successfully');
-            $session->clear('session_form');
+            $session->remove('session_form');
 
             if ($this->return_url <> '') {
                 return $this->redirectToRoute($this->return_url);
