@@ -4,12 +4,14 @@ define('JPATH_ROOT', realpath(__DIR__ . '/../') . '/');
 define('JPATH_SETUP', JPATH_ROOT . 'include/Setup');
 define('VIEW_SIDE', 'frontend');
 define('KAZIST', true);
-putenv('TMPDIR=' . JPATH_ROOT . 'cache/tmp');
 
 define('VENDOR_DIR', JPATH_ROOT . 'vendor/');
 define('VENDOR_FORM_DIR', VENDOR_DIR . 'symfony/form');
 define('VENDOR_VALIDATOR_DIR', VENDOR_DIR . 'symfony/validator');
 define('VENDOR_TWIG_BRIDGE_DIR', VENDOR_DIR . 'symfony/twig-bridge');
+
+mkdir(JPATH_ROOT . 'cache/tmp');
+putenv('TMPDIR=' . JPATH_ROOT . 'cache/tmp');
 
 use Kazist\Service\NewRouterCollection;
 
