@@ -170,16 +170,16 @@ class Document {
         $route_path = JPATH_ROOT . 'applications/' . $extension_path . '/Code/route.json';
 
         if (file_exists($route_path)) {
-            
+
             $route_list = (json_decode(file_get_contents($route_path)));
 
             $front_routes = (isset($route_list->frontend) && !empty($route_list->frontend)) ? $route_list->frontend : array();
             $back_routes = (isset($route_list->backend) && !empty($route_list->backend)) ? $route_list->backend : array();
 
             $routes = array_merge($front_routes, $back_routes);
-            
+
             foreach ($routes as $key => $route) {
-                if ($router == $route->unique_name) {
+                if ($controller == $route->controller) {
                     $route->extension_path = $extension_path;
                     return $route;
                 }
