@@ -31,7 +31,10 @@
                     <label>Username </label>
                 {% elseif login_using =='email' %}
                     <label>Email </label>
+                {% else %}
+                    <label>Username or Email</label>
                 {% endif %}
+                
                 {{ forms.input('username', 'text', null) }}
             </div>
 
