@@ -101,6 +101,10 @@ class Registration {
             $this->is_valid = false;
         }
 
+        if (!$this->isValidName($user_obj->name)) {
+            $this->is_valid = false;
+        }
+
         if (!$this->isValidEmail($user_obj->email)) {
             $this->is_valid = false;
         }
@@ -145,6 +149,19 @@ class Registration {
         $factory->enqueueMessage($msg, 'error');
 
         return false;
+    }
+
+    public function isValidName($name) {
+
+        $factory = new KazistFactory();
+
+        if ($name == '' || $name == ' ' || $name == null) {
+            $msg = 'Name is not Valid.';
+            $factory->enqueueMessage($msg, 'error');
+            return false;
+        }
+
+        return true;
     }
 
     public function isValidEmail($email) {
