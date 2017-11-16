@@ -1,7 +1,6 @@
 
 {% import "form.macro.twig" as forms %}
 
-
 {% if web_is_admin %}
     {% set view_url = 'admin.'~json_object.table_name|replace({'_': '.'}) %}
 {% else %}
@@ -9,8 +8,6 @@
 {% endif %}
 
 <form id="{{ main_form_id }}" class="{{ main_form_id }}" action="{{ generate_url(view_url) }}" method="post" >
-
-    <script src="{{ web_root }}assets/js/recordpicker.js"></script>
 
     {% include "top.table." ~ document.base_route ~ ".twig" ignore missing %}
 
@@ -40,6 +37,7 @@
                 </thead>
                 <tbody>
                     {% for item in items %}
+
                         <tr>
                             {% if twig_file != 'recordpicker' %}
                                 <td>
@@ -105,10 +103,10 @@
         <br>
     {% else %}
         <div class="no-record">
-            No Records to show
-            <br>
-            <br>
-            {% if is_granted_access(view_url, 'add') %}
+            No Records to show.
+            {% if url_exist(view_url ~ '.add') and is_granted_access(view_url, 'add') %}
+                <br>
+                <br>
                 <a class="btn btn-primary" href="{{ generate_url(view_url ~ '.add') }}" class="btn btn-primary">
                     <i class="fa fa-plus"></i>
                     Add Record
@@ -117,6 +115,10 @@
         </div>
     {% endif %}
 
+    {% if twig_file == 'recordpicker' %}
+        <script src="{{ web_root }}assets/js/recordpicker.js"></script>
+        <input class="displayfields" type="hidden" name="displayfield" value="{{ displayfields|join(',') }}">
+    {% endif %}
 
     {% include "bottom.table." ~ document.unique_name ~ ".twig" ignore missing %}
     {#
@@ -127,4 +129,11 @@
 
 </form>
 
+<script>
+    if (top != self) {
+        jQuery(document).ready(function () {
+            jQuery('form').append('<input class="" type="hidden" name="twig_file" value="recordpicker">');
+        });
+    }
+</script>
 

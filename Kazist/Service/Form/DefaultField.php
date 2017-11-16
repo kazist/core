@@ -47,6 +47,13 @@ class DefaultField {
                 $textfield = new TextField();
                 $data = $textfield->getDetailData($field, $item);
                 break;
+            case 'select':
+            case 'recordpicker':
+            case 'radio':
+            case 'autocomplete':
+                $choicefield = new ChoiceField();
+                $data = $choicefield->getDetailData($field, $item);
+                break;
             default:
                 $basefield = new BaseField();
                 $data = $basefield->getDetailData($field, $item);

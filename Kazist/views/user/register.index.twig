@@ -9,6 +9,13 @@
 
 {% set countries = callFunction( "Setup.Countries.Code.Models.CountriesModel", 'getCountriesInput', params ) %}
 
+{% set gender =
+    {
+        0:{'value':'male','text':'Male'},
+        1:{'value':'female','text':'Female'}
+    }
+%}
+
 <div class="user_register_bg">
 
     <form  method="post" action="{{ generate_url('registration_save') }}" role="form">
@@ -18,49 +25,66 @@
         {% endif %}
 
         <div class="form-horizontal">
+            <div class="registration-profile">
+                <div class="col-sm-12">
+                    <label>Name</label>
+                    {{ forms.input('name', 'text', null) }}
+                    <div class="clr"></div>
+                </div>
 
-            <div class="col-sm-12">
-                <label>Name</label>
-                {{ forms.input('name', 'text', null) }}
-                <div class="clr"></div>
+                <div class="col-sm-12">
+                    <label>Username</label>
+                    {{ forms.input('username', 'text', null) }}
+                    <div class="clr"></div>
+                </div>
+
+                <div>
+                    <div class="col-sm-6">
+                        <label>Password</label>
+                        {{ forms.input('password', 'password', null) }}
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Confirm Password</label>
+                        {{ forms.input('password_again', 'password', null) }}
+                    </div>
+                </div>
+
+                <div>
+                    <div class="col-sm-6">
+                        <label>Email</label>
+                        {{ forms.input('email', 'text', null) }}
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label>Confirm Email</label>
+                        {{ forms.input('email_again', 'text', null) }}
+                    </div>
+                </div>
+
+                <div class="col-sm-12" >
+                    <label>Gender</label>
+                    {{ forms.input('gender', 'radio', null, null, null, null, null, null, gender)  }}
+                </div>
             </div>
 
-            <div class="col-sm-12">
-                <label>Username</label>
-                {{ forms.input('username', 'text', null) }}
-                <div class="clr"></div>
-            </div>
+            <div class="registration-location">
+                <h3>Location</h3>
+                <div class="col-sm-6">
+                    <label>Country</label>
+                    {{ forms.input('country_id', 'select', null, null, null, null, null, null, countries) }}
+                </div>
 
-            <div class="col-sm-12">
-                <label>Password</label>
-                {{ forms.input('password', 'password', null) }}
-                <div class="clr"></div>
+                <div class="col-sm-6">
+                    <label>City</label>
+                    {{ forms.input('city', 'text', null) }}
+                </div>
+                <div class="col-sm-12">
+                    <label>Address</label>
+                    {{ forms.input('city', 'textarea', null) }}
+                </div>
             </div>
-
-            <div class="col-sm-12">
-                <label>Password</label>
-                {{ forms.input('password_again', 'password', null) }}
-                <div class="clr"></div>
-            </div>
-
-            <div class="col-sm-12">
-                <label>Email</label>
-                {{ forms.input('email', 'text', null) }}
-                <div class="clr"></div>
-            </div>
-
-            <div class="col-sm-12">
-                <label>Country</label>
-                {{ forms.input('country_id', 'select', null, null, null, null, null, null, countries) }}
-                <div class="clr"></div>
-            </div>
-
-            <div class="col-sm-12">
-                <label>Location</label>
-                {{ forms.input('location_id', 'select', null) }}
-                <div class="clr"></div>
-            </div>
-
+            <div class="clearfix"></div>
+            <br>
         </div>
 
         <div class="form-group form_links-group">

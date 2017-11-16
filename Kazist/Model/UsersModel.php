@@ -70,9 +70,9 @@ class UsersModel extends BaseModel {
      * @throws  \RuntimeException
      */
     public function logoutUser() {
-        $session = new Session();
-        $session->clear('user');
-        $session->clear('user_id');
+        $session = $this->container->get('session');
+
+        $session->clear();
     }
 
     public function logUserTimeIp($user) {
@@ -235,6 +235,17 @@ class UsersModel extends BaseModel {
         $user = $factory->getUser();
         $authenticationManager = $this->container->get('security.authenticate');
 
+        if ($form['return_url']) {
+
+            $return_url = $form['return_url'];
+            $return_url_decode = base64_decode($return_url);
+            if (base64_encode($return_url_decode) == $return_url) {
+                $return_url = $return_url_decode;
+            } else {
+                $return_url = $form['return_url'];
+            }
+        }
+
         if ($form['new_password'] != $form['new_password_again']) {
 
             $msg = 'You New Password did not Match with Confirm New Password. ';
@@ -243,22 +254,31 @@ class UsersModel extends BaseModel {
         } elseif (is_object($user)) {
 
             $token = new UsernamePasswordToken($user->username, $form['current_password'], 'main', array());
-            $token = $authenticationManager->authenticate($token);
 
-            if ($token->isAuthenticated()) {
+            try {
+                $token = $authenticationManager->authenticate($token);
 
-                $user_obj = new \stdClass();
-                $user_obj->id = $user->id;
-                $user_obj->password = md5($form['new_password']);
-                $factory->saveRecord('#__users_users', $user_obj);
+                if ($token->isAuthenticated()) {
 
-                $msg = 'Your Password Was Change Successfully.';
-                $factory->enqueueMessage($msg, 'info');
-                $return_url = $this->generateUrl('home');
-            } else {
-                $msg = 'The password that in "Current Password" is Wrong. ';
+                    $user_obj = new \stdClass();
+                    $user_obj->id = $user->id;
+                    $user_obj->password = md5($form['new_password']);
+                    $factory->saveRecord('#__users_users', $user_obj);
+
+                    $msg = 'Your Password Was Changed Successfully.';
+                    $factory->enqueueMessage($msg, 'info');
+                    $return_url = ($form['return_url']) ? $return_url : $this->generateUrl('home');
+
+                    $this->logoutUser();
+                } else {
+                    $msg = 'The password that in "Current Password" is Wrong. ';
+                    $factory->enqueueMessage($msg, 'error');
+                    $return_url = ($form['return_url']) ? $return_url : $this->generateUrl('change_password');
+                }
+            } catch (\Exception $exc) {
+                $msg = 'The password that you provided as "Current Password" is Wrong. ';
                 $factory->enqueueMessage($msg, 'error');
-                $return_url = $this->generateUrl('change_password');
+                $return_url = ($form['return_url']) ? $return_url : $this->generateUrl('change_password');
             }
         } else {
             $msg = 'You are currently logged out. Kindly Login again to Change You Password. ';
@@ -399,7 +419,6 @@ class UsersModel extends BaseModel {
     public function updateYesNo() {
 
         $factory = new KazistFactory();
-
 
         $item_id = $this->request->request->get('item_id');
         $item_status = $this->request->request->get('item_status');

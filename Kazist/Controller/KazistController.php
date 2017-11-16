@@ -118,9 +118,10 @@ abstract class KazistController {
         }
 
         $this->container->set('request', $this->request);
-
+     
         $this->model->request = $this->request;
         $this->model->doctrine = $this->getDoctrine();
+             
     }
 
     /*     * '

@@ -158,7 +158,9 @@ class KazistKernelListener implements EventSubscriberInterface {
         $system = new System($this->container, $request);
         $cron = new Cron($this->container, $request);
 
-        $emailSender->sendEmailList(1);
+        $immediate_priority = $factory->getSetting('notification_emails_send_immediate_priority', 5);
+
+        $emailSender->sendEmailList($immediate_priority);
 
         if ($factory->getSetting('system_cron_run_page_load')) {
 

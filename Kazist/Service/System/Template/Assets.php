@@ -62,8 +62,7 @@ class Assets {
 
         $document = $this->container->get('document');
 
-        unset($document->user);
-        unset($document->user);
+
 
         $kazist['web_root'] = WEB_ROOT;
         $kazist['web_base'] = WEB_BASE;
@@ -78,6 +77,9 @@ class Assets {
         $kazist['base_route'] = $document->base_route;
         $kazist['current_url'] = $document->current_url;
         $kazist['user_id'] = $document->user->id;
+        $kazist['record_id'] = $document->record_id;
+
+        unset($document->user);
 
         $response_content = $response_content . '<script> var kazist_document = ' . json_encode($kazist) . ';</script>';
 

@@ -19,7 +19,7 @@
 {% endif %}
 
 
-<form id="{{ main_form_id }}" class="form-horizontal" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
+<form id="{{ main_form_id }}" class="form-horizontal main_edit_form" action="{{generate_url( document.base_route  ~ '.save') }}" method="post" role="form"  enctype="multipart/form-data">
     {% include "top.editform." ~ document.base_route ~ ".twig"  ignore missing with {'save_button_text': save_button_text}  %}
     {% include "top.editform.twig" ignore missing %}
 

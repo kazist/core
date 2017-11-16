@@ -10,6 +10,9 @@ define('VENDOR_FORM_DIR', VENDOR_DIR . 'symfony/form');
 define('VENDOR_VALIDATOR_DIR', VENDOR_DIR . 'symfony/validator');
 define('VENDOR_TWIG_BRIDGE_DIR', VENDOR_DIR . 'symfony/twig-bridge');
 
+mkdir(JPATH_ROOT . 'cache/tmp');
+putenv('TMPDIR=' . JPATH_ROOT . 'cache/tmp');
+
 use Kazist\Service\NewRouterCollection;
 print_r('$controller'); exit;
 $dir = new DirectoryIterator(JPATH_ROOT . '/applications');
@@ -28,7 +31,7 @@ $session->remove('routes_cached');
 
 /* $cache_routes = $sc->getParameter('system.cache_routes');
 
-if ($cache_routes) {
+  if ($cache_routes) {
 
   $routes_cached_time = $session->get('routes_cached_time');
 

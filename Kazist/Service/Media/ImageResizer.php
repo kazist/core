@@ -27,6 +27,14 @@ Class ImageResizer {
         $this->height = imagesy($this->image);
     }
 
+    public function getWidth() {
+        return $this->width;
+    }
+
+    public function getHeight() {
+        return $this->height;
+    }
+
     ## --------------------------------------------------------
 
     private function openImage($file) {

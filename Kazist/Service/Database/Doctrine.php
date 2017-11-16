@@ -40,7 +40,7 @@ class Doctrine {
         if (!$this->container->hasParameter('database.cache')) {
             $this->container->setParameter('database.cache', false);
         }
-        
+
         if (!$this->container->hasParameter('database.cache.lifetime')) {
             $this->container->setParameter('database.cache.lifetime', 7200);
         }
@@ -96,7 +96,7 @@ class Doctrine {
         // Create EntityManager
         $entityManager = EntityManager::create($connectionOptions, $config, $evm);
 
-        if ($this->entity_path <> '') {
+        if ($this->entity_path <> '' && is_dir($this->entity_path)) {
 
             $schemaManager = $entityManager->getConnection()->getSchemaManager();
             $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);

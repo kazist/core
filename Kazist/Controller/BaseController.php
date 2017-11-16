@@ -14,6 +14,7 @@
 
 namespace Kazist\Controller;
 
+use Kazist\KazistFactory;
 use Kazist\Model\BaseModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,11 @@ abstract class BaseController extends KazistController {
         $records = $this->model->getRecords($offset, $limit);
         $json_object = $this->model->getDetailedJson();
 
+        $twig_file = $this->request->get('twig_file');
+        $displayfields = explode(',', $this->request->get('displayfield'));
+
+        $this->data_arr['displayfields'] = $displayfields;
+        $this->data_arr['twig_file'] = $twig_file;
         $this->data_arr['items'] = (count($this->data_arr['items'])) ? $this->data_arr['items'] : $records;
         $this->data_arr['json_object'] = $json_object;
         $this->data_arr['action_type'] = 'table';
@@ -44,7 +50,7 @@ abstract class BaseController extends KazistController {
         $this->data_arr['show_search'] = (isset($this->data_arr['show_search'])) ? $this->data_arr['show_search'] : true;
         $this->data_arr['show_messages'] = (isset($this->data_arr['show_messages'])) ? $this->data_arr['show_messages'] : true;
         $this->data_arr['total'] = $this->model->getTotal();
-      
+
 
         $this->html .= $this->render('Kazist:views:table:table.index.twig', $this->data_arr);
 
@@ -84,7 +90,7 @@ abstract class BaseController extends KazistController {
         $document->description = $this->model->renderString($document->description, $this->data_arr);
 
         $json_list = $this->model->getDetailedJson();
-
+        //print_r($json_list); exit;
         $this->data_arr['save_button_text'] = 'Save';
         $this->data_arr['json_object'] = $json_list;
         $this->data_arr['action_type'] = 'edit';
@@ -128,6 +134,8 @@ abstract class BaseController extends KazistController {
 
     public function deleteAction($id = 0) {
 
+        $factory = new KazistFactory();
+
         $document = $this->container->get('document');
         $extension_path = $document->extension_path;
 
@@ -139,6 +147,8 @@ abstract class BaseController extends KazistController {
         }
 
         $this->model->delete();
+
+        $factory->enqueueMessage('Record Deleted Successfully');
 
         if (!isset($form_data) || !$form_data['return_url']) {
             $return_url = ((WEB_IS_ADMIN) ? 'admin.' : '') .
@@ -157,6 +167,9 @@ abstract class BaseController extends KazistController {
 
         $factory = new \Kazist\KazistFactory();
 
+        $session = $this->container->get('session');
+        $session_form = $session->get('session_form');
+
         $document = $this->container->get('document');
         $extension_path = $document->extension_path;
         $activity = $this->request->query->get('activity');
@@ -166,6 +179,9 @@ abstract class BaseController extends KazistController {
             if (!is_array($form_data)) {
                 $form_data = $this->request->request->get('form');
             }
+
+            $new_form = (!empty($session_form)) ? array_merge($session_form, $form_data) : $form_data;
+            $session->set('session_form', $new_form);
 
             if ($activity == 'savecopy') {
                 $record = $this->model->getRecord($form_data['id']);
@@ -177,6 +193,9 @@ abstract class BaseController extends KazistController {
 
             $id = $this->model->save($form_data);
 
+            $factory->enqueueMessage('Record Saved Successfully');
+            $session->remove('session_form');
+
             if ($this->return_url <> '') {
                 return $this->redirectToRoute($this->return_url);
             } elseif (!$form_data['return_url']) {
@@ -186,6 +205,7 @@ abstract class BaseController extends KazistController {
 
                 switch ($activity) {
                     case 'savecopy':
+                        $factory->enqueueMessage('Record is  Saved Copy.');
                         return $this->redirectToRoute($return_url . '.edit', array('id' => $id));
                     case 'savenew':
                         return $this->redirectToRoute($return_url . '.add');

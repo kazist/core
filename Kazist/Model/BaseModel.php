@@ -224,7 +224,9 @@ class BaseModel extends KazistModel {
     }
 
     public function delete($delete_ids = array()) {
-
+        
+      
+        
         $entityManager = $this->container->get('doctrine')->getEntityManager();
 
         $form_data = $this->request->get('form');
@@ -256,6 +258,7 @@ class BaseModel extends KazistModel {
 
         $entityManager->flush();
         $entityManager->getConnection()->close();
+
     }
 
     public function save($form_data = '') {
@@ -303,7 +306,6 @@ class BaseModel extends KazistModel {
 
         $tmp_table_name = $json['table_name'];
         $table_fields = $query->tableColumns('#__' . $tmp_table_name);
-
 
         foreach ($table_fields as $table_field) {
 
@@ -364,7 +366,7 @@ class BaseModel extends KazistModel {
 
         $d = \DateTime::createFromFormat($date_str, $date);
 
-        return $d && $d->format($date_str) === $date;
+        return $d && strtotime($d->format($date_str)) == strtotime($date);
     }
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx End of Validation
@@ -446,6 +448,7 @@ class BaseModel extends KazistModel {
 
         $data_arr = (is_array($data)) ? $data : json_decode(json_encode($data), true);
         $parameter_arr = (is_array($parameter_arr)) ? $parameter_arr : json_decode(json_encode($parameter_arr), true);
+        $table_name = (strpos($table_name, '__')) ? $table_name : '#__' . $table_name;
         $table_alias = $this->getTableAlias($table_name);
 
         if (isset($data_arr['id']) && $data_arr['id']) {
@@ -462,6 +465,7 @@ class BaseModel extends KazistModel {
 
             $query = $this->getQueryBuilder($table_name, $table_alias, $where_arr, $parameter_arr);
             $query->select('COUNT(*) AS total');
+
             $count = $query->loadResult();
             $is_insert = (!$count) ? true : false;
         }
@@ -490,8 +494,9 @@ class BaseModel extends KazistModel {
 
         $user = $this->getUser();
         $user_id = (is_object($user) && $user->id) ? $user->id : 0;
+        $table_name = (strpos($table_name, '__')) ? $table_name : '#__' . $table_name;
 
-// $record = $this->getRecord($table_name, $data_arr, $where_arr , $parameter_arr);
+        // $record = $this->getRecord($table_name, $data_arr, $where_arr , $parameter_arr);
         $data_arr = (is_array($data_arr)) ? $data_arr : json_decode(json_encode($data_arr), true);
         $parameter_arr = (is_array($parameter_arr)) ? $parameter_arr : json_decode(json_encode($parameter_arr), true);
         $table_alias = $this->getTableAlias($table_name);
@@ -533,6 +538,8 @@ class BaseModel extends KazistModel {
 
         $user = $this->getUser();
         $user_id = (isset($user) && $user->id) ? $user->id : 0;
+        $table_name = (strpos($table_name, '__')) ? $table_name : '#__' . $table_name;
+
         $fields = $query->tableColumnsArray($table_name);
         $table_alias = $this->getTableAlias($table_name);
 
@@ -567,6 +574,8 @@ class BaseModel extends KazistModel {
     }
 
     public function deleteRecords($table_name, $where_arr = array(), $parameter_arr = array()) {
+
+        $table_name = (strpos($table_name, '__')) ? $table_name : '#__' . $table_name;
 
         $query = new Query();
         $table_alias = $this->getTableAlias($table_name);
@@ -675,9 +684,11 @@ class BaseModel extends KazistModel {
 
         $query = new Query();
 
+        $table_name = (strpos($table_name, '__')) ? $table_name : '#__' . $table_name;
         $json = $this->getJson($table_name);
 
         $this->table_alias = ($table_alias <> '') ? $table_alias : $this->getTableAlias($table_name);
+
 
         if (!empty($json)) {
 
@@ -862,7 +873,7 @@ class BaseModel extends KazistModel {
 
             $routes = $this->container->getParameter('routes');
             $route_obj = $routes->get($route);
-            
+
             if (is_object($route_obj)) {
                 return true;
             } else {
@@ -972,6 +983,8 @@ class BaseModel extends KazistModel {
         $query = new Query();
         $controller = $this->request->attributes->get('_controller');
 
+        $table_name = str_replace('#__', '', $table_name);
+
         if ($table_name) {
 
             $tmp_table_name = str_replace('#__', '', $table_name);
@@ -1016,7 +1029,6 @@ class BaseModel extends KazistModel {
 
         $json = $this->getJson($table_name);
 
-
         foreach ($json['fields'] as $field_name => $field) {
 
             if ($field['dropdown_filter'] && !in_array($field['html_type'], $exempt_arr)) {
@@ -1037,16 +1049,23 @@ class BaseModel extends KazistModel {
 
     public function getTableAlias($table_name = '') {
 
-        $table_alias_arr = array();
         $table_name_arr = explode('_', str_replace('#__', '', $table_name));
+        $json = $this->getJson($table_name);
 
-        if (!empty($table_name_arr)) {
-            foreach ($table_name_arr as $key => $term) {
-                $table_alias_arr[] = substr($term, 0, 1);
+        if (is_array($json)) {
+            $this->table_alias = $json['table_alias'];
+        } else {
+
+            $table_alias_arr = array();
+
+            if (!empty($table_name_arr)) {
+                foreach ($table_name_arr as $key => $term) {
+                    $table_alias_arr[] = substr($term, 0, 1);
+                }
             }
+            $this->table_alias = implode('', $table_alias_arr);
         }
 
-        $this->table_alias = implode('', $table_alias_arr);
 
         return $this->table_alias;
     }

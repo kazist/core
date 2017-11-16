@@ -17,6 +17,7 @@
 
 <div>
     <form role="form" action="{{ generate_url(document.unique_name) }}" method="post">
+
         <div class="input-group">
             <input type="text" class="form-control input-sm" name="search[keyword]" value="{{ search.keyword }}" placeholder=" Search...">
             <div class="input-group-btn " >
@@ -117,6 +118,10 @@
                 {% endfor %}
 
             </div>
+        {% endif %}
+
+        {% if twig_file == 'recordpicker' %}
+            <input class="displayfields" type="hidden" name="displayfield" value="{{ displayfields|join(',') }}">
         {% endif %}
 
         {{ forms.input('_token' ) }} 

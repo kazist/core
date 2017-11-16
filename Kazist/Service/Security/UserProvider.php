@@ -77,7 +77,11 @@ class UserProvider implements UserProviderInterface {
                 $factory->enqueueMessage('No User Found With that username/email.', 'error');
             } elseif (!$user->is_verified) {
                 $user_obj = false;
-                $factory->enqueueMessage('Your Account is not yet Verified. Please go to your inbox and click verification link.', 'error');
+                $resend_link=$factory->generateUrl('resend_verification_form');
+                $verification_msg='Your Account is not yet Verified. '
+                        . 'Please go to your inbox and click verification link.<br>'
+                        . 'Resend the Verification Code <a class="btn btn-primary" href="'.$resend_link.'">Resend Verification Link</a>';
+                $factory->enqueueMessage($verification_msg, 'error');
             } elseif (!$user->published) {
                 $user_obj = false;
                 $factory->enqueueMessage('Your Account is Blocked. Please contact Admin.', 'error');

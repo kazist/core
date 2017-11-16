@@ -75,9 +75,9 @@ class KazistModel {
                 $parameters['doubleauth_code'] = $doubleauth_code = rand(10000, 100000);
                 $parameters['doubleauth_url'] = $this->generateUrl($link_route, array('return_url' => base64_encode($return_url)), 0);
 
-                $email->sendDefinedLayoutEmail('users.users.doubleauth', $user->email, $parameters);
+                $email->sendDefinedLayoutEmail('users.users.doubleauth', $user->email, $parameters, null, 1);
                 $session->set('doubleauth_code', $doubleauth_code);
-                $this->enqueueMessage($doubleauth_code);
+                //$this->enqueueMessage($doubleauth_code);
 
                 return false;
             }

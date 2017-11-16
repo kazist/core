@@ -7,7 +7,7 @@
     {% else %}
         <div class="form-group {{ classname(class, name, false) }}-group">
             <label for="{{ name }}" class="col-sm-3 control-label">{{ label }}</label>
-            <div class="col-sm-9 {% if readonly %}form-control-static{% endif %}">
+            <div class="col-sm-9 kazicode-form-field {% if readonly %}form-control-static{% endif %}">
                 {{ _self.html_input(name, type, default, label, class, id, attributes, readonly, options, setting) }}
             </div>
         </div>
@@ -49,7 +49,7 @@
                     <option value="{{ option.value|raw }}" {{ selected }}>{{ option.text|raw }}</option>
                 {% endfor %}    
             </select>  
-
+            
         {% else %}
 
             {% if not readonly %}
@@ -74,7 +74,7 @@
             {% endif %}
         {% endif %}
     {% else %}
-       
+
         {% if options is iterable %}
             {% for key, option in options %}
 

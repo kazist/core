@@ -124,5 +124,4 @@ $sc->register('framework', 'Kazist\Framework')
 $sc->setParameter('debug', true);
 
 
-
 return $sc;

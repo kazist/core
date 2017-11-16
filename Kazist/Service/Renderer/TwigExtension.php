@@ -344,10 +344,10 @@ class TwigExtension extends \Twig_Extension {
         //return $url;
     }
 
-    public function getSetting($string, $block_id = '') {
+    public function getSetting($string, $default= '') {
 
         $factory = new KazistFactory();
-        $value = $factory->getSetting($string, $block_id);
+        $value = $factory->getSetting($string, $default);
         return $value;
     }
 

@@ -58,7 +58,7 @@ class BaseField {
         if ($field['parameters']['source']['data_source'] == 'custom') {
             $option_arr = $field['parameters']['source']['customs'];
         }
-        if ($field['parameters']['source']['data_source'] == 'db_table' && $field['html_type'] <> 'autocomplete') {
+        if ($field['parameters']['source']['data_source'] == 'db_table' && $field['html_type'] <> 'autocomplete' && $field['html_type'] <> 'recordpicker') {
 
             $option_arr = array();
 

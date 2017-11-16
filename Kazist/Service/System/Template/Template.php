@@ -38,10 +38,13 @@ class Template {
         $twig = $this->container->get('twig');
         $session = $this->container->get('session');
         $document = $this->container->get('document');
+        $request = $this->container->get('request');
+
+        $tmp_twig_file = $request->get('twig_file');
+        $twig_file = (strpos($tmp_twig_file, '.twig')) ? $tmp_twig_file : $tmp_twig_file . '.twig';
 
         $token = $session->get('security.token');
         $template_appended = $session->get('template.appended');
-
 
         if ($template_appended) {
             // return $response_content;
@@ -54,7 +57,10 @@ class Template {
         $data['user'] = $user;
         $data['response_content'] = $response_content;
 
-        $twig_file = (WEB_IS_ADMIN && (!is_object($user) || !$user->id)) ? 'login.twig' : 'index.twig';
+        if ($tmp_twig_file == '') {
+            $twig_file = (WEB_IS_ADMIN && (!is_object($user) || !$user->id)) ? 'login.twig' : 'index.twig';
+        }
+
         $positions = $this->getPositions($data, $twig_file);
 
         foreach ($positions as $position) {

@@ -74,7 +74,7 @@
     {% if not readonly %}
         <input type="{{ type|default('text') }}" id="{{ idname(id, name)}}" class="{{ classname(class, name) }}" name="{{ fieldname(name) }}" value="{{ default|e }}"  {{ attributes|raw }}/>
     {% else %}
-        {{ default|e }}
+        {{ default|raw }}
     {% endif %}  
     
 {% endmacro %}

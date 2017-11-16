@@ -23,7 +23,7 @@
         {{ _self.field_media(field, item) }}
     {% elseif field_type == 'yesno' %}
         {{ _self.field_yesno(field, item) }}
-    {% elseif field_type == 'select' or field_type == 'autocomplete' or field_type == 'radio'  %}
+    {% elseif field_type == 'select' or field_type == 'autocomplete' or field_type == 'recordpicker' or field_type == 'radio'  %}
         {{ _self.field_select(field, item) }}
     {% elseif field_type == 'datetime' %}
         {{ _self.field_datetime(field, item) }}
@@ -93,7 +93,7 @@
     {% set field_name = field.name %}
 
     {% if attribute(item, field_name) !=  '' %}
-        {{ attribute(item, field_name)|date('d M Y H:i:s') }}
+        {{ attribute(item, field_name)|date('d M Y H:i:s',  document.timezone) }}
     {% endif %}
 
 {% endmacro %}
@@ -103,7 +103,7 @@
     {% set field_name = field.name %}
 
     {% if attribute(item, field_name) !=  '' %}
-        {{ attribute(item, field_name)|date('d M Y') }}
+        {{ attribute(item, field_name)|date('d M Y',  document.timezone) }}
     {% endif %}
 
 {% endmacro %}
@@ -113,7 +113,7 @@
     {% set field_name = field.name %}
 
     {% if attribute(item, field_name) != '' %}
-        {{ attribute(item, field_name)|date('H:i:s') }}
+        {{ attribute(item, field_name)|date('H:i:s',  document.timezone) }}
     {% endif %}
 
 {% endmacro %}

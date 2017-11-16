@@ -24,6 +24,7 @@ use Kazist\Model\UsersModel;
 class UserController extends BaseController {
 
     public function doubleauthAction() {
+
         $factory = new KazistFactory();
 
         $session = $factory->getSession();
@@ -82,7 +83,7 @@ class UserController extends BaseController {
             return $this->redirectToRoute('admin.home');
         } else {
             if ($login_attempts && $login_attempts >= $max_login_attempts) {
-                $factory->enqueueMessage('maximum Login Attempt Reached.Change your password and try again or login after one hour.');
+                $factory->enqueueMessage('Maximum Login Attempt Reached.Change your password and try again or login after one hour.');
                 return $this->redirectToRoute('home');
             }
 
@@ -146,6 +147,9 @@ class UserController extends BaseController {
 
         $session->set('login_attempts', $login_attempts + 1);
 
+        $frontend_redirector = $factory->getSetting('users_users_frontend_login_redirector', 'home');
+        $backend_redirector = $factory->getSetting('users_users_backend_login_redirector', 'admin.home');
+
         try {
 
             $username = $form_data['username'];
@@ -159,7 +163,7 @@ class UserController extends BaseController {
 
             $session->set('security.token', $token);
 
-            $route_str = (WEB_IS_ADMIN) ? 'admin.home' : 'home';
+            $route_str = (WEB_IS_ADMIN) ? $backend_redirector : $frontend_redirector;
 
             $user = $token->getUser();
             $this->model->logUserTimeIp($user);

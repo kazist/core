@@ -14,7 +14,7 @@
     {% if bag_messages|length > 0 %}
         <div class="alert alert-{{ class_type }}">
             {% for flashmessage in bag_messages %}
-                {{ flashmessage }}</br>
+                {{ flashmessage|raw }}</br>
             {% endfor %}
         </div>
     {% endif %} 
