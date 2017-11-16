@@ -191,6 +191,12 @@ class Registration {
             return true;
         }
 
+        if (count($username) < 6) {
+            $msg = 'Username should be greater than 6 Character.';
+            $factory->enqueueMessage($msg, 'error');
+            return true;
+        }
+
         $sub_username = substr($username, 0, 8);
 
         if (count($sub_username) > 8) {
