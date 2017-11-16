@@ -14,7 +14,7 @@ mkdir(JPATH_ROOT . 'cache/tmp');
 putenv('TMPDIR=' . JPATH_ROOT . 'cache/tmp');
 
 use Kazist\Service\NewRouterCollection;
-
+print_r('$controller'); exit;
 $dir = new DirectoryIterator(JPATH_ROOT . '/applications');
 
 foreach ($dir as $fileinfo) {
