@@ -97,7 +97,15 @@ class Registration {
 
     public function validateRegistration($user_obj, $is_register) {
 
+        $factory = new KazistFactory();
+        
         if (!$this->isValidCaptcha($is_register)) {
+            $this->is_valid = false;
+        }
+
+        if (trim($user_obj->name) === '') {
+            $msg = 'Name Is Empty.';
+            $factory->enqueueMessage($msg, 'error');
             $this->is_valid = false;
         }
 

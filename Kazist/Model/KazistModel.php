@@ -39,6 +39,7 @@ class KazistModel {
     public $doctrine = '';
     public $request = '';
     public $container = '';
+    public $query_failed_attempt = 0;
 
     public function __construct($doctrine = '', $request = '') {
 
@@ -60,10 +61,7 @@ class KazistModel {
         $doubleauth_code = $session->get('doubleauth_code');
         $user_doubleauth_code = $session->get('user_doubleauth_code');
 
-        $query = new Query();
-        $query->select('udr.*');
-        $query->from('#__users_doubleauth_routes', 'udr')->where('udr.route=:route')->setParameter('route', $router);
-        $route = $query->loadObject();
+        $route = $this->fetchDoubleAuth($router);
 
         if (is_object($route)) {
 
@@ -86,6 +84,28 @@ class KazistModel {
         } else {
             return true;
         }
+    }
+
+    public function fetchDoubleAuth($router) {
+
+
+        $query = new Query();
+        $query->select('udr.*');
+        $query->from('#__users_doubleauth_routes', 'udr')->where('udr.route=:route')->setParameter('route', $router);
+
+        try {
+            $route = $query->loadObject();
+        } catch (\Exception $ex) {
+
+            $this->doctrine->refresh = true;
+            $this->doctrine->entity_path = JPATH_ROOT . 'applications/Users/Doubleauth/Routes/Code/Tables';
+            $this->doctrine->getEntityManager();
+
+            $route = $query->loadObject();
+        }
+
+
+        return $route;
     }
 
     /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Start Process User Object xxxxxxxxxxxxxxxx */
@@ -238,7 +258,7 @@ class KazistModel {
         if ($user->is_admin) {
             return true;
         }
-        
+
 
         if (($document->login_required || WEB_IS_ADMIN)) {
             $is_allowed = $this->getUserActiveRole($document->unique_name, $user, $document->permissions);

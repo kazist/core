@@ -11,7 +11,7 @@ define('VENDOR_VALIDATOR_DIR', VENDOR_DIR . 'symfony/validator');
 define('VENDOR_TWIG_BRIDGE_DIR', VENDOR_DIR . 'symfony/twig-bridge');
 
 use Kazist\Service\NewRouterCollection;
-
+print_r('$controller'); exit;
 $dir = new DirectoryIterator(JPATH_ROOT . '/applications');
 
 foreach ($dir as $fileinfo) {
