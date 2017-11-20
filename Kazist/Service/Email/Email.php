@@ -361,7 +361,7 @@ class Email {
         $layout = $this->getLayout($unique_name);
 
         $this->priority = ($priority) ? $priority : $this->priority;
-
+         
         if (!empty($layout)) {
 
             $subject = $layout->subject;
