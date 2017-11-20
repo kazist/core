@@ -185,14 +185,14 @@ class Registration {
 
         $factory = new KazistFactory();
 
-        if (count($username) > 16) {
+        if (strlen($username) > 16) {
             $msg = 'Username should be less than 16 Character.';
             $factory->enqueueMessage($msg, 'error');
             return true;
         }
 
-        if (count($username) < 6) {
-            $msg = 'Username should be greater than 6 Character.';
+        if (strlen($username) < 4) {
+            $msg = 'Username should be greater than 4 Character.';
             $factory->enqueueMessage($msg, 'error');
             return true;
         }
