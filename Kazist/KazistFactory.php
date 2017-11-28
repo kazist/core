@@ -32,6 +32,12 @@ class KazistFactory {
         $this->container = $sc;
     }
 
+    public function isAdmin() {
+
+        $baseModel = new BaseModel();
+        return $baseModel->isAdmin();
+    }
+
     public function getUser() {
 
         $baseModel = new BaseModel();

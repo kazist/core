@@ -110,6 +110,12 @@ class KazistModel {
 
     /* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Start Process User Object xxxxxxxxxxxxxxxx */
 
+    public function isAdmin() {
+        $user = $this->getUser();
+
+        return (isset($user->is_admin) && $user->is_admin) ? true : false;
+    }
+
     public function getUser() {
 
         $session = $this->container->get('session');

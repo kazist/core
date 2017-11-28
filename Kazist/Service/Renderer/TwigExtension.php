@@ -98,6 +98,7 @@ class TwigExtension extends \Twig_Extension {
         $functions[] = new \Twig_SimpleFunction('get_context', array($this, 'getContext'));
         $functions[] = new \Twig_SimpleFunction('get_setting', array($this, 'getSetting'));
         $functions[] = new \Twig_SimpleFunction('get_flash_bags', array($this, 'getFlashBags'));
+        $functions[] = new \Twig_SimpleFunction('is_admin', array($this, 'isAdmin'));
         $functions[] = new \Twig_SimpleFunction('get_user', array($this, 'getUser'));
         $functions[] = new \Twig_SimpleFunction('get_container', array($this, 'getContainer'));
         $functions[] = new \Twig_SimpleFunction('json_decode', array($this, 'getJsonDecode'));
@@ -138,6 +139,11 @@ class TwigExtension extends \Twig_Extension {
     public function getUser() {
         $factory = new KazistFactory();
         return $factory->getUser();
+    }
+
+    public function isAdmin() {
+        $factory = new KazistFactory();
+        return $factory->isAdmin();
     }
 
     public function getContainer() {
@@ -344,7 +350,7 @@ class TwigExtension extends \Twig_Extension {
         //return $url;
     }
 
-    public function getSetting($string, $default= '') {
+    public function getSetting($string, $default = '') {
 
         $factory = new KazistFactory();
         $value = $factory->getSetting($string, $default);
