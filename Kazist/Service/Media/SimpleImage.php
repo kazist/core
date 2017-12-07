@@ -249,7 +249,7 @@ class SimpleImage {
      */
     function create($width, $height = null, $color = null) {
 
-        $height = $height ? : $width;
+        $height = $height ?: $width;
         $this->width = $width;
         $this->height = $height;
         $this->image = imagecreatetruecolor($width, $height);
@@ -599,7 +599,7 @@ class SimpleImage {
     function output($format = null, $quality = null) {
 
         // Determine quality
-        $quality = $quality ? : $this->quality;
+        $quality = $quality ?: $this->quality;
 
         // Determine mimetype
         switch (strtolower($format)) {
@@ -652,7 +652,7 @@ class SimpleImage {
     function output_base64($format = null, $quality = null) {
 
         // Determine quality
-        $quality = $quality ? : $this->quality;
+        $quality = $quality ?: $this->quality;
 
         // Determine mimetype
         switch (strtolower($format)) {
@@ -865,10 +865,10 @@ class SimpleImage {
     function save($filename = null, $quality = null, $format = null) {
 
         // Determine quality, filename, and format
-        $quality = $quality ? : $this->quality;
-        $filename = $filename ? : $this->filename;
+        $quality = $quality ?: $this->quality;
+        $filename = $filename ?: $this->filename;
         if (!$format) {
-            $format = $this->file_ext($filename) ? : $this->original_info['format'];
+            $format = $this->file_ext($filename) ?: $this->original_info['format'];
         }
 
         // Create the image
@@ -1124,7 +1124,7 @@ class SimpleImage {
     function thumbnail($width, $height = null) {
 
         // Determine height
-        $height = $height ? : $width;
+        $height = $height ?: $width;
 
         // Determine aspect ratios
         $current_aspect_ratio = $this->height / $this->width;
@@ -1170,23 +1170,29 @@ class SimpleImage {
      *
      */
     protected function get_meta_data() {
+
+        $factory = new \Kazist\KazistFactory();
+
         //gather meta data
         if (empty($this->imagestring)) {
             $info = getimagesize($this->filename);
-
-            switch ($info['mime']) {
-                case 'image/gif':
-                    $this->image = imagecreatefromgif($this->filename);
-                    break;
-                case 'image/jpeg':
-                    $this->image = imagecreatefromjpeg($this->filename);
-                    break;
-                case 'image/png':
-                    $this->image = imagecreatefrompng($this->filename);
-                    break;
-                default:
-                    throw new Exception('Invalid image: ' . $this->filename);
-                    break;
+            try {
+                switch ($info['mime']) {
+                    case 'image/gif':
+                        $this->image = @imagecreatefromgif($this->filename);
+                        break;
+                    case 'image/jpeg':
+                        $this->image = @imagecreatefromjpeg($this->filename);
+                        break;
+                    case 'image/png':
+                        $this->image = @imagecreatefrompng($this->filename);
+                        break;
+                    default:
+                        throw new Exception('Invalid image: ' . $this->filename);
+                        break;
+                }
+            } catch (\Exception $e) {
+                $factory->enqueueMessage($e->getMessage(), 'error');
             }
         } elseif (function_exists('getimagesizefromstring')) {
             $info = getimagesizefromstring($this->imagestring);

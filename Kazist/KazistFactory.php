@@ -225,6 +225,17 @@ class KazistFactory {
         }
     }
 
+    public function getMedia($media_id) {
+
+        $query = $this->getQueryBuilder('#__media_media', 'mm');
+        $query->where('mm.id=:id');
+        $query->setParameter('id', $media_id);
+
+        $record = $query->loadObject();
+
+        return $record;
+    }
+
     public function uploadMedia($fields, $extension, $alias) {
 
         global $sc;
