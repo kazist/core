@@ -34,7 +34,7 @@ abstract class BaseController extends KazistController {
     }
 
     public function indexAction($offset = 0, $limit = 10) {
-
+        
         $records = $this->model->getRecords($offset, $limit);
         $json_object = $this->model->getDetailedJson();
 
@@ -50,7 +50,6 @@ abstract class BaseController extends KazistController {
         $this->data_arr['show_search'] = (isset($this->data_arr['show_search'])) ? $this->data_arr['show_search'] : true;
         $this->data_arr['show_messages'] = (isset($this->data_arr['show_messages'])) ? $this->data_arr['show_messages'] : true;
         $this->data_arr['total'] = $this->model->getTotal();
-
 
         $this->html .= $this->render('Kazist:views:table:table.index.twig', $this->data_arr);
 
