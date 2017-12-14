@@ -4,3 +4,4 @@
 *.zip
 *config.php
 *er/composer.json
+/nbproject/private/

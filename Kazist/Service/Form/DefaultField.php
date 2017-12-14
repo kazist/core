@@ -64,7 +64,7 @@ class DefaultField {
     }
 
     public function getOptionData($field, $item) {
-
+        
         switch ($field['html_type']) {
             case 'media':
                 $mediafield = new MediaField();

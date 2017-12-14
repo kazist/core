@@ -120,7 +120,7 @@
         <input class="displayfields" type="hidden" name="displayfield" value="{{ displayfields|join(',') }}">
     {% endif %}
 
-    {% include "bottom.table." ~ document.unique_name ~ ".twig" ignore missing %}
+    {% include "bottom.table." ~ document.base_route  ~ ".twig" ignore missing %}
     {#
         {% include "form.hidden.twig" %}
     #}
