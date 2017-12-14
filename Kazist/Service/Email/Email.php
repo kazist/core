@@ -421,6 +421,7 @@ class Email {
         $query = new Query();
         $query->select('*');
         $query->from('#__notification_templates');
+        $query->andWhere('is_default=1 OR published=1');
         if ($template_id) {
             $query->where('id=' . $template_id);
         }
