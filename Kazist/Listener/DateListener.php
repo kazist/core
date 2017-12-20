@@ -24,7 +24,7 @@ class DateListener implements EventSubscriberInterface {
     public $container = '';
 
     public function onDateValidation(InputEvent $event) {
-        
+
         global $sc;
 
         $this->container = $sc;
@@ -33,7 +33,12 @@ class DateListener implements EventSubscriberInterface {
         $input_name = $event->getInputName();
         $mysql_type = $event->getMysqlType();
 
-        return true;
+        $date_str = 'Y-m-d';
+        $date = $form_data[$input_name];
+
+        $d = \DateTime::createFromFormat($date_str, $date);
+
+        return $d && strtotime($d->format($date_str)) == strtotime($date);
     }
 
     public static function getSubscribedEvents() {

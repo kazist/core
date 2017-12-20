@@ -73,7 +73,7 @@ class KazistFactory {
     }
 
     public function saveRecord($table_name, $data, $where_arr = array(), $parameter_arr = array()) {
-
+    
         $baseModel = new BaseModel();
         return $baseModel->saveRecord($table_name, $data, $where_arr, $parameter_arr);
     }

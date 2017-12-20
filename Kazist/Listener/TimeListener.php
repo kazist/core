@@ -24,7 +24,7 @@ class TimeListener implements EventSubscriberInterface {
     public $container = '';
 
     public function onTimeValidation(InputEvent $event) {
-        
+
         global $sc;
 
         $this->container = $sc;
@@ -33,7 +33,12 @@ class TimeListener implements EventSubscriberInterface {
         $input_name = $event->getInputName();
         $mysql_type = $event->getMysqlType();
 
-        return true;
+        $date_str = 'H:i:s';
+        $date = $form_data[$input_name];
+
+        $d = \DateTime::createFromFormat($date_str, $date);
+
+        return $d && strtotime($d->format($date_str)) == strtotime($date);
     }
 
     public static function getSubscribedEvents() {

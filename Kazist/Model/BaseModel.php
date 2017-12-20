@@ -224,9 +224,9 @@ class BaseModel extends KazistModel {
     }
 
     public function delete($delete_ids = array()) {
-        
-      
-        
+
+
+
         $entityManager = $this->container->get('doctrine')->getEntityManager();
 
         $form_data = $this->request->get('form');
@@ -258,7 +258,6 @@ class BaseModel extends KazistModel {
 
         $entityManager->flush();
         $entityManager->getConnection()->close();
-
     }
 
     public function save($form_data = '') {
@@ -325,7 +324,6 @@ class BaseModel extends KazistModel {
                 case 'date':
                     $form_data[$field_name] = ($this->validateDate($form_data[$field_name], 'Y-m-d')) ? $form_data[$field_name] : NULL;
                     $form_data[$field_name] = ( is_null($form_data[$field_name]) && $field_not_null) ? date('Y-m-d') : $form_data[$field_name];
-
                     break;
                 case 'time':
                     $form_data[$field_name] = ($this->validateDate($form_data[$field_name], 'H:i:s')) ? $form_data[$field_name] : NULL;
