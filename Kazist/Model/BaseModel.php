@@ -360,6 +360,18 @@ class BaseModel extends KazistModel {
 
     function validateDate($date, $format_str) {
 
+        switch ($format_str) {
+            case 'datetime':
+                $format_str = 'Y-m-d H:i:s';
+                break;
+            case 'time':
+                $format_str = 'H:i:s';
+                break;
+            case 'date':
+                $format_str = 'Y-m-d';
+                break;
+        }
+
         $date_str = ($format_str <> '') ? $format_str : 'Y-m-d H:i:s';
 
         $d = \DateTime::createFromFormat($date_str, $date);
@@ -845,6 +857,7 @@ class BaseModel extends KazistModel {
                         $where_arr[] = $this->table_alias . '.' . $key . ' = :' . $key;
                         $parameter_arr[$key] = $item;
                     } elseif (is_array($item)) {
+
                         if ($this->validateDate($item['start'], $field['html_type']) && $this->validateDate($item['end'], $field['html_type'])) {
                             $where_arr[] = $this->table_alias . '.' . $key . ' BETWEEN :' . $key . '_start AND :' . $key . '_end';
                             $parameter_arr[$key . '_start'] = $item['start'];
