@@ -70,7 +70,7 @@ class Cron {
         $this->printSeparator();
         $this->printLog($unique_name);
 
-        $url = $http_host . $factory->generateUrl($unique_name);
+        $url = $factory->generateUrl($unique_name, NULL, 0);
         $url = str_replace('cron.', 'index.', $url);
         $url = str_replace('cron-dev.', 'index-dev.', $url);
 
