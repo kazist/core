@@ -225,8 +225,6 @@ class BaseModel extends KazistModel {
 
     public function delete($delete_ids = array()) {
 
-
-
         $entityManager = $this->container->get('doctrine')->getEntityManager();
 
         $form_data = $this->request->get('form');
@@ -274,7 +272,6 @@ class BaseModel extends KazistModel {
 
         $form_data = $this->validateForm($form_data);
 
-
         try {
 
             $this->saveEntity($data_entity, $form_data);
@@ -317,6 +314,8 @@ class BaseModel extends KazistModel {
             if (!in_array($field_name, $field_keys)) {
                 continue;
             }
+
+           // $form_data[$field_name] = trim($form_data[$field_name]);
 
             $validation->validate($field_name, $form_data, $html_type, $field_type);
 

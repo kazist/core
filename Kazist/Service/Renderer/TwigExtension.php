@@ -152,24 +152,11 @@ class TwigExtension extends \Twig_Extension {
 
     public function resizedImage($image, $width = '', $height = '', $type = '') {
 
+        $factory = new KazistFactory();
 
-        $mediamanager = new MediaManager();
-
-        $image_path = JPATH_ROOT . $image;
-
-        if (!is_file($image_path)) {
-            $image = 'uploads/system/no-image.png';
-        }
-
-        if ($width || $height) {
-            $image_path = JPATH_ROOT . $mediamanager->getFileImage($image);
-
-            $web_filename = $mediamanager->getResizedImage($image, $width, $height, $type);
-        } else {
-            $web_filename = $image;
-        }
-
-        return WEB_ROOT . $web_filename . '?' . filemtime($image_path);
+        $img_url = $factory->resizedImage($image, $width, $height, $type);
+      
+        return $img_url;
     }
 
     public function addTwigPath($path) {

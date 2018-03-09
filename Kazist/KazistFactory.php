@@ -73,7 +73,7 @@ class KazistFactory {
     }
 
     public function saveRecord($table_name, $data, $where_arr = array(), $parameter_arr = array()) {
-    
+
         $baseModel = new BaseModel();
         return $baseModel->saveRecord($table_name, $data, $where_arr, $parameter_arr);
     }
@@ -373,13 +373,15 @@ class KazistFactory {
             $image = 'uploads/system/no-image.png';
         }
 
-        if ($width || $height) {
-            $image_path = JPATH_ROOT . $mediamanager->getFileImage($image);
-
+        $image = $mediamanager->getFileImage($image);
+        $image_path = JPATH_ROOT . $image;
+    
+        if (($width || $height) && !strpos($image_path, 'file-icons')) {
             $web_filename = $mediamanager->getResizedImage($image, $width, $height, $type);
         } else {
             $web_filename = $image;
         }
+        
 
         return WEB_ROOT . $web_filename . '?' . filemtime($image_path);
     }

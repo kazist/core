@@ -27,10 +27,10 @@ class MediaManager {
 
         $extension = ($extension !== '') ? $extension : $this->getFileExtension($file);
         $icon_dir = 'assets/images/file-icons/32px/';
-
+  
         $filename = $icon_dir . $extension . '.png';
         $default_filename = $icon_dir . '_blank.png';
-
+ 
         if ($this->getFileType($extension) != 'image' || $extension == '') {
 
             if (file_exists(JPATH_ROOT . '/' . $filename)) {
