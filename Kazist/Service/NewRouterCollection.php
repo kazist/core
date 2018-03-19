@@ -104,6 +104,10 @@ class NewRouterCollection extends RouteCollection {
             '_controller' => 'Kazist\Controller\\UserController::loginCheckAction',
         )));
 
+        $this->add('remote_login', new Routing\Route('/remotelogin', array(
+            '_controller' => 'Kazist\Controller\\UserController::remoteLoginAction',
+        )));
+
         $this->add('admin.login_check', new Routing\Route('/admin/login-check', array(
             '_controller' => 'Kazist\Controller\\UserController::loginCheckAction',
         )));

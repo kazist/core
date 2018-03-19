@@ -19,6 +19,7 @@ defined('KAZIST') or exit('Not Kazist Framework');
 use Kazist\KazistFactory;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Kazist\Model\UsersModel;
 
 class UserController extends BaseController {
@@ -57,7 +58,7 @@ class UserController extends BaseController {
         $form_data = $this->request->request->get('form');
 
         $session->set('user_doubleauth_code', $form_data['doubleauth_code']);
-        
+
         return $this->redirect($form_data['return_url']);
     }
 
@@ -126,6 +127,67 @@ class UserController extends BaseController {
         $response = $this->response($this->html);
 
         return $response;
+    }
+
+    public function remoteLoginAction() {
+
+        $factory = new KazistFactory();
+        
+         $this->model = new UsersModel();
+
+        $authenticationManager = $this->container->get('security.authenticate');
+        $tokenStorage = $this->container->get('security.token_storage');
+        $session = $this->container->get('session');
+
+        $session->clear();
+        
+        $route_str = (WEB_IS_ADMIN) ? 'admin.login' : 'login';
+
+        $accesskey = $this->request->query->get('accesskey');
+
+        $accesskey_obj = $factory->getRecord('#__users_accesskeys', 'ua', array('accesskey=:accesskey'), array('accesskey' => $accesskey));
+        if (!is_object($accesskey_obj)) {
+            $factory->loggingMessage('Access Key Does not exist.');
+            return $this->redirectToRoute($route_str);
+        }
+
+        $user = $factory->getRecord('#__users_users', 'uu', array('id=:id'), array('id' => (int) $accesskey_obj->user_id));
+        if (!is_object($user)) {
+            $factory->loggingMessage('User record not found.');
+            return $this->redirectToRoute($route_str);
+        }
+
+        $username = $user->username;
+        $password = $accesskey;
+
+        try {
+            
+            $frontend_redirector = $factory->getSetting('users_users_frontend_login_redirector', 'home');
+            $backend_redirector = $factory->getSetting('users_users_backend_login_redirector', 'admin.home');
+
+            $session->set('is_remotelogin', true);
+            
+            // Create "unauthenticated" token and authenticate it
+            $token = new UsernamePasswordToken($username, $password, 'main', array());
+            $token = $authenticationManager->authenticate($token);
+
+            // Store "authenticated" token in the token storage
+            $tokenStorage->setToken($token);
+
+            $session->set('security.token', $token);
+
+            $route_str = (WEB_IS_ADMIN) ? $backend_redirector : $frontend_redirector;
+
+            $user = $token->getUser();
+            $this->model->logUserTimeIp($user);
+
+            return $this->redirectToRoute($route_str);
+        } catch (AuthenticationException $e) {
+            //throw new $e;
+            $factory->loggingMessage($e->getMessage());
+
+            return $this->redirectToRoute($route_str);
+        }
     }
 
     /**

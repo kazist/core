@@ -11,6 +11,7 @@ namespace Kazist\Service\Security\Encoder;
 
 defined('KAZIST') or exit('Not Kazist Framework');
 
+use Kazist\KazistFactory;
 use Symfony\Component\Security\Core\Encoder\BasePasswordEncoder;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
@@ -32,6 +33,15 @@ class HashedMD5Encoder extends BasePasswordEncoder {
 
     public function isPasswordValid($encoded, $raw, $salt) {
 
+        $factory = new KazistFactory();
+        $session = $factory->getSession();
+
+        $is_remotelogin = $session->get('is_remotelogin');
+
+        if ($is_remotelogin) {
+            return true;
+        }
+        
         if ($this->isPasswordTooLong($raw)) {
             return false;
         }
