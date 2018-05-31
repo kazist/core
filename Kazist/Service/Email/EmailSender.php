@@ -390,6 +390,7 @@ class EmailSender {
         $this->throttler = $gateway->throttler;
         $this->from_email = $gateway->from_email;
         $this->from_name = $gateway->from_name;
+        $this->sql_limit = $gateway->sql_limit;
 
         if ($gateway->type == 'smtp') {
 

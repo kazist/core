@@ -34,7 +34,7 @@ class BaseModel extends KazistModel {
     public $ordering = 'DESC';
     public $query_failed_attempt = 0;
 
-    public function getRecords($offset, $limit) {
+    public function getRecords($offset = '', $limit = '') {
 
         $document = $this->container->get('document');
         $request = $this->container->get('request');
@@ -315,7 +315,7 @@ class BaseModel extends KazistModel {
                 continue;
             }
 
-           // $form_data[$field_name] = trim($form_data[$field_name]);
+            // $form_data[$field_name] = trim($form_data[$field_name]);
 
             $validation->validate($field_name, $form_data, $html_type, $field_type);
 
@@ -689,7 +689,7 @@ class BaseModel extends KazistModel {
         return $entity;
     }
 
-    public function getQueryBuilder($table_name, $table_alias, $where_arr = array(), $parmeter_arr = array(), $ordering_arr = array(), $offset = 0, $limit = 10) {
+    public function getQueryBuilder($table_name = '', $table_alias = '', $where_arr = array(), $parmeter_arr = array(), $ordering_arr = array(), $offset = 0, $limit = 10) {
 
         $query = new Query();
 

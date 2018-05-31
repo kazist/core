@@ -81,7 +81,7 @@ class AssetExtension extends \Twig_Extension {
 
     /* ---------------------------------------- Asset Behaviours ---------------------------- */
 
-    public function setAssets($url, $category) {
+    public function setAssets($url, $category='') {
 
         $assets = $this->container->get('session')->get('kazist_assets');
 

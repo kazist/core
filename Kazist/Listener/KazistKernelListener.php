@@ -88,7 +88,7 @@ class KazistKernelListener implements EventSubscriberInterface {
 
         $response_content = $response->getContent();
 
-        $response_content = $this->loadPropareImageUrl($response_content);
+        $response_content = $this->loadPropareImageUrl($response_content,$request);
 
         if ($type !== 'application/json' && $response->getStatusCode() == 200) {
 

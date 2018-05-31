@@ -28,7 +28,7 @@ class Template {
         $this->request = $request;
     }
 
-    public function applyTemplateToResponse($response_content, $status_code) {
+    public function applyTemplateToResponse($response_content) {
 
         $data = array();
         $tmp_data = array();
