@@ -4,30 +4,33 @@ namespace Kazist\Service\User;
 
 defined('KAZIST') or exit('Not Kazist Framework');
 
-use Kazist\KazistFactory;
-use Kazist\Service\Email\Email;
-use Kazist\Service\Database\Query;
 use Kazist\Event\UserEvent;
+use Kazist\KazistFactory;
+use Kazist\Service\Database\Query;
+use Kazist\Service\Email\Email;
 
 /**
  * @copyright  Copyright (C) 2012 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-class Registration {
+class Registration
+{
 
     public $user_id = 0;
     public $is_valid = true;
     public $container = '';
     public $request = '';
 
-    public function __construct() {
+    public function __construct()
+    {
         global $sc;
         $this->container = $sc;
         $this->request = $this->container->get('request');
     }
 
-    public function registerUser($user_obj, $is_valid = false) {
+    public function registerUser($user_obj, $is_valid = false)
+    {
 
         $user_id = '';
         $factory = new KazistFactory();
@@ -74,7 +77,8 @@ class Registration {
         return $user_id;
     }
 
-    public function sendVerificationEmail($user) {
+    public function sendVerificationEmail($user)
+    {
 
         $email = new Email();
         $factory = new KazistFactory();
@@ -96,7 +100,8 @@ class Registration {
         return $user;
     }
 
-    public function validateRegistration($user_obj, $is_register) {
+    public function validateRegistration($user_obj, $is_register = '')
+    {
 
         $factory = new KazistFactory();
 
@@ -133,7 +138,8 @@ class Registration {
         return $this->is_valid;
     }
 
-    public function isValidCaptcha($is_register) {
+    public function isValidCaptcha($is_register)
+    {
 
         if (!$is_register) {
             return true;
@@ -156,7 +162,8 @@ class Registration {
         return false;
     }
 
-    public function isValidName($name) {
+    public function isValidName($name)
+    {
 
         $factory = new KazistFactory();
 
@@ -169,7 +176,8 @@ class Registration {
         return true;
     }
 
-    public function isValidEmail($email) {
+    public function isValidEmail($email)
+    {
 
         $factory = new KazistFactory();
 
@@ -182,7 +190,8 @@ class Registration {
         return true;
     }
 
-    public function userFailedCharacterSize($username, $is_register) {
+    public function userFailedCharacterSize($username, $is_register)
+    {
 
         $factory = new KazistFactory();
 
@@ -218,7 +227,8 @@ class Registration {
         return false;
     }
 
-    public function userNameNotAlnum($username, $is_register) {
+    public function userNameNotAlnum($username, $is_register)
+    {
 
         $factory = new KazistFactory();
 
@@ -231,10 +241,10 @@ class Registration {
         return false;
     }
 
-    public function userNameExist($username, $is_register) {
+    public function userNameExist($username, $is_register)
+    {
 
         $factory = new KazistFactory();
-
 
         $query = new Query();
         $query->select('uu.*');
@@ -257,7 +267,8 @@ class Registration {
         return false;
     }
 
-    public function emailExist($email, $is_register) {
+    public function emailExist($email, $is_register)
+    {
 
         $factory = new KazistFactory();
 
@@ -282,7 +293,8 @@ class Registration {
         return false;
     }
 
-    public function addRegisteredUserGroup($user_id) {
+    public function addRegisteredUserGroup($user_id)
+    {
 
         $factory = new KazistFactory;
 
@@ -301,7 +313,8 @@ class Registration {
         }
     }
 
-    public function getDefaultUserGroup() {
+    public function getDefaultUserGroup()
+    {
 
         $factory = new KazistFactory;
         $db = $factory->getDatabase();
