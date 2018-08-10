@@ -13,22 +13,25 @@ namespace Kazist\Service\System\Template;
  *
  * @author sbc
  */
-use Kazist\Service\Database\Query;
 use Kazist\KazistFactory;
 use Kazist\Model\KazistModel;
+use Kazist\Service\Database\Query;
 
-class Template {
+class Template
+{
 
     public $container = '';
     public $request = '';
 
 //put your code here
-    function __construct($container, $request) {
+    public function __construct($container, $request)
+    {
         $this->container = $container;
         $this->request = $request;
     }
 
-    public function applyTemplateToResponse($response_content) {
+    public function applyTemplateToResponse($response_content)
+    {
 
         $data = array();
         $tmp_data = array();
@@ -52,7 +55,6 @@ class Template {
 
         $user = $kazistmodel->getUser();
 
-
         $data['document'] = $document;
         $data['user'] = $user;
         $data['response_content'] = $response_content;
@@ -71,12 +73,13 @@ class Template {
 
         $session->set('template.appended', true);
 
-        // 
+        //
 
         return $content;
     }
 
-    public function getFlexviewHtml($position) {
+    public function getFlexviewHtml($position)
+    {
 
         $where_arr = array();
         $tmp_array = array();
@@ -134,7 +137,6 @@ class Template {
             $render = $record->render;
             $params = json_decode($record->params, true);
 
-
             if ($render == 'flexview') {
 
                 $response = $this->getControllerResponse($unique_name, $params);
@@ -155,7 +157,8 @@ class Template {
         return $tmp_array;
     }
 
-    public function preparePatterns() {
+    public function preparePatterns()
+    {
 
         $route_arr = array();
 
@@ -196,7 +199,8 @@ class Template {
         return $route_arr;
     }
 
-    public function getFlexviewByPattern($visible = true) {
+    public function getFlexviewByPattern($visible = true)
+    {
 
         $tmp_array = array();
         $query = new Query();
@@ -222,7 +226,8 @@ class Template {
         return $tmp_array;
     }
 
-    public function getControllerResponse($unique_name, $params) {
+    public function getControllerResponse($unique_name, $params)
+    {
         // error_reporting(E_ALL);
         $kazimodel = new KazistModel();
         $factory = new KazistFactory();
@@ -271,7 +276,8 @@ class Template {
         }
     }
 
-    public function getPositions($data, $twig_file) {
+    public function getPositions($data, $twig_file)
+    {
 
         $jpath_templates = str_replace('/views', '', JPATH_TEMPLATES);
         $type = str_replace('.twig', '', $twig_file);
