@@ -22,7 +22,7 @@ class NewRouterCollection extends RouteCollection {
     public $prefix = '';
 
     public function __construct() {
-
+       
         /* xxxxxxxxxxxxxxxxxxxxxxxxxxx Homepage xxxxxxxxxxxxxxxxxxxxxxxxxx */
 
         $this->add('home', new Routing\Route('', array(

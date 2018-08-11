@@ -23,11 +23,11 @@ defined('KAZIST') or exit('Not Kazist Framework');
 class HomeController extends BaseController {
 
     public function indexAction($offset = 0, $limit = 6) {
-        
+       
         $document = $this->container->get('document');
         $document->title = $this->container->getParameter('system.title');
         $response = $this->response($this->html);
-
+        
         return $response;
     }
 

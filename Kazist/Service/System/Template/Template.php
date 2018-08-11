@@ -45,7 +45,7 @@ class Template
 
         $tmp_twig_file = $request->get('twig_file');
         $twig_file = (strpos($tmp_twig_file, '.twig')) ? $tmp_twig_file : $tmp_twig_file . '.twig';
-
+        
         $token = $session->get('security.token');
         $template_appended = $session->get('template.appended');
 
@@ -62,13 +62,13 @@ class Template
         if ($tmp_twig_file == '') {
             $twig_file = (WEB_IS_ADMIN && (!is_object($user) || !$user->id)) ? 'login.twig' : 'index.twig';
         }
-
+       
         $positions = $this->getPositions($data, $twig_file);
-
+       
         foreach ($positions as $position) {
             $data[$position] = $this->getFlexviewHtml($position);
         }
-
+        
         $content = $twig->render($twig_file, $data);
 
         $session->set('template.appended', true);
@@ -140,7 +140,7 @@ class Template
             if ($render == 'flexview') {
 
                 $response = $this->getControllerResponse($unique_name, $params);
-
+               
                 if (is_object($response) && !ctype_space($response->getContent())) {
                     $record->html = $response->getContent();
                     $tmp_array[$record->id] = $record;
