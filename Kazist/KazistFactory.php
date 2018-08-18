@@ -118,7 +118,7 @@ class KazistFactory {
         return $baseModel->getQueryedRecords($table_name, $table_alias, $where_arr, $parmeter_arr, $ordering_arr, $offset, $limit);
     }
 
-    public function getQueryBuilder($table_name, $table_alias, $where_arr = array(), $parmeter_arr = array(), $ordering_arr = array(), $offset = 0, $limit = 10) {
+    public function getQueryBuilder($table_name, $table_alias = '', $where_arr = array(), $parmeter_arr = array(), $ordering_arr = array(), $offset = 0, $limit = 10) {
 
         $baseModel = new BaseModel();
 
